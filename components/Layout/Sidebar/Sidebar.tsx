@@ -9,6 +9,7 @@ import ApiUser from "../../../api/ApiUser";
 import RouteList from "../../../routes/RouteList";
 import {logoutUser} from "@app/redux/slices/UserSlice";
 import {IAccountRole} from "@app/types";
+import Icon from "@app/components/Icon/Icon";
 
 const RenderMenu = React.memo(() => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const RenderMenu = React.memo(() => {
       defaultSelectedKeys={[router.pathname]}
       defaultOpenKeys={["/" + router.pathname.split("/")[1]]}
     >
-      {RouteList.map(({path, name, children, role}) => {
+      {RouteList.map(({path, name, icon, children, role}) => {
         // if (role?.includes(userRole ?? IAccountRole.ANONYMOUS)) {
         //   return null;
         // }
@@ -64,6 +65,7 @@ const RenderMenu = React.memo(() => {
               router.push(path);
             }}
           >
+            <Icon icon={icon as string} size={40} color="#fff" />
             {name}
           </Menu.Item>
         );
@@ -85,7 +87,6 @@ export default function Sidebar(): JSX.Element {
       title: "Đăng xuất",
       content: "Bạn có chắc chắn?",
       onOk: () => {
-        // dispatch(UserAction.userLogout())
         dispatch(logoutUser());
       },
     });
@@ -113,7 +114,12 @@ export default function Sidebar(): JSX.Element {
 
       <div className={classNames("sidebar")}>
         <div className="logo-container">
-          <Image src="/img/logo/logo.png" alt="logo" width={20} height={20} />
+          <Image
+            src="/img/logo_detail.png"
+            width={565}
+            height={217}
+            alt="logo"
+          />
         </div>
         <RenderMenu />
         <div
