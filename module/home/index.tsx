@@ -69,7 +69,7 @@ export function Home(): JSX.Element {
       width: 80,
       render: (url) => (
         <div>
-          <Image src={url} fallback="img/logo.png" />
+          <Image src={url} fallback="img/avatar/avatar.jpg" />
         </div>
       ),
     },
@@ -125,7 +125,7 @@ export function Home(): JSX.Element {
           onClick={(): void => {
             handleUserAction(record);
           }}
-          icon={<Icon icon="Edit_Profile" size={30} />}
+          icon={<Icon icon="BlockUser" size={20} />}
         />
       ),
     },
