@@ -39,6 +39,7 @@
 12. Class Validator Docs `https://www.npmjs.com/package/class-validator#validation-decorators`
 13. React i18next Docs `https://react.i18next.com/`
 14. Redux toolkit Docs `https://redux-toolkit.js.org/usage/usage-guide`
+15. Typescript Docs `https://www.typescriptlang.org/docs/`
 
 # Plugins
 
@@ -60,5 +61,4 @@
 
 ## TODO
 
-1. Create code style schemas
-2. Build a login page
+- Add doc for how to translate, add page, add form, create new reudcer for redux, ...
