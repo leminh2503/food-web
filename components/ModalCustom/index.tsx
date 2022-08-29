@@ -5,12 +5,21 @@ interface ModalCustomProps {
   isModalVisible: boolean;
   handleOk: () => void;
   handleCancel: () => void;
+  okeText?: string;
+  cancelText?: string;
   title: string;
   content: JSX.Element;
 }
 
-export function ModalCustom(props: ModalCustomProps): JSX.Element {
-  const {isModalVisible, handleOk, handleCancel, title, content} = props;
+export function ModalCustom({
+  isModalVisible,
+  handleOk,
+  handleCancel,
+  okeText = "Xác nhận",
+  cancelText = "Hủy",
+  title,
+  content,
+}: ModalCustomProps): JSX.Element {
   return (
     <Modal
       centered
@@ -18,6 +27,8 @@ export function ModalCustom(props: ModalCustomProps): JSX.Element {
       visible={isModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
+      okText={okeText}
+      cancelText={cancelText}
       className="modal-ant"
     >
       {content}

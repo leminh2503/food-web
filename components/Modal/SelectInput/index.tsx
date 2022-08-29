@@ -15,9 +15,15 @@ interface InputModalProps {
   }[];
 }
 
-export function SelectInput(props: InputModalProps): JSX.Element {
-  const {className, label, setValue, value, require, data, keyValue} = props;
-
+export function SelectInput({
+  className,
+  label,
+  setValue,
+  value,
+  require,
+  data,
+  keyValue,
+}: InputModalProps): JSX.Element {
   const onChange = (value: number): void => {
     setValue((prev: any) => ({
       ...prev,

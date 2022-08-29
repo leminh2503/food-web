@@ -8,7 +8,7 @@ interface ConfirmParams {
   displayCloseOnly?: boolean;
 }
 
-function ConfirmModal(props: ModalProps<ConfirmParams>) {
+function ConfirmModal(props: ModalProps<ConfirmParams>): JSX.Element {
   const {modalRef} = props;
 
   return (
@@ -17,13 +17,13 @@ function ConfirmModal(props: ModalProps<ConfirmParams>) {
       <div className="text-center">
         {!props.data?.displayCloseOnly && (
           <>
-            <Button type="primary" onClick={() => modalRef.close(false)}>
+            <Button type="primary" onClick={(): void => modalRef.close(false)}>
               Cancel
             </Button>
             <Button
               className="ml-3"
               type="primary"
-              onClick={() => modalRef.close(true)}
+              onClick={(): void => modalRef.close(true)}
             >
               Confirm
             </Button>

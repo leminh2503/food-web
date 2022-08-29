@@ -2,8 +2,8 @@ import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
 import {Image} from "antd";
 import React, {useState} from "react";
-import {InputModal} from "@app/components/InputModal";
-import {SelectInput} from "@app/components/SelectInput";
+import {InputModal} from "@app/components/Modal/InputModal";
+import {SelectInput} from "@app/components/Modal/SelectInput";
 
 interface ModalInfoProps {
   isModalVisible: boolean;

@@ -6,10 +6,14 @@ export interface ILoginBody {
   email: string;
   password: string;
 }
+
 export interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
-  role?: number | string;
+  role?: {
+    id?: number;
+    roleName?: string;
+  };
 }
 
 export interface IParamsGetUser {

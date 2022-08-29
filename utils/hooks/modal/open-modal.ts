@@ -8,7 +8,7 @@ let increNumber = 1;
 export function openModal<T extends ComponentType<ModalProps>>(
   Content: T,
   options?: ModalOptions<ExtractModalData<T>>
-) {
+): ModalRef {
   const currentTop = window.scrollY;
   const modalId = increNumber++;
   const modalSbj: Subject<any>[] = [];

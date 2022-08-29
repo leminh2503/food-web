@@ -5,7 +5,7 @@ import {ModalContext} from "./modal-context";
 import Grow from "@mui/material/Grow";
 import {Fade} from "@mui/material";
 
-export function ModalPortal() {
+export function ModalPortal(): JSX.Element {
   const [modalList, setModalList] = useState<ModalSetting[]>([]);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ interface ModalWrapperProps {
   modal: ModalSetting;
 }
 
-function ModalWrapper(props: ModalWrapperProps) {
+function ModalWrapper(props: ModalWrapperProps): JSX.Element {
   const [show, setShow] = useState(false);
   const {modal} = props;
 
