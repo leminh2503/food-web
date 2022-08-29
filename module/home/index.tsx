@@ -36,7 +36,7 @@ export function Home(): JSX.Element {
   const handleUserAction = (record: IUserLogin): void => {
     Modal.confirm({
       title: `Bạn có muốn khoá tài khoản ${record.email}?`,
-      content: `Taì khoản ${record.email} sẽ bị khoá`,
+      content: `Tài khoản ${record.email} sẽ bị khoá`,
       okType: "primary",
       cancelText: "Huỷ",
       okText: "Khoá",
@@ -46,9 +46,9 @@ export function Home(): JSX.Element {
     });
   };
 
-  const onRow = (record: IUserLogin): {onDoubleClick: (e: any) => void} => {
+  const onRow = (record: IUserLogin): {onDoubleClick: () => void} => {
     return {
-      onDoubleClick: (e: any) => {
+      onDoubleClick: (): void => {
         showModal();
       },
     };

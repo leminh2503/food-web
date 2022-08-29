@@ -9,7 +9,7 @@ type ModalWrapperProps = PropsWithChildren<{
   className?: string;
 }>;
 
-export function ModalWraper(props: ModalWrapperProps) {
+export function ModalWraper(props: ModalWrapperProps): JSX.Element {
   const modalCtx = useContext(ModalContext);
 
   return (
@@ -18,7 +18,7 @@ export function ModalWraper(props: ModalWrapperProps) {
         <span className="text-body-m-bold">{props.title}</span>
         <Button
           className="modal-close-btn"
-          onClick={() => modalCtx.modal.modalRef.close()}
+          onClick={(): void => modalCtx.modal.modalRef.close()}
         >
           <Icon size={24} className="clr-white" icon="Edit_Profile" />
         </Button>

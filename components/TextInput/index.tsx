@@ -13,17 +13,15 @@ interface TextInputProps {
   name: string;
 }
 
-export function TextInput(props: TextInputProps): JSX.Element {
-  const {
-    label,
-    handleChange,
-    placeholder,
-    value,
-    handleBlur,
-    name,
-    type = "text",
-  } = props;
-
+export function TextInput({
+  label,
+  handleChange,
+  placeholder,
+  value,
+  handleBlur,
+  name,
+  type = "text",
+}: TextInputProps): JSX.Element {
   const renderPasswordIcon = useCallback(
     (visible: boolean): React.ReactNode =>
       visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />,

@@ -13,11 +13,16 @@ interface InputModalProps {
   keyValue: string;
 }
 
-export function InputModal(props: InputModalProps): JSX.Element {
-  const {className, label, placeholder, onChange, value, require, keyValue} =
-    props;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+export function InputModal({
+  className,
+  label,
+  placeholder,
+  onChange,
+  value,
+  require,
+  keyValue,
+}: InputModalProps): JSX.Element {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange((prev: any) => ({
       ...prev,
       [keyValue]: e.target.value,

@@ -30,7 +30,7 @@ export enum IState {
 }
 
 export interface IUserLogin {
-  _id?: string;
+  id?: string;
   fullName?: string;
   state?: IState;
   email?: string;
@@ -72,4 +72,29 @@ export interface IAccountInfo {
   refreshToken?: string;
   isConfirmed?: boolean;
   dataProfile?: IProfile;
+  role?: {
+    id?: number;
+    roleName?: string;
+  };
+}
+
+export interface ILeaveWork {
+  id?: number;
+  user?: {
+    id: number;
+    email: string;
+    fullName: string;
+  };
+  startDate?: Date;
+  reason?: string;
+  reasonRefuse?: string;
+  quantity?: number;
+  state?: number;
+}
+
+export interface ISetStateModal {
+  startDate?: string;
+  quantity?: number;
+  reason?: string;
+  refuseReason?: string;
 }
