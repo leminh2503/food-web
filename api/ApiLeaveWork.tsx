@@ -15,11 +15,11 @@ export interface IRefuseLeaveWorkBody {
 export interface ILeaveWorkResponse {
   id: number;
   userId: number;
-  startDate: string;
+  startDate?: string;
   reason: string;
-  reasonRefuse: string;
+  reasonRefuse?: string;
   quantity: number;
-  state: number;
+  state?: number;
 }
 
 export interface IParamsGetLeaveWork {
@@ -31,7 +31,8 @@ export interface IParamsGetLeaveWork {
   search?: string;
   searchType?: string;
   filter?: {
-    state_IN: number[];
+    state_IN?: number[];
+    createdAt_RANGE?: string[];
   };
 }
 
@@ -41,6 +42,13 @@ const path = {
 
 function getLeaveWork(params?: IParamsGetLeaveWork): Promise<ILeaveWork[]> {
   return fetcher({url: path.getLeaveWork, method: "get", params: params});
+}
+
+function getDaysAllowedLeave(): Promise<ILeaveWork> {
+  return fetcher({
+    url: path.getLeaveWork + "/days-allowed-leave",
+    method: "get",
+  });
 }
 
 function createLeaveWork(body: ILeaveWorkBody): Promise<ILeaveWorkResponse> {
@@ -70,6 +78,7 @@ function approvalLeaveWork(id: number): Promise<ILeaveWork[]> {
 
 export default {
   getLeaveWork,
+  getDaysAllowedLeave,
   createLeaveWork,
   deleteLeaveWork,
   refuseLeaveWork,

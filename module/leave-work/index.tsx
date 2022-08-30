@@ -1,6 +1,6 @@
 import "./index.scss";
 import {Button, Image, Modal, Table} from "antd";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import type {ColumnsType} from "antd/es/table";
 import Icon from "@app/components/Icon/Icon";
 import moment from "moment";
@@ -9,8 +9,9 @@ import {ILeaveWork} from "@app/types";
 import {useMutation, useQuery} from "react-query";
 import {IRootState} from "@app/redux/store";
 import {useSelector} from "react-redux";
-import {ModalCreateLeaveWork} from "@app/module/leave-work/ModalCreateLeaveWork";
-import {ModalRefuseLeaveWork} from "@app/module/leave-work/ModalRefuseLeaveWork";
+import {ModalCreateLeaveWork} from "@app/module/leave-work/components/ModalCreateLeaveWork";
+import {ModalRefuseLeaveWork} from "@app/module/leave-work/components/ModalRefuseLeaveWork";
+import {FilterLeaveWork} from "@app/module/leave-work/components/FilterLeaveWork";
 
 export function LeaveWork(): JSX.Element {
   const role = useSelector((state: IRootState) => state.user.role);
@@ -19,6 +20,15 @@ export function LeaveWork(): JSX.Element {
     number | undefined
   >();
   const [isModalVisible, setIsModalVisible] = useState("");
+  const [filterState, setFilterState] = useState<number[]>([0, 1, 2]);
+  const [filterYear, setFilterYear] = useState<number>(moment().year());
+  const [filterMonth, setFilterMonth] = useState<number>(moment().month() + 1);
+
+  const getDate = useMemo(() => {
+    return filterMonth < 10
+      ? `${filterYear}-0${filterMonth}-01`
+      : `${filterYear}-${filterMonth}-01`;
+  }, [filterYear, filterMonth]);
 
   const showModalCreateLeaveWork = (): void => {
     setIsModalVisible("modalCreateLeaveWork");
@@ -36,7 +46,14 @@ export function LeaveWork(): JSX.Element {
     return ApiLeaveWork.getLeaveWork({
       pageSize: 30,
       pageNumber: 1,
-      filter: {state_IN: [0, 1, 2]},
+      filter: {
+        state_IN: filterState,
+        createdAt_RANGE: [
+          getDate,
+          getDate.slice(0, getDate.length - 2) +
+            `${moment(getDate).daysInMonth()}`,
+        ],
+      },
     });
   };
   const dataLeaveWork = useQuery("listLeaveWork", getLeaveWork);
@@ -47,7 +64,7 @@ export function LeaveWork(): JSX.Element {
 
   useEffect(() => {
     dataRefetch();
-  }, []);
+  }, [filterState, filterYear, filterMonth]);
 
   const dataAdmin = dataLeaveWork.data;
   const dataUser = dataAdmin?.filter((item) => item.user?.id === userId);
@@ -255,23 +272,28 @@ export function LeaveWork(): JSX.Element {
 
   return (
     <div className="container">
+      <div className="flex justify-between mb-5">
+        <FilterLeaveWork
+          setFilterState={setFilterState}
+          setFilterYear={setFilterYear}
+          setFilterMonth={setFilterMonth}
+        />
+        {!role ? (
+          <Button
+            className="btn-primary"
+            type="primary"
+            onClick={(): void => {
+              showModalCreateLeaveWork();
+            }}
+          >
+            Tạo đơn xin nghỉ phép
+          </Button>
+        ) : null}
+      </div>
       {role ? (
         <Table columns={columnsAdmin} bordered dataSource={dataAdmin} />
       ) : (
-        <>
-          <div className="flex justify-between mb-5">
-            <Button
-              className="btn-primary"
-              type="primary"
-              onClick={(): void => {
-                showModalCreateLeaveWork();
-              }}
-            >
-              Tạo đơn xin nghỉ phép
-            </Button>
-          </div>
-          <Table columns={columnsUser} bordered dataSource={dataUser} />
-        </>
+        <Table columns={columnsUser} bordered dataSource={dataUser} />
       )}
       <ModalCreateLeaveWork
         isModalVisible={isModalVisible === "modalCreateLeaveWork"}
