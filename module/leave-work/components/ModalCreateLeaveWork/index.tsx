@@ -4,9 +4,10 @@ import {DateInput} from "@app/components/Modal/DateInput";
 import {NumberInput} from "@app/components/Modal/NumberInput";
 import {TextArea} from "@app/components/Modal/TextArea";
 import ApiLeaveWork, {ILeaveWorkBody} from "@app/api/ApiLeaveWork";
-import {useMutation} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import {Modal} from "antd";
 import moment from "moment";
+import {ILeaveWork} from "@app/types";
 
 interface ModalCreateLeaveWorkProps {
   isModalVisible: boolean;
@@ -24,6 +25,11 @@ export function ModalCreateLeaveWork({
     quantity: 0.5,
     reason: "",
   });
+
+  const getDaysAllowedLeave = (): Promise<ILeaveWork> => {
+    return ApiLeaveWork.getDaysAllowedLeave();
+  };
+  const daysAllowedLeave = useQuery("daysAllowedLeave", getDaysAllowedLeave);
 
   const createLeaveWorkMutation = useMutation(ApiLeaveWork.createLeaveWork);
   const handleCreateLeaveWork = (values: ILeaveWorkBody): void => {
@@ -79,6 +85,7 @@ export function ModalCreateLeaveWork({
             keyValue="quantity"
             label="Số ngày nghỉ"
             value={data.quantity ?? 0.5}
+            max={daysAllowedLeave.data?.quantity}
             required
             onChange={setData}
           />
