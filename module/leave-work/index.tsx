@@ -26,8 +26,18 @@ export function LeaveWork(): JSX.Element {
 
   const getDate = useMemo(() => {
     return filterMonth < 10
-      ? `${filterYear}-0${filterMonth}-01`
-      : `${filterYear}-${filterMonth}-01`;
+      ? [
+          `${filterYear}-0${filterMonth}-01`,
+          `${filterYear}-0${filterMonth}-${moment(
+            `${filterYear}-0${filterMonth}-01`
+          ).daysInMonth()}`,
+        ]
+      : [
+          `${filterYear}-${filterMonth}-01`,
+          `${filterYear}-${filterMonth}-${moment(
+            `${filterYear}-${filterMonth}-01`
+          ).daysInMonth()}`,
+        ];
   }, [filterYear, filterMonth]);
 
   const showModalCreateLeaveWork = (): void => {
@@ -48,11 +58,7 @@ export function LeaveWork(): JSX.Element {
       pageNumber: 1,
       filter: {
         state_IN: filterState,
-        createdAt_RANGE: [
-          getDate,
-          getDate.slice(0, getDate.length - 2) +
-            `${moment(getDate).daysInMonth()}`,
-        ],
+        createdAt_RANGE: getDate,
       },
     });
   };
