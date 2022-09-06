@@ -3,12 +3,13 @@ import {Modal} from "antd";
 
 interface ModalCustomProps {
   isModalVisible: boolean;
-  handleOk: () => void;
-  handleCancel: () => void;
+  handleOk?: () => void;
+  handleCancel?: () => void;
   okeText?: string;
   cancelText?: string;
   title: string;
   content: JSX.Element;
+  footer?: null;
 }
 
 export function ModalCustom({
@@ -19,6 +20,7 @@ export function ModalCustom({
   cancelText = "Hủy",
   title,
   content,
+  footer,
 }: ModalCustomProps): JSX.Element {
   return (
     <Modal
@@ -30,6 +32,7 @@ export function ModalCustom({
       okText={okeText}
       cancelText={cancelText}
       className="modal-ant"
+      footer={footer}
     >
       {content}
     </Modal>

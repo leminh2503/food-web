@@ -1,8 +1,9 @@
 .input-modal-container {
   .label-item {
     font-weight: $font-weight-medium;
-    .require {
-      color: $red-color;
-    }
+  }
+  .required::after {
+    content: "*";
+    color: $red-color;
   }
 }
