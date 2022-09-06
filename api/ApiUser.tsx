@@ -7,6 +7,21 @@ export interface ILoginBody {
   password: string;
 }
 
+export interface IProfileBody {
+  fullName?: string;
+  email?: string;
+  dateOfBirth?: string;
+  personId?: number;
+  address?: string;
+  phoneNumber?: string;
+  phoneNumberRelative?: string;
+  gender?: string;
+}
+
+export interface IUploadAvatarBody {
+  file: string;
+}
+
 export interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -30,6 +45,7 @@ const path = {
   login: "/auth/login",
   getMe: "/users/me",
   getUserAccount: "/users",
+  uploadAvatar: "/users/set-avatar",
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
@@ -38,6 +54,14 @@ function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
 
 function getMe(): Promise<IUserLogin> {
   return fetcher({url: path.getMe, method: "get"});
+}
+
+function updateMe(data: IProfileBody): Promise<IUserLogin> {
+  return fetcher({url: path.getMe, method: "put", data});
+}
+
+function updateAvatar(formData: any): Promise<IUserLogin> {
+  return fetcher({url: path.uploadAvatar, method: "patch", data: formData});
 }
 
 function login(body: ILoginBody): Promise<ILoginResponse> {
@@ -67,5 +91,7 @@ export default {
   getAuthToken,
   getUserRole,
   getMe,
+  updateMe,
   getUserAccount,
+  updateAvatar,
 };
