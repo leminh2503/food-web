@@ -11,6 +11,7 @@ interface DateInputProps {
   value: string;
   required?: boolean;
   keyValue: string;
+  isErrored?: boolean;
 }
 
 export function DateInput({
@@ -20,6 +21,7 @@ export function DateInput({
   value,
   required,
   keyValue,
+  isErrored,
 }: DateInputProps): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange((prev: ISetStateModal) => ({
@@ -33,7 +35,12 @@ export function DateInput({
       <h4 className={classNames("label-item mb-2", {required: required})}>
         {label}
       </h4>
-      <Input type="date" value={value} onChange={handleChange} />
+      <Input
+        type="date"
+        value={value}
+        onChange={handleChange}
+        status={isErrored ? "error" : ""}
+      />
     </div>
   );
 }
