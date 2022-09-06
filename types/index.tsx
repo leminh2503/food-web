@@ -1,4 +1,5 @@
 import React from "react";
+import {speedDialActionClasses} from "@mui/material";
 
 export interface CommonReduxAction {
   type: string;
@@ -48,6 +49,11 @@ export interface IUserLogin {
   baseSalary?: number;
   manageSalary?: number;
   gender?: string;
+}
+
+export interface IDataProjectSalary {
+  projectName?: string;
+  projectSalary?: number | string;
 }
 
 export interface IProfile {
