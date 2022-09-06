@@ -1,58 +1,157 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Image} from "antd";
-import React, {useState} from "react";
-import {InputModal} from "@app/components/Modal/InputModal";
+import {Avatar, Button} from "antd";
+import React, {useEffect, useState} from "react";
 import {SelectInput} from "@app/components/Modal/SelectInput";
+import {IUserLogin} from "@app/types";
+import {InputModal2} from "@app/components/Modal/InputModal2";
+import {DateInput2} from "@app/components/Modal/DateInput2";
+import {initDataPosition} from "@app/utils/constants/user";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
   handleOk: () => void;
   handleCancel: () => void;
+  dataDetail: IUserLogin;
+  listPositionConvert: {value: number; label: string}[];
+  listWorkTypeConvert: {value: number; label: string}[];
 }
 
 export function ModalInfo(props: ModalInfoProps): JSX.Element {
-  const {isModalVisible, handleOk, handleCancel} = props;
+  const {
+    isModalVisible,
+    handleOk,
+    handleCancel,
+    dataDetail,
+    listPositionConvert,
+    listWorkTypeConvert,
+  } = props;
+  const {
+    fullName,
+    email,
+    avatar,
+    personId,
+    address,
+    phoneNumber,
+    phoneNumberRelative,
+    baseSalary,
+    position,
+    workType,
+    dateOfBirth,
+  } = dataDetail;
 
-  const [adString, setAdString] = useState({fullName: "", position: 1});
-
-  const initData = [
-    {
-      label: "Nhân viên part time",
-      value: 1,
-    },
-    {
-      label: "Nhân viên mới",
-      value: 2,
-    },
-  ];
+  const [adString, setAdString] = useState<IUserLogin>();
+  useEffect(() => {
+    setAdString({
+      fullName,
+      email,
+      avatar,
+      personId,
+      address,
+      phoneNumber,
+      phoneNumberRelative,
+      baseSalary,
+      positionId: position?.id || 0,
+      workTypeId: workType?.id || 0,
+      workType,
+      dateOfBirth,
+    });
+  }, [dataDetail]);
 
   const renderContent = (): JSX.Element => {
     return (
       <div className="modal-info">
-        <div className="avatar-container">
-          <Image
-            src="img/logo.png"
-            height="15vh"
-            width="15vh"
-            preview={false}
-          />
+        <div className="avatar-container mb-3">
+          <Avatar size={150} src={avatar || "/img/avatar/avatar.jpg"} />
         </div>
-        <InputModal
+        <InputModal2
           label="Họ và tên"
-          value={adString.fullName}
+          value={fullName || ""}
           onChange={setAdString}
           keyValue="fullName"
-          placeholder="Nguyễn Văn A"
+          placeholder="Nhập họ và tên"
+          className="pt-12"
+        />
+        <InputModal2
+          label="Email"
+          value={email || ""}
+          onChange={setAdString}
+          keyValue="email"
+          placeholder="Nhập email"
+          className="pt-12"
+        />
+        <DateInput2
+          className="pt-12"
+          keyValue="birthDay"
+          label="Ngày sinh"
+          value={dateOfBirth ?? ""}
+          onChange={() => {
+            console.log(123);
+          }}
+        />
+        <InputModal2
+          label="Số điện thoại"
+          value={phoneNumber || ""}
+          onChange={setAdString}
+          keyValue="phoneNumber"
+          placeholder="Nhập số điện thoại"
+          className="pt-12"
+        />
+        <InputModal2
+          label="Số điện thoại người thân"
+          value={phoneNumberRelative || ""}
+          onChange={setAdString}
+          keyValue="relativePhoneNumber"
+          placeholder="Nhập số điện thoại người thân"
+          className="pt-12"
+        />
+        <InputModal2
+          label="CMND/CCCD"
+          value={personId?.toString() || ""}
+          onChange={setAdString}
+          keyValue="personId"
+          placeholder="Nhập CMND/CCCD"
+          className="pt-12"
+        />
+        <InputModal2
+          label="Địa chỉ"
+          value={address || ""}
+          onChange={setAdString}
+          keyValue="address"
+          placeholder="Nhập địa chỉ"
           className="pt-12"
         />
         <SelectInput
           className="pt-12"
           label="Chức vụ"
-          keyValue="position"
+          keyValue="positionId"
           setValue={setAdString}
-          value={adString.position}
-          data={initData}
+          value={adString?.positionId || 0}
+          data={listPositionConvert}
+        />
+        <SelectInput
+          className="pt-12"
+          label="Vị trí"
+          keyValue="workTypeId"
+          setValue={setAdString}
+          value={adString?.workTypeId || 0}
+          data={listWorkTypeConvert}
+        />
+        <SelectInput
+          className="pt-12"
+          label="Người quản lý"
+          keyValue="manager"
+          setValue={setAdString}
+          value={1}
+          data={initDataPosition}
+        />
+        <InputModal2
+          label="Lương cứng"
+          value={baseSalary?.toString() || ""}
+          onChange={setAdString}
+          keyValue="baseSalary"
+          placeholder="Nhập lương cứng"
+          className="pt-12"
         />
       </div>
     );
@@ -62,9 +161,45 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     <ModalCustom
       isModalVisible={isModalVisible}
       handleOk={handleOk}
-      handleCancel={handleCancel}
+      handleCancel={() => {
+        handleCancel();
+        setAdString({
+          ...adString,
+          positionId: dataDetail?.position?.id || 0,
+          workTypeId: dataDetail?.workType?.id || 0,
+        });
+      }}
       title="Thông tin nhân viên"
       content={renderContent()}
+      footer={[
+        <Button
+          key="changePassword"
+          style={{backgroundColor: "#3333"}}
+          type="default"
+          className="btn-action m-1 hover-pointer"
+          // onClick={onFileUpload}
+        >
+          Đổi mật khẩu
+        </Button>,
+        <Button
+          key="cancel"
+          style={{backgroundColor: "#3333"}}
+          type="default"
+          className="btn-action m-1 hover-pointer"
+          onClick={handleCancel}
+        >
+          Hủy
+        </Button>,
+        <Button
+          key="save"
+          style={{backgroundColor: "#40a9ff"}}
+          type="primary"
+          className="btn-action m-1 hover-pointer"
+          onClick={handleOk}
+        >
+          Lưu
+        </Button>,
+      ]}
     />
   );
 }
