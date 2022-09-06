@@ -92,9 +92,20 @@ export interface ILeaveWork {
   state?: number;
 }
 
+export interface IEvent {
+  id?: number;
+  title?: string;
+  content?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 export interface ISetStateModal {
   startDate?: string;
+  endDate?: string;
   quantity?: number;
   reason?: string;
   refuseReason?: string;
+  title?: string;
+  content?: string;
 }

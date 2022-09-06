@@ -56,7 +56,7 @@ const routes: IRoute[] = [
     isSidebar: true,
   },
   {
-    path: "/events",
+    path: "/event",
     name: "Sự kiện công ty",
     icon: "Event",
     isSidebar: true,

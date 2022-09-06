@@ -5,7 +5,7 @@ import {ChangeEvent} from "react";
 interface FilterProps {
   listSearch: {
     isSearch?: boolean;
-    placeholder: string;
+    placeholder?: string;
     visible: boolean;
     handleOnSearch?: (value: string) => void;
     handleOnChangeSearch?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -14,6 +14,7 @@ interface FilterProps {
     data?: {
       title: string;
       value: number;
+      default?: boolean;
     }[];
   }[];
   searchString?: string;
@@ -34,13 +35,12 @@ export function Filter({
             visible={item.isSelect && item.visible}
             data={item.data}
             handleChange={item.handleOnChange}
-            placeholder={item.placeholder}
           />
           <InputSearch
             visible={item.isSearch && item.visible}
             onSearchString={item.handleOnSearch}
             searchString={searchString}
-            placeholder={item.placeholder}
+            placeholder={item.placeholder ?? ""}
             onChangeSearch={item.handleOnChangeSearch}
           />
         </div>

@@ -1,15 +1,15 @@
 import "./index.scss";
-import {Col, Input, Row} from "antd";
+import {Input} from "antd";
 import React from "react";
 import classNames from "classnames";
 
 interface InputModalProps {
   className?: string;
   label: string;
-  placeholder: string;
+  placeholder?: string;
   onChange: (value: any) => void;
   value: string;
-  require?: boolean;
+  required?: boolean;
   keyValue: string;
 }
 
@@ -19,7 +19,7 @@ export function InputModal({
   placeholder,
   onChange,
   value,
-  require,
+  required,
   keyValue,
 }: InputModalProps): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -30,18 +30,11 @@ export function InputModal({
   };
 
   return (
-    <Row className={classNames("input-modal-container", className)}>
-      <Col md={6} className="label-item">
+    <div className={classNames("input-modal-container", className)}>
+      <h4 className={classNames("label-item mb-2", {required: required})}>
         {label}
-        <span className="require">{require ? "*" : ""}</span>
-      </Col>
-      <Col md={18}>
-        <Input
-          placeholder={placeholder}
-          onChange={handleChange}
-          value={value}
-        />
-      </Col>
-    </Row>
+      </h4>
+      <Input placeholder={placeholder} onChange={handleChange} value={value} />
+    </div>
   );
 }

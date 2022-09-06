@@ -8,8 +8,8 @@ interface SelectSearchProps {
   data?: {
     title: string;
     value: number;
+    default?: boolean;
   }[];
-  placeholder?: string;
   index: number;
 }
 
@@ -17,16 +17,17 @@ export function SelectSearch({
   visible,
   handleChange,
   data,
-  placeholder,
   index,
 }: SelectSearchProps): JSX.Element {
+  const defaultItem = data?.find((item) => item.default);
+
   return (
     <div
       className={classNames("select-input-container", {"pl-5": index !== 0})}
     >
       {visible && data && (
         <Select
-          placeholder={placeholder}
+          defaultValue={defaultItem?.value}
           onChange={handleChange}
           className="w-full"
         >

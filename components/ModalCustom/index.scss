@@ -1,4 +1,9 @@
 .modal-ant {
+  .btn-primary {
+    color: $blue-color;
+    cursor: pointer;
+  }
+
   .ant-modal-header {
     background-color: $blue-color;
     .ant-modal-title {
