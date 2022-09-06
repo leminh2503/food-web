@@ -62,3 +62,5 @@
 ## TODO
 
 - Add doc for how to translate, add page, add form, create new reudcer for redux, ...
+
+Re Deploy
