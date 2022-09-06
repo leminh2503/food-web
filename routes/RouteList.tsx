@@ -68,7 +68,7 @@ const routes: IRoute[] = [
     isSidebar: true,
   },
   {
-    path: "/accout",
+    path: "/profile-account",
     name: "Thông tin tài khoản",
     icon: "User",
     isSidebar: true,
