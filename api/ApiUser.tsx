@@ -7,6 +7,27 @@ export interface ILoginBody {
   password: string;
 }
 
+export interface IRegisterAccountBody {
+  password?: string;
+  gender?: string;
+  englishCertificate?: string;
+  englishScore?: number;
+  workRoom?: string;
+  personId?: string;
+  dateOfBirth?: string;
+  position: number;
+  workType: number;
+  address?: string;
+  phoneNumber?: string;
+  phoneNumberRelative?: string;
+  baseSalary: number;
+  manageSalary: number;
+  manager?: number;
+  email: string;
+  employeeCode: string;
+  fullName: string;
+}
+
 export interface IProfileBody {
   id?: number;
   fullName?: string;
@@ -79,6 +100,7 @@ const path = {
   position: "/position",
   updateInformationAccount: "/users",
   resetPasswordForAccount: "/users/set-password",
+  addNewEmployee: "/auth/register",
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
@@ -136,6 +158,10 @@ function login(body: ILoginBody): Promise<ILoginResponse> {
   );
 }
 
+function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
+  return fetcher({url: path.addNewEmployee, method: "post", data: body});
+}
+
 function isLogin(): boolean {
   return !!getAuthToken();
 }
@@ -163,4 +189,5 @@ export default {
   getListPosition,
   updateInformationAccount,
   resetPasswordForAccount,
+  addNewEmployee,
 };

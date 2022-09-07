@@ -12,16 +12,14 @@ interface ModalInfoProps {
 export function ModalChangePass(props: ModalInfoProps): JSX.Element {
   const {isModalVisible, handleConfirmChangePass, handleCancelChangePass} =
     props;
-  const [adString, setAdString] = useState({
+  const defaultValuesForm = {
     newPassword: "",
     passwordConfirm: "",
-  });
+  };
+  const [adString, setAdString] = useState(defaultValuesForm);
 
   useEffect(() => {
-    setAdString({
-      newPassword: "",
-      passwordConfirm: "",
-    });
+    setAdString(defaultValuesForm);
   }, [isModalVisible]);
 
   const renderContent = (): JSX.Element => {

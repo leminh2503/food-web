@@ -76,6 +76,16 @@ export interface IUserLogin {
   positionId: number;
   workTypeId: number;
   deductionOwn: number;
+  familyCircumstances: any;
+}
+
+export interface IFamilyCircumstance {
+  id: number;
+  userId: number;
+  fullName: string;
+  IDCode: string;
+  yearOfBirth: string;
+  relationship: string;
 }
 
 export interface IAccountInfo {
@@ -120,4 +130,17 @@ export interface ISetStateModal {
   refuseReason?: string;
   title?: string;
   content?: string;
+}
+
+export enum EUserGender {
+  OTHER = "Other",
+  MALE = "Male",
+  FEMALE = "Female",
+}
+
+export enum EEnglishCertificate {
+  TOEIC = "Toeic",
+  TOEFL = "Toefl",
+  IELTS = "Ielts",
+  OTHER = "Other",
 }

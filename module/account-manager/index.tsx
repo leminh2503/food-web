@@ -4,6 +4,7 @@ import type {ColumnsType} from "antd/es/table";
 import React, {useEffect, useState} from "react";
 import ApiUser, {
   IInformationAccountBody,
+  IRegisterAccountBody,
   IResetPasswordBody,
 } from "@app/api/ApiUser";
 import {IUserLogin, IWorkType} from "@app/types";
@@ -13,9 +14,14 @@ import {ModalInfo} from "@app/module/account-manager/ModalConfirm";
 import {renameKeys} from "@app/utils/convert/ConvertHelper";
 import {SelectInput2} from "@app/components/Modal/SelectInput2";
 import {ModalChangePass} from "@app/module/account-manager/ModalChangePass";
+import {ModalAddEmployee} from "@app/module/account-manager/ModalAddEmployee";
+import {ModalFamilyCircumstance} from "@app/module/account-manager/ModalFamilyCircumstances";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalFamilyVisible, setIsModalFamilyVisible] = useState(false);
+  const [isModalAddEmployeeVisible, setIsModalAddEmployeeVisible] =
+    useState(false);
   const [isModalChangePassVisible, setIsModalChangePassVisible] =
     useState(false);
   const [dataDetail, setDataDetail] = useState<IUserLogin>({});
@@ -35,6 +41,27 @@ export function AccountManager(): JSX.Element {
 
   const handleCancel = (): void => {
     setIsModalVisible(false);
+  };
+
+  const handleCloseModalFamily = (): void => {
+    setIsModalFamilyVisible(false);
+  };
+
+  const handleConfirmAddEmployee = (data: IRegisterAccountBody): void => {
+    Modal.confirm({
+      title: "Xác nhận tạo tài khoản nhân viên?",
+      okType: "primary",
+      okText: "Xác nhận",
+      cancelText: "Huỷ",
+      onOk: () => {
+        handleAddNewEmployee(data);
+        setIsModalAddEmployeeVisible(false);
+      },
+    });
+  };
+
+  const handleCancelAddEmployee = (): void => {
+    setIsModalAddEmployeeVisible(false);
   };
 
   const handleConfirmChangePass = (newPassword: string): void => {
@@ -160,6 +187,26 @@ export function AccountManager(): JSX.Element {
       newPassword: newPassword,
     };
     resetPasswordForAccount.mutate(body);
+  };
+
+  const addNewEmployee = useMutation(ApiUser.addNewEmployee, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Thêm thành công`,
+      });
+      dataUserAccount.refetch();
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Thêm thất bại`,
+      });
+    },
+  });
+
+  const handleAddNewEmployee = (data: IRegisterAccountBody): void => {
+    addNewEmployee.mutate(data);
   };
 
   const columns: ColumnsType<IUserLogin> = [
@@ -288,7 +335,7 @@ export function AccountManager(): JSX.Element {
           <Row>
             <Col lg={3}>
               <SelectInput2
-                className="pt-12"
+                className=""
                 keyValue="position"
                 setValue={() => {
                   console.log(123);
@@ -296,6 +343,39 @@ export function AccountManager(): JSX.Element {
                 value={0}
                 data={listPositionConvert}
               />
+            </Col>
+            <Col lg={3}>
+              <SelectInput2
+                className=""
+                keyValue="position"
+                setValue={() => {
+                  console.log(123);
+                }}
+                value={0}
+                data={listPositionConvert}
+              />
+            </Col>
+            <Col lg={3}>
+              <SelectInput2
+                className=""
+                keyValue="position"
+                setValue={() => {
+                  console.log(123);
+                }}
+                value={0}
+                data={listPositionConvert}
+              />
+            </Col>
+            <Col lg={15}>
+              <div className="" style={{float: "right"}}>
+                <Button className="mr-4">Xuất Excel</Button>
+                <Button
+                  onClick={() => setIsModalAddEmployeeVisible(true)}
+                  className=""
+                >
+                  Tạo tài khoản mới
+                </Button>
+              </div>
             </Col>
           </Row>
         </div>
@@ -321,11 +401,25 @@ export function AccountManager(): JSX.Element {
         handleOk={handleOk}
         handleCancel={handleCancel}
         setIsModalChangePassVisible={setIsModalChangePassVisible}
+        setIsModalFamilyVisible={setIsModalFamilyVisible}
+      />
+      <ModalAddEmployee
+        listPositionConvert={listPositionConvert}
+        listWorkTypeConvert={listWorkTypeConvert}
+        isModalVisible={isModalAddEmployeeVisible}
+        handleConfirmAddEmployee={handleConfirmAddEmployee}
+        handleCancelAddEmployee={handleCancelAddEmployee}
       />
       <ModalChangePass
         isModalVisible={isModalChangePassVisible}
         handleConfirmChangePass={handleConfirmChangePass}
         handleCancelChangePass={handleCancelChangePass}
+      />
+      <ModalFamilyCircumstance
+        isModalVisible={isModalFamilyVisible}
+        handleConfirmAddEmployee={handleConfirmAddEmployee}
+        handleCloseModalFamily={handleCloseModalFamily}
+        data={dataDetail.familyCircumstances}
       />
     </div>
   );

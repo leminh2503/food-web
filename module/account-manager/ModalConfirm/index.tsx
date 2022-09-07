@@ -13,6 +13,7 @@ interface ModalInfoProps {
   handleOk: (data: IUserLogin) => void;
   handleCancel: () => void;
   setIsModalChangePassVisible: (istoggle: boolean) => void;
+  setIsModalFamilyVisible: (istoggle: boolean) => void;
   dataDetail: IUserLogin;
   listPositionConvert: {value: number; label: string}[];
   listWorkTypeConvert: {value: number; label: string}[];
@@ -27,6 +28,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     listPositionConvert,
     listWorkTypeConvert,
     setIsModalChangePassVisible,
+    setIsModalFamilyVisible,
   } = props;
   const {
     fullName,
@@ -41,6 +43,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     workType,
     dateOfBirth,
     deductionOwn,
+    familyCircumstances,
   } = dataDetail;
 
   const [adString, setAdString] = useState<IUserLogin>({});
@@ -59,6 +62,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       workType,
       dateOfBirth,
       deductionOwn,
+      familyCircumstances,
     });
   }, [dataDetail]);
 
@@ -165,6 +169,12 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
           placeholder="Nhập lương cứng"
           className="pt-12"
         />
+        <Button
+          onClick={() => setIsModalFamilyVisible(true)}
+          className="mt-3 button-modal-family"
+        >
+          Số người phụ thuộc: {familyCircumstances?.length}
+        </Button>
       </div>
     );
   };
