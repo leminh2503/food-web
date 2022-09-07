@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect,useState} from "react";
 import {MenuOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {IRootState} from "@app/redux/store";
@@ -12,11 +12,14 @@ import {Dropdown, Menu, Modal} from "antd";
 import Link from "next/link";
 import Icon from "@app/components/Icon/Icon";
 import {useRouter} from "next/router";
-
+import {ModalChangePassword} from "@app/components/Layout/Navbar/ModalChangePassword";
+import "./Navbar.scss";
 /**
  *
  */
 export default function Navbar(): JSX.Element {
+  const [toggleModal, setToggleModal] = useState(false);
+
   const router = useRouter();
   const user = useSelector((state: IRootState) => state.user);
 
@@ -32,7 +35,13 @@ export default function Navbar(): JSX.Element {
     dataUser.refetch().then((data) => {
       dispatch(loginUser({...user, user: data?.data}));
     });
-  }, []);
+    console.log(toggleModal,"change");
+  }, [toggleModal]);
+
+  // const handleModal= ():void =>{
+  //   setIsModalOpen(true)
+  // }
+
 
   const handleLogout = (): void => {
     Modal.confirm({
@@ -50,13 +59,16 @@ export default function Navbar(): JSX.Element {
    */
   const renderDropdown = (): JSX.Element => (
     <Menu>
-      <Menu.Item key="0">
-        <Link href="/user/home" passHref>
+      <Menu.Item key="0" onClick={()=>setToggleModal(true)}>
+         {toggleModal && (<ModalChangePassword 
+          isModalVisible
+          setToggleModal={setToggleModal}
+          />)} 
           <div>
             <Icon icon="BlockUser" size={20} color="#000" className="mr-2" />
             Đổi mật khẩu
           </div>
-        </Link>
+        
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="1" onClick={handleLogout}>
@@ -69,6 +81,7 @@ export default function Navbar(): JSX.Element {
   );
 
   return (
+    <>
     <div className="navbar flex items-center justify-between">
       <div className="flex items-center">
         <MenuOutlined
@@ -95,5 +108,8 @@ export default function Navbar(): JSX.Element {
         </Dropdown>
       </div>
     </div>
+
+    
+    </>
   );
 }
