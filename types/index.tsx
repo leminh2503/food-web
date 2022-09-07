@@ -17,6 +17,12 @@ export interface ISettingId {
   referCode?: string;
 }
 
+export interface IWorkType {
+  id: 1;
+  name: string;
+  description: string;
+}
+
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
@@ -29,13 +35,30 @@ export enum IState {
   DELETED,
 }
 
+export interface IProfile {
+  _id?: string;
+  username?: string;
+  email?: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  facebook?: string;
+  twitter?: string;
+  avatar?: string;
+  newEmail?: string;
+}
+
 export interface IUserLogin {
   id?: string;
   fullName?: string;
   state?: IState;
   email?: string;
   dateOfBirth?: string;
-  positionId?: number;
+  position?: IWorkType;
   avatar?: string;
   personId?: number;
   address?: string;
@@ -48,27 +71,10 @@ export interface IUserLogin {
   baseSalary?: number;
   manageSalary?: number;
   gender?: string;
-}
-
-export interface IProfile {
-  id?: string;
-  avatar?: string;
-  fullName?: string;
-  email?: string;
-  employeeCode?: string;
-  personId?: string;
-  dateOfBirth?: string;
-  address?: string;
-  phoneNumber?: string;
-  phoneNumberRelative?: string;
-  baseSalary?: number;
-  manageSalary?: number;
-  deductionOwn?: number;
-  workRoom?: string;
-  state?: number;
-  gender?: string;
-  englishCertificate?: string;
-  englishScore?: number;
+  manager?: IProfile;
+  workType?: IWorkType;
+  positionId: number;
+  workTypeId: number;
 }
 
 export interface IAccountInfo {
