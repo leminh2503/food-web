@@ -92,6 +92,13 @@ const routes: IRoute[] = [
     role: [IAccountRole.ADMIN],
     isSidebar: true,
   },
+  {
+    path: "/position",
+    name: "Chức vụ",
+    icon: "",
+    role: [IAccountRole.ADMIN],
+    isSidebar: true,
+  },
 ];
 
 export default routes;
