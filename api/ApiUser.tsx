@@ -8,14 +8,43 @@ export interface ILoginBody {
 }
 
 export interface IProfileBody {
+  id?: number;
   fullName?: string;
   email?: string;
   dateOfBirth?: string;
-  personId?: number;
+  personId?: string;
   address?: string;
   phoneNumber?: string;
   phoneNumberRelative?: string;
   gender?: string;
+}
+
+export interface IInformationAccountBody {
+  id?: number;
+  gender?: string;
+  englishCertificate?: string;
+  englishScore?: number;
+  workRoom?: string;
+  personId?: string;
+  dateOfBirth?: string;
+  position?: number;
+  workType?: number;
+  address?: string;
+  phoneNumber?: string;
+  phoneNumberRelative?: string;
+  baseSalary?: number;
+  manageSalary?: number;
+  manager?: number;
+  deductionOwn?: number;
+  state?: number;
+  email?: string;
+  employeeCode?: string;
+  fullName?: string;
+}
+
+export interface IResetPasswordBody {
+  id?: number;
+  newPassword?: string;
 }
 
 export interface IUploadAvatarBody {
@@ -48,6 +77,8 @@ const path = {
   uploadAvatar: "/users/set-avatar",
   workType: "/work-type",
   position: "/position",
+  updateInformationAccount: "/users",
+  resetPasswordForAccount: "/users/set-password",
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
@@ -68,6 +99,30 @@ function getMe(): Promise<IUserLogin> {
 
 function updateMe(data: IProfileBody): Promise<IUserLogin> {
   return fetcher({url: path.getMe, method: "put", data});
+}
+
+function updateInformationAccount(
+  data: IInformationAccountBody
+): Promise<IUserLogin> {
+  const {id} = data;
+  delete data.id;
+  return fetcher({
+    url: path.updateInformationAccount + `/${id}`,
+    method: "put",
+    data,
+  });
+}
+
+function resetPasswordForAccount(
+  data: IResetPasswordBody
+): Promise<IUserLogin> {
+  const {id} = data;
+  delete data.id;
+  return fetcher({
+    url: `/users/${id}/set-password`,
+    method: "post",
+    data,
+  });
 }
 
 function updateAvatar(formData: any): Promise<IUserLogin> {
@@ -106,4 +161,6 @@ export default {
   updateAvatar,
   getListWorkType,
   getListPosition,
+  updateInformationAccount,
+  resetPasswordForAccount,
 };

@@ -1,26 +1,57 @@
 import "./index.scss";
-import {Button, Card, Col, Image, Modal, Row, Table} from "antd";
+import {Button, Card, Col, Image, Modal, notification, Row, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import React, {useEffect, useState} from "react";
-import ApiUser from "@app/api/ApiUser";
+import ApiUser, {
+  IInformationAccountBody,
+  IResetPasswordBody,
+} from "@app/api/ApiUser";
 import {IUserLogin, IWorkType} from "@app/types";
-import {useQuery} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import Icon from "@app/components/Icon/Icon";
 import {ModalInfo} from "@app/module/account-manager/ModalConfirm";
 import {renameKeys} from "@app/utils/convert/ConvertHelper";
-import {SelectInput} from "@app/components/Modal/SelectInput";
 import {SelectInput2} from "@app/components/Modal/SelectInput2";
+import {ModalChangePass} from "@app/module/account-manager/ModalChangePass";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalChangePassVisible, setIsModalChangePassVisible] =
+    useState(false);
   const [dataDetail, setDataDetail] = useState<IUserLogin>({});
 
-  const handleOk = (): void => {
-    setIsModalVisible(false);
+  const handleOk = (data: IUserLogin): void => {
+    Modal.confirm({
+      title: "Xác nhận sửa thông tin nhân viên?",
+      okType: "primary",
+      okText: "Xác nhận",
+      cancelText: "Huỷ",
+      onOk: () => {
+        handleUpdateInformationAccount(data);
+        setIsModalVisible(false);
+      },
+    });
   };
 
   const handleCancel = (): void => {
     setIsModalVisible(false);
+  };
+
+  const handleConfirmChangePass = (newPassword: string): void => {
+    Modal.confirm({
+      title: "Xác nhận sửa thông tin nhân viên?",
+      okType: "primary",
+      okText: "Xác nhận",
+      cancelText: "Huỷ",
+      onOk: () => {
+        handleResetPasswordForAccount(newPassword);
+        setIsModalChangePassVisible(false);
+      },
+    });
+  };
+
+  const handleCancelChangePass = (): void => {
+    setIsModalChangePassVisible(false);
   };
 
   const getUserAccount = (): Promise<IUserLogin[]> => {
@@ -71,6 +102,64 @@ export function AccountManager(): JSX.Element {
         // todo
       },
     });
+  };
+
+  const updateProfile = useMutation(ApiUser.updateInformationAccount, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Sửa thành công`,
+      });
+      dataUserAccount.refetch();
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Sửa thất bại`,
+      });
+    },
+  });
+
+  const handleUpdateInformationAccount = (values: IUserLogin): void => {
+    const body: IInformationAccountBody = {
+      id: Number(dataDetail.id),
+      personId: values.personId,
+      dateOfBirth: values.dateOfBirth,
+      position: values.positionId,
+      workType: values.workTypeId,
+      address: values.address,
+      phoneNumber: values.phoneNumber,
+      phoneNumberRelative: values.phoneNumberRelative,
+      baseSalary: values.baseSalary,
+      email: values.email,
+      fullName: values.fullName,
+      deductionOwn: values.deductionOwn,
+    };
+    updateProfile.mutate(body);
+  };
+
+  const resetPasswordForAccount = useMutation(ApiUser.resetPasswordForAccount, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Sửa thành công`,
+      });
+      dataUserAccount.refetch();
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Sửa thất bại`,
+      });
+    },
+  });
+
+  const handleResetPasswordForAccount = (newPassword: string): void => {
+    const body: IResetPasswordBody = {
+      id: Number(dataDetail.id),
+      newPassword: newPassword,
+    };
+    resetPasswordForAccount.mutate(body);
   };
 
   const columns: ColumnsType<IUserLogin> = [
@@ -231,6 +320,12 @@ export function AccountManager(): JSX.Element {
         isModalVisible={isModalVisible}
         handleOk={handleOk}
         handleCancel={handleCancel}
+        setIsModalChangePassVisible={setIsModalChangePassVisible}
+      />
+      <ModalChangePass
+        isModalVisible={isModalChangePassVisible}
+        handleConfirmChangePass={handleConfirmChangePass}
+        handleCancelChangePass={handleCancelChangePass}
       />
     </div>
   );

@@ -10,8 +10,9 @@ import {initDataPosition} from "@app/utils/constants/user";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
-  handleOk: () => void;
+  handleOk: (data: IUserLogin) => void;
   handleCancel: () => void;
+  setIsModalChangePassVisible: (istoggle: boolean) => void;
   dataDetail: IUserLogin;
   listPositionConvert: {value: number; label: string}[];
   listWorkTypeConvert: {value: number; label: string}[];
@@ -25,6 +26,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     dataDetail,
     listPositionConvert,
     listWorkTypeConvert,
+    setIsModalChangePassVisible,
   } = props;
   const {
     fullName,
@@ -38,9 +40,10 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     position,
     workType,
     dateOfBirth,
+    deductionOwn,
   } = dataDetail;
 
-  const [adString, setAdString] = useState<IUserLogin>();
+  const [adString, setAdString] = useState<IUserLogin>({});
   useEffect(() => {
     setAdString({
       fullName,
@@ -55,6 +58,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       workTypeId: workType?.id || 0,
       workType,
       dateOfBirth,
+      deductionOwn,
     });
   }, [dataDetail]);
 
@@ -66,7 +70,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         </div>
         <InputModal2
           label="Họ và tên"
-          value={fullName || ""}
+          value={adString.fullName || ""}
           onChange={setAdString}
           keyValue="fullName"
           placeholder="Nhập họ và tên"
@@ -74,7 +78,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         />
         <InputModal2
           label="Email"
-          value={email || ""}
+          value={adString.email || ""}
           onChange={setAdString}
           keyValue="email"
           placeholder="Nhập email"
@@ -84,14 +88,14 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
           className="pt-12"
           keyValue="birthDay"
           label="Ngày sinh"
-          value={dateOfBirth ?? ""}
+          value={adString.dateOfBirth ?? ""}
           onChange={() => {
             console.log(123);
           }}
         />
         <InputModal2
           label="Số điện thoại"
-          value={phoneNumber || ""}
+          value={adString.phoneNumber || ""}
           onChange={setAdString}
           keyValue="phoneNumber"
           placeholder="Nhập số điện thoại"
@@ -99,15 +103,15 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         />
         <InputModal2
           label="Số điện thoại người thân"
-          value={phoneNumberRelative || ""}
+          value={adString.phoneNumberRelative || ""}
           onChange={setAdString}
-          keyValue="relativePhoneNumber"
+          keyValue="phoneNumberRelative"
           placeholder="Nhập số điện thoại người thân"
           className="pt-12"
         />
         <InputModal2
           label="CMND/CCCD"
-          value={personId?.toString() || ""}
+          value={adString.personId?.toString() || ""}
           onChange={setAdString}
           keyValue="personId"
           placeholder="Nhập CMND/CCCD"
@@ -115,7 +119,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         />
         <InputModal2
           label="Địa chỉ"
-          value={address || ""}
+          value={adString.address || ""}
           onChange={setAdString}
           keyValue="address"
           placeholder="Nhập địa chỉ"
@@ -147,9 +151,17 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         />
         <InputModal2
           label="Lương cứng"
-          value={baseSalary?.toString() || ""}
+          value={adString.baseSalary?.toString() || ""}
           onChange={setAdString}
           keyValue="baseSalary"
+          placeholder="Nhập lương cứng"
+          className="pt-12"
+        />
+        <InputModal2
+          label="Giảm trừ gia cảnh bản thân"
+          value={adString.deductionOwn?.toString() || ""}
+          onChange={setAdString}
+          keyValue="deductionOwn"
           placeholder="Nhập lương cứng"
           className="pt-12"
         />
@@ -160,7 +172,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={handleOk}
+      handleOk={() => handleOk(adString)}
       handleCancel={() => {
         handleCancel();
         setAdString({
@@ -177,7 +189,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
           style={{backgroundColor: "#3333"}}
           type="default"
           className="btn-action m-1 hover-pointer"
-          // onClick={onFileUpload}
+          onClick={() => setIsModalChangePassVisible(true)}
         >
           Đổi mật khẩu
         </Button>,
@@ -195,7 +207,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
           style={{backgroundColor: "#40a9ff"}}
           type="primary"
           className="btn-action m-1 hover-pointer"
-          onClick={handleOk}
+          onClick={() => handleOk(adString)}
         >
           Lưu
         </Button>,

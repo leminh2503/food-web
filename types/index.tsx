@@ -60,7 +60,7 @@ export interface IUserLogin {
   dateOfBirth?: string;
   position?: IWorkType;
   avatar?: string;
-  personId?: number;
+  personId?: string;
   address?: string;
   phoneNumber?: string;
   role?: {
@@ -75,6 +75,7 @@ export interface IUserLogin {
   workType?: IWorkType;
   positionId: number;
   workTypeId: number;
+  deductionOwn: number;
 }
 
 export interface IAccountInfo {

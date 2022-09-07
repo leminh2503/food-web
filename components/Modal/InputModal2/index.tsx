@@ -11,6 +11,7 @@ interface InputModalProps {
   value: string;
   required?: boolean;
   keyValue: string;
+  type?: string;
 }
 
 export function InputModal2({
@@ -21,6 +22,7 @@ export function InputModal2({
   value,
   required,
   keyValue,
+  type,
 }: InputModalProps): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange((prev: any) => ({
@@ -34,7 +36,19 @@ export function InputModal2({
       <h4 className={classNames("label-item mb-2", {required: required})}>
         {label}
       </h4>
-      <Input placeholder={placeholder} onChange={handleChange} value={value} />
+      {type === "password" ? (
+        <Input.Password
+          placeholder={placeholder}
+          onChange={handleChange}
+          value={value}
+        />
+      ) : (
+        <Input
+          placeholder={placeholder}
+          onChange={handleChange}
+          value={value}
+        />
+      )}
     </div>
   );
 }
