@@ -1,6 +1,6 @@
 import {fetcher} from "./Fetcher";
 import store from "../redux/store";
-import {IAccountRole, IUserLogin, IWorkType} from "../types";
+import {IAccountRole, IUserLogin} from "../types";
 
 export interface ILoginBody {
   email: string;
@@ -46,20 +46,10 @@ const path = {
   getMe: "/users/me",
   getUserAccount: "/users",
   uploadAvatar: "/users/set-avatar",
-  workType: "/work-type",
-  position: "/position",
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
   return fetcher({url: path.getUserAccount, method: "get", params: params});
-}
-
-function getListPosition(): Promise<IWorkType[]> {
-  return fetcher({url: path.position, method: "get"});
-}
-
-function getListWorkType(): Promise<IWorkType[]> {
-  return fetcher({url: path.workType, method: "get"});
 }
 
 function getMe(): Promise<IUserLogin> {
@@ -90,6 +80,11 @@ function getUserRole(): IAccountRole | undefined {
   return user?.user?.role?.id;
 }
 
+function getInfoMe(): IUserLogin | undefined {
+  const {user} = store.getState();
+  return user?.user;
+}
+
 function getAuthToken(): string | undefined {
   const {user} = store.getState();
   return user?.accessToken;
@@ -99,11 +94,10 @@ export default {
   login,
   isLogin,
   getAuthToken,
+  getInfoMe,
   getUserRole,
   getMe,
   updateMe,
   getUserAccount,
   updateAvatar,
-  getListWorkType,
-  getListPosition,
 };

@@ -17,12 +17,6 @@ export interface ISettingId {
   referCode?: string;
 }
 
-export interface IWorkType {
-  id: 1;
-  name: string;
-  description: string;
-}
-
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
@@ -35,13 +29,140 @@ export enum IState {
   DELETED,
 }
 
+export interface IDataOnsite {
+  id: number;
+  dayOnWeek?: string;
+  day?: number | string;
+  onsitePlace?: string;
+  salary?: number;
+  date?: string;
+  state?: number;
+  action?: boolean;
+}
+
+export interface IDataOverTime {
+  id: number;
+  dayOnWeek?: string;
+  day?: number | string;
+  date?: string;
+  state?: number;
+  action?: boolean;
+  hour?: number | string;
+  projectName?: string;
+  project?: {
+    id: number;
+    name: string;
+    projectManager: {
+      state: number;
+      gender: string;
+      englishCertificate: string;
+      role: {
+        id: number;
+        roleName: string;
+        permissions: [
+          {
+            id: number;
+            permissionName: string;
+            permissionKey: "";
+          }
+        ];
+      };
+    };
+  };
+}
+
+export interface IDataProject {
+  id?: number;
+  date?: string;
+  salary?: number;
+  projectName?: string;
+  project?: {
+    id: number;
+    name: string;
+    projectManager: {
+      state: number;
+      gender: string;
+      englishCertificate: string;
+      role: {
+        id: number;
+        roleName: string;
+        permissions: [
+          {
+            id: number;
+            permissionName: string;
+            permissionKey: "";
+          }
+        ];
+      };
+    };
+  };
+}
+
+export interface IDataBonus {
+  id?: number;
+  date?: string;
+  reason?: string;
+  salary?: number;
+  projectName?: string;
+  project?: {
+    id: number;
+    name: string;
+    projectManager: {
+      state: number;
+      gender: string;
+      englishCertificate: string;
+      role: {
+        id: number;
+        roleName: string;
+        permissions: [
+          {
+            id: number;
+            permissionName: string;
+            permissionKey: "";
+          }
+        ];
+      };
+    };
+  };
+}
+
+export interface IDataDeductionDay {
+  id?: number;
+  date?: string;
+  dayOffWork?: number;
+  hourLateWork?: number;
+  deductionSalaryDay?: number | string;
+  deductionSalaryHour?: number | string;
+}
+
+export interface IDataSalary {
+  afterTaxSalary: number;
+  baseSalary: number;
+  bonusSalary: number;
+  createdAt: string;
+  date: string;
+  deductionSalary: number;
+  id: number;
+  manageSalary: number;
+  onsiteSalary: number;
+  overtimeSalary: number;
+  projectSalary: number;
+  state: number;
+  taxSalary: number;
+  totalSalary: number;
+  updatedAt: string;
+}
+
 export interface IUserLogin {
+  date?: string;
+  createdAt?: string;
+  month?: number;
   id?: string;
   fullName?: string;
   state?: IState;
   email?: string;
   dateOfBirth?: string;
-  position?: IWorkType;
+  positionId?: number;
   avatar?: string;
   personId?: number;
   address?: string;
@@ -75,10 +196,6 @@ export interface IProfile {
   twitter?: string;
   avatar?: string;
   newEmail?: string;
-  manager?: IProfile;
-  workType?: IWorkType;
-  positionId: number;
-  workTypeId: number;
 }
 
 export interface IAccountInfo {

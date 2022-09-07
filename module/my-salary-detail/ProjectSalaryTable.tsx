@@ -2,11 +2,23 @@ import "./index.scss";
 import React from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-// eslint-disable-next-line import/named
-import {IDataProjectSalary} from "@app/types";
+import {IDataProject} from "@app/types";
+import ApiSalary from "@app/api/ApiSalary";
+import {useQuery} from "react-query";
 
-export function ProjectSalaryTable(): JSX.Element {
-  const columns: ColumnsType<IDataProjectSalary> = [
+export default function ProjectSalaryTable({
+  month,
+  year,
+}: {
+  month: number;
+  year: number;
+}): JSX.Element {
+  const getProjectSalary = (): Promise<IDataProject[]> => {
+    return ApiSalary.getMyProjectSalary(year, month);
+  };
+
+  const {data: dataProject} = useQuery("projectSalary", getProjectSalary) || [];
+  const columns: ColumnsType<IDataProject> = [
     {
       title: "Dự án",
       dataIndex: "projectName",
@@ -15,17 +27,16 @@ export function ProjectSalaryTable(): JSX.Element {
     },
     {
       title: "Lương thưởng dự án",
-      dataIndex: "projectSalary",
-      key: "projectSalary",
+      dataIndex: "salary",
+      key: "salary",
       align: "center",
     },
   ];
 
-  const data: IDataProjectSalary[] = [
-    {projectSalary: "100.000", projectName: "Amoga"},
-    {projectSalary: "100.000", projectName: "Amoga"},
-  ];
-
+  const data: IDataProject[] =
+    dataProject?.map((el) => {
+      return {salary: el?.salary, reason: el?.projectName};
+    }) || [];
   return (
     <Card className="w-full">
       <div className="mb-4 font-bold">Lương dự án :</div>
