@@ -30,13 +30,6 @@ const routes: IRoute[] = [
   // },
   {
     path: "/",
-    name: "Home",
-    icon: "Homepage",
-    isSSR: true,
-    isSidebar: true,
-  },
-  {
-    path: "/account-manager",
     name: "Quản lý tài khoản",
     role: [IAccountRole.ADMIN],
     icon: "Users",

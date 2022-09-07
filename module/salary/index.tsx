@@ -1,99 +1,139 @@
 import "./index.scss";
-import {Space, Table, Tag} from "antd";
+import {Select, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
-import React, {useEffect} from "react";
-import {useRouter} from "next/router";
+import React, {useEffect, useState} from "react";
 import ApiUser from "@app/api/ApiUser";
+import {IUserLogin} from "@app/types";
+import {useQuery} from "react-query";
+import {useRouter} from "next/router";
+import baseURL from "@app/config/baseURL";
 import Config from "@app/config";
-
-interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
-}
+import ApiSalary from "@app/api/ApiSalary";
 
 export function Salary(): JSX.Element {
   const router = useRouter();
+  const date = new Date();
+  const [year, setYear] = useState<number>(date.getFullYear());
+  const getUserAccount = (): Promise<IUserLogin[]> => {
+    return ApiUser.getUserAccount({pageSize: 30, pageNumber: 1});
+  };
+
+  const getListTotalSalary = (): Promise<any> => {
+    return ApiSalary.getMyListTotalSalary(year);
+  };
+
   useEffect(() => {
-    if (!ApiUser.isLogin()) {
-      router.push(Config.PATHNAME.LOGIN);
-    }
+    console.log(getListTotalSalary());
   }, []);
 
-  const columns: ColumnsType<DataType> = [
+  const dataYear = (): JSX.Element => {
+    const year = [];
+    for (let i = Config.YEAR_NOW; i <= date.getFullYear(); i++) {
+      year.push(i);
+    }
+    return (
+      <>
+        {year.map((el, index) => (
+          <Select.Option key={index} value={el}>
+            {el}
+          </Select.Option>
+        ))}
+      </>
+    );
+  };
+
+  const onRow = (record: IUserLogin): {onDoubleClick: () => void} => {
+    return {
+      onDoubleClick: (): void => {
+        router.push({
+          pathname: baseURL.SALARY.SALARY_DETAIL,
+          query: {
+            month: 9,
+            year: 2022,
+          },
+        });
+      },
+    };
+  };
+
+  const dataUserAccount = useQuery("listUserAccount", getUserAccount);
+
+  useEffect(() => {
+    dataUserAccount.refetch();
+  }, []);
+
+  const columns: ColumnsType<IUserLogin> = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <a>{text}</a>,
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      align: "center",
+      render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "Năm",
+      dataIndex: "year",
+      key: "year",
+      align: "center",
+      width: 80,
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: "Tháng",
+      dataIndex: "month",
+      key: "month",
+      align: "center",
     },
     {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, {tags}) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      title: "Thưởng dự án",
+      dataIndex: "projectSalary",
+      key: "fullName",
+      align: "center",
     },
     {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
-        </Space>
-      ),
+      title: "Lương làm thêm",
+      dataIndex: "overTimeSalary",
+      key: "overTimeSalary",
+      align: "center",
+    },
+    {
+      title: "Lương Onsite",
+      dataIndex: "onsiteSalary",
+      key: "onsiteSalary",
+      align: "center",
+    },
+    {
+      title: "Lương cứng",
+      dataIndex: "baseSalary",
+      key: "baseSalary",
+      align: "center",
+    },
+    {
+      title: "Lương khấu trừ",
+      align: "center",
+    },
+    {
+      title: "Tổng lương",
+      key: "totalSalary",
+      align: "center",
     },
   ];
 
-  const data: DataType[] = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-  ];
-
-  return <Table columns={columns} dataSource={data} />;
+  return (
+    <div>
+      <Select
+        defaultValue={date.getFullYear().toString()}
+        style={{width: 120}}
+        onChange={(e) => setYear(Number(e))}
+      >
+        {dataYear()}
+      </Select>
+      <Table
+        columns={columns}
+        dataSource={dataUserAccount.data}
+        bordered
+        className="hover-pointer mt-4"
+        onRow={onRow}
+      />
+    </div>
+  );
 }

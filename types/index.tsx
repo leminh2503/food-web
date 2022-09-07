@@ -35,23 +35,6 @@ export enum IState {
   DELETED,
 }
 
-export interface IProfile {
-  _id?: string;
-  username?: string;
-  email?: string;
-  fullName?: string;
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  phone?: string;
-  location?: string;
-  website?: string;
-  facebook?: string;
-  twitter?: string;
-  avatar?: string;
-  newEmail?: string;
-}
-
 export interface IUserLogin {
   id?: string;
   fullName?: string;
@@ -71,6 +54,27 @@ export interface IUserLogin {
   baseSalary?: number;
   manageSalary?: number;
   gender?: string;
+}
+
+export interface IDataProjectSalary {
+  projectName?: string;
+  projectSalary?: number | string;
+}
+
+export interface IProfile {
+  _id?: string;
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  facebook?: string;
+  twitter?: string;
+  avatar?: string;
+  newEmail?: string;
   manager?: IProfile;
   workType?: IWorkType;
   positionId: number;
