@@ -13,9 +13,9 @@ export interface IDataError {
 
 export interface IMetadata {
   time?: string;
-  totalPages: number;
-  totalItems: number;
-  currentPage: number;
+  totalPages?: number;
+  totalItems?: number;
+  currentPage?: number;
   pageSize?: number;
 }
 

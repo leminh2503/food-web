@@ -5,7 +5,8 @@
   top: 0;
   left: -$sidebar-width;
   transition: left $transition-layout-time;
-  //overflow: auto;
+  position: sticky;
+  top: 0;
 
   z-index: 1001;
 
