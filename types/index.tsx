@@ -105,6 +105,12 @@ export interface IEvent {
   endDate?: string;
 }
 
+export interface IPosition {
+  id?: number;
+  name?: string;
+  description?: string;
+}
+
 export interface ISetStateModal {
   startDate?: string;
   endDate?: string;
@@ -113,4 +119,6 @@ export interface ISetStateModal {
   refuseReason?: string;
   title?: string;
   content?: string;
+  name?: string;
+  description?: string;
 }
