@@ -32,7 +32,7 @@ const LANGUAGE = {
   DEFAULT: "en",
 };
 
-const YEAR_NOW = 2022;
+const NOW = {YEAR: 2022, Month: 9};
 
 export default {
   STORE_NAME,
@@ -40,5 +40,5 @@ export default {
   PATHNAME,
   LAYOUT_CONFIG,
   LANGUAGE,
-  YEAR_NOW,
+  NOW,
 };

@@ -1,15 +1,18 @@
 import {fetcher} from "./Fetcher";
 import {
   IDataBonus,
+  IDataCost,
   IDataDeductionDay,
   IDataOnsite,
   IDataOverTime,
   IDataProject,
+  IDataProjectList,
   IDataSalary,
 } from "@app/types";
 
 const path = {
-  getListTotalSalary: "/total-salary/me",
+  getMyListTotalSalary: "/total-salary/me",
+  getListTotalSalary: "/total-salary/total-cost",
   getMyListOnsiteSalary: "/onsite-salary/me",
   deleteOnsiteSalary: "/onsite-salary/",
   getMyListOTSalary: "/overtime-salary/me",
@@ -18,13 +21,22 @@ const path = {
   getMyBonusSalary: "/bonus-salary/me",
   getMyDeductionDaySalary: "/deduction-day-off",
   getMyDeductionHourSalary: "/deduction-hour-late",
+  getListProject: "/project",
 };
 
 function getMyListTotalSalary(year: number): Promise<IDataSalary[]> {
   return fetcher({
-    url: path.getListTotalSalary,
+    url: path.getMyListTotalSalary,
     method: "get",
     params: {filter: {date_year: year}},
+  });
+}
+
+function getListTotalSalary(year: number): Promise<IDataCost> {
+  return fetcher({
+    url: path.getListTotalSalary,
+    method: "post",
+    data: {year},
   });
 }
 
@@ -105,7 +117,17 @@ function getMyDeductionHourSalary(
   });
 }
 
+function getListProject(name?: string): Promise<IDataProjectList[]> {
+  return fetcher({
+    url: path.getListProject,
+    method: "get",
+    params: {filter: {name}},
+  });
+}
+
 export default {
+  getListTotalSalary,
+  getListProject,
   getMyDeductionDaySalary,
   getMyDeductionHourSalary,
   getMyBonusSalary,

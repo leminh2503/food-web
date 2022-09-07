@@ -1,9 +1,9 @@
-import "../index.scss";
+import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
 import {ModalCustom} from "@app/components/ModalCustom";
 import {Input, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {IDataOnsite} from "@app/types";
+import {IDataOverTime} from "@app/types";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import {CloseCircleOutlined} from "@ant-design/icons";
@@ -11,8 +11,8 @@ import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import ApiSalary from "@app/api/ApiSalary";
 
 interface IModalCreateOnsite {
-  dataOnsite: IDataOnsite[];
-  refetchDataOnsite: () => void;
+  dataOverTime: IDataOverTime[];
+  refetchDataOT: () => void;
   month: number;
   year: number;
   isModalVisible: boolean;
@@ -20,18 +20,18 @@ interface IModalCreateOnsite {
   handleCancel: () => void;
 }
 
-export default function ModalCreateOnsite(
+export default function ModalCreateOverTime(
   props: IModalCreateOnsite
 ): JSX.Element {
-  const [data, setData] = useState<IDataOnsite[]>();
+  const [data, setData] = useState<IDataOverTime[]>();
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
-    const dataDefault: IDataOnsite[] = [];
+    const dataDefault: IDataOverTime[] = [];
     for (let i = 1; i <= getDayOnMonth(props.month, props.year); i++) {
       let check = 0;
-      props.dataOnsite?.map((el, index) => {
+      props.dataOverTime?.map((el, index) => {
         if (
           el.date ===
           props.year + "-" + formatNumber(props.month) + "-" + formatNumber(i)
@@ -39,9 +39,10 @@ export default function ModalCreateOnsite(
           dataDefault.push({
             day: formatNumber(i) + "/" + formatNumber(props.month),
             dayOnWeek: findDayOnWeek(props.year, props.month, i),
-            onsitePlace: el.onsitePlace,
+            hour: el.hour,
             action: true,
             id: el.id,
+            projectName: el?.project?.name || "",
           });
           check += 1;
         }
@@ -51,17 +52,18 @@ export default function ModalCreateOnsite(
         dataDefault.push({
           day: formatNumber(i) + "/" + formatNumber(props.month),
           dayOnWeek: findDayOnWeek(props.year, props.month, i),
-          onsitePlace: "",
+          hour: "",
           action: false,
           id: 0,
+          projectName: "",
         });
       }
     }
     setData(dataDefault);
     setLoading(false);
-  }, [props.dataOnsite]);
+  }, [props.dataOverTime]);
 
-  const columns: ColumnsType<IDataOnsite> = [
+  const columns: ColumnsType<IDataOverTime> = [
     {
       title: "Ngày",
       dataIndex: "day",
@@ -75,20 +77,29 @@ export default function ModalCreateOnsite(
       align: "center",
     },
     {
-      title: "Địa điểm Onsite",
-      dataIndex: "onsitePlace",
-      key: "onsitePlace",
+      title: "số giờ OT",
+      dataIndex: "hour",
+      key: "hour",
+      width: "90px",
       align: "center",
       render: (index, _record): JSX.Element => {
         return (
           <Input
-            value={_record.onsitePlace}
+            min={0}
+            type="number"
+            value={_record.hour}
             onChange={(e) => {
               handleChangeOnsite(e, _record.day);
             }}
           />
         );
       },
+    },
+    {
+      title: "Dự án",
+      dataIndex: "projectName",
+      key: "ProjectName",
+      align: "center",
     },
     {
       title: "",
@@ -123,7 +134,7 @@ export default function ModalCreateOnsite(
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
-        el.onsitePlace = e.target.value;
+        el.hour = e.target.value;
       }
       return el;
     });
@@ -131,8 +142,8 @@ export default function ModalCreateOnsite(
   };
 
   const deleteOnsite = (id: number): void => {
-    ApiSalary.deleteOnsiteSalary(id).then((r) => {
-      props.refetchDataOnsite();
+    ApiSalary.deleteOTSalary(id).then((r) => {
+      props.refetchDataOT();
       notification.success({message: "delete success"});
     });
   };

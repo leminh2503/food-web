@@ -1,23 +1,29 @@
-import "../index.scss";
+import "../my-salary-detail/index.scss";
 import React, {useState} from "react";
 import {Card, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
-import ModalCreateOverTime from "@app/module/my-salary-detail/OverTimeSalaryTable/ModalCreateOverTime";
-import {EditFilled} from "@ant-design/icons";
-import {IDataOverTime} from "@app/types";
+import ModalCreateOnsite from "./ModalCreateOnsite";
+import {CheckCircleFilled, EditFilled} from "@ant-design/icons";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
+import {IDataOnsite} from "@app/types";
 
-export default function OverTimeSalaryTable({
+export default function OnsiteSalaryTable({
+  idUser,
   month,
   year,
+  isManager,
 }: {
+  idUser: number | string;
+  isManager?: boolean;
   month: number;
   year: number;
 }): JSX.Element {
+  const [disableCheck, setDisableCheck] = useState(true);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = (): void => {
@@ -32,20 +38,37 @@ export default function OverTimeSalaryTable({
     setIsModalVisible(false);
   };
 
-  const getListOTSalary = (): Promise<IDataOverTime[]> => {
-    return ApiSalary.getMyListOTSalary(year, month);
+  const getListOnsiteSalary = (): Promise<IDataOnsite[]> => {
+    return ApiSalary.getMyListOnsiteSalary(year, month);
   };
 
-  const {data: dataOT, refetch} =
-    useQuery("listOTSalaryUser", getListOTSalary) || [];
+  const {data: dataOnsite, refetch} =
+    useQuery("listOnsiteSalaryUser", getListOnsiteSalary) || [];
 
-  const columns: ColumnsType<IDataOverTime[]> = [
+  const handleUpdate = (): void => {
+    //
+  };
+
+  const columns: ColumnsType<IDataOnsite[]> = [
     {
       title: (
-        <EditFilled
-          onClick={showModal}
-          className="text-[20px] text-[#0092ff]"
-        />
+        <>
+          <EditFilled
+            onClick={showModal}
+            className="text-[20px] text-[#0092ff] mr-3"
+          />
+          {isManager && (
+            <CheckCircleFilled
+              className={
+                disableCheck
+                  ? "text-[20px] text-[#ADE597FF]"
+                  : "text-[20px] text-[green]"
+              }
+              onClick={handleUpdate}
+              disabled={disableCheck}
+            />
+          )}
+        </>
       ),
       dataIndex: "col1",
       key: "col1",
@@ -59,13 +82,15 @@ export default function OverTimeSalaryTable({
     {col1: "Ngày"},
     {col1: "Thứ"},
     {col1: "Tên dự án"},
-    {col1: "Số giờ OT"},
     {col1: "Duyệt"},
   ];
 
   for (let i = 1; i <= getDayOnMonth(month, year); i++) {
     let check = 0;
-    dataOT?.map((el) => {
+    dataOnsite?.map((el) => {
+      if (el.state === 0) {
+        setDisableCheck(false);
+      }
       if (
         el.date ===
         year + "-" + formatNumber(month) + "-" + formatNumber(i)
@@ -75,7 +100,7 @@ export default function OverTimeSalaryTable({
           title: "",
           key: i,
           align: "center",
-          width: "120px",
+          width: "130px",
           render: (index, _item) => {
             if (index.col1 === "Ngày") {
               return <span>{i}</span>;
@@ -84,10 +109,7 @@ export default function OverTimeSalaryTable({
               return <span>{findDayOnWeek(year, month, i)}</span>;
             }
             if (index.col1 === "Tên dự án") {
-              return <span>{el?.project?.name}</span>;
-            }
-            if (index.col1 === "Số giờ OT") {
-              return <span>{el?.hour}</span>;
+              return <span>{el.onsitePlace}</span>;
             }
             return (
               <span
@@ -116,7 +138,7 @@ export default function OverTimeSalaryTable({
         title: "",
         key: i,
         align: "center",
-        width: "120px",
+        width: "130px",
         render: (index, _item) => {
           if (index.col1 === "Ngày") {
             return <span>{i}</span>;
@@ -127,9 +149,6 @@ export default function OverTimeSalaryTable({
           if (index.col1 === "Tên dự án") {
             return <span> </span>;
           }
-          if (index.col1 === "Số giờ OT") {
-            return <span> </span>;
-          }
           return <span> </span>;
         },
       });
@@ -137,22 +156,22 @@ export default function OverTimeSalaryTable({
   }
   return (
     <Card className="max-w-full">
-      <ModalCreateOverTime
-        dataOverTime={dataOT || []}
+      <ModalCreateOnsite
+        dataOnsite={dataOnsite || []}
         month={month}
-        refetchDataOT={refetch}
+        refetchDataOnsite={refetch}
         year={year}
         isModalVisible={isModalVisible}
         handleOk={handleOk}
         handleCancel={handleCancel}
       />
-      <div className="mb-4 font-bold">Lương Overtime :</div>
+      <div className="mb-4 font-bold">Lương Onsite :</div>
       <Table
         columns={columns}
         dataSource={data}
         bordered
         pagination={false}
-        scroll={{x: 1500}}
+        scroll={{x: "calc( 100vw - 292px)"}}
       />
     </Card>
   );

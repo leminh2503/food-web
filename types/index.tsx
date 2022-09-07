@@ -21,12 +21,52 @@ export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
   ANONYMOUS = 2,
+  MANAGER,
 }
 
 export enum IState {
   INACTIVE,
   ACTIVE,
   DELETED,
+}
+
+export interface IDataCost {
+  April: number;
+  August: number;
+  December: number;
+  February: number;
+  January: number;
+  July: number;
+  June: number;
+  March: number;
+  May: number;
+  November: number;
+  October: number;
+  September: number;
+}
+
+export interface IDataProjectList {
+  name?: string;
+  id?: number;
+  state?: number;
+  startDate?: string;
+  endDate?: string;
+  scale?: number;
+  customer?: string;
+  technicality?: string;
+  description?: string;
+  projectManager?: {
+    id: number;
+    avatar: string;
+    fullName: string;
+    email: string;
+    employeeCode: string;
+    personId: string;
+    dateOfBirth: string;
+    address: string;
+    phoneNumber: string;
+    phoneNumberRelative: string;
+  };
 }
 
 export interface IDataOnsite {

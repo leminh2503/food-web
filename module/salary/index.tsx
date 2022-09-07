@@ -23,7 +23,7 @@ export function Salary(): JSX.Element {
 
   const dataYear = (): JSX.Element => {
     const year = [];
-    for (let i = Config.YEAR_NOW; i <= date.getFullYear(); i++) {
+    for (let i = Config.NOW.YEAR; i <= date.getFullYear(); i++) {
       year.push(i);
     }
     return (
