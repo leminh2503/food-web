@@ -227,7 +227,7 @@ export interface IUserLogin {
   month?: number;
   id?: string;
   fullName?: string;
-  state?: IState;
+  state?: number;
   email?: string;
   dateOfBirth?: string;
   position?: IWorkType | null;
@@ -247,8 +247,8 @@ export interface IUserLogin {
   workType?: IWorkType | null;
   positionId?: number;
   workTypeId?: number;
-  deductionOwn: number;
-  familyCircumstances: any;
+  deductionOwn?: number;
+  familyCircumstances?: any;
 }
 
 export interface IFamilyCircumstance {

@@ -9,13 +9,13 @@ import ApiUser, {
 } from "@app/api/ApiUser";
 import {IUserLogin, IWorkType} from "@app/types";
 import {useMutation, useQuery} from "react-query";
-import Icon from "@app/components/Icon/Icon";
 import {ModalInfo} from "@app/module/account-manager/ModalConfirm";
 import {renameKeys} from "@app/utils/convert/ConvertHelper";
 import {ModalChangePass} from "@app/module/account-manager/ModalChangePass";
 import {ModalAddEmployee} from "@app/module/account-manager/ModalAddEmployee";
 import {ModalFamilyCircumstance} from "@app/module/account-manager/ModalFamilyCircumstances";
 import {FilterAccount} from "@app/module/account-manager/FilterAccount";
+import {LockOutlined, UnlockOutlined} from "@ant-design/icons";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -164,15 +164,17 @@ export function AccountManager(): JSX.Element {
     return listPositionConvert;
   });
 
-  const handleUserAction = (record: IUserLogin): void => {
+  const handleUserAction = (record: IUserLogin, type: string): void => {
+    const title = type === "lock" ? "Khóa" : "Mở khóa";
     Modal.confirm({
-      title: `Bạn có muốn khoá tài khoản ${record.email}?`,
+      title: `Bạn có muốn ${title.toLowerCase()} tài khoản ${record.email}?`,
       content: `Tài khoản ${record.email} sẽ bị khoá`,
       okType: "primary",
       cancelText: "Huỷ",
-      okText: "Khoá",
+      okText: title,
       onOk: () => {
-        // todo
+        const values = {id: record.id, state: type === "lock" ? 0 : 1};
+        handleBlockAccount(values);
       },
     });
   };
@@ -209,6 +211,30 @@ export function AccountManager(): JSX.Element {
       deductionOwn: values.deductionOwn,
     };
     updateProfile.mutate(body);
+  };
+
+  const blockAccount = useMutation(ApiUser.updateInformationAccount, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Thành công`,
+      });
+      refetch();
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Thất bại`,
+      });
+    },
+  });
+
+  const handleBlockAccount = (values: IUserLogin): void => {
+    const body: IInformationAccountBody = {
+      id: Number(values.id),
+      state: values.state,
+    };
+    blockAccount.mutate(body);
   };
 
   const resetPasswordForAccount = useMutation(ApiUser.resetPasswordForAccount, {
@@ -364,13 +390,26 @@ export function AccountManager(): JSX.Element {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <Button
-          className="mr-1"
-          onClick={(): void => {
-            handleUserAction(record);
-          }}
-          icon={<Icon icon="BlockUser" size={20} />}
-        />
+        <div>
+          {Number(record.id) === 1 ? (
+            <div />
+          ) : (
+            <Button
+              className="mr-1"
+              onClick={(): void => {
+                const type = record.state === 1 ? "lock" : "unlock";
+                handleUserAction(record, type);
+              }}
+              icon={
+                record.state === 1 ? (
+                  <LockOutlined style={{color: "red"}} />
+                ) : (
+                  <UnlockOutlined style={{color: "green"}} />
+                )
+              }
+            />
+          )}
+        </div>
       ),
     },
   ];
