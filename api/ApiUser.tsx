@@ -171,6 +171,11 @@ function getUserRole(): IAccountRole | undefined {
   return user?.user?.role?.id;
 }
 
+function getInfoMe(): IUserLogin | undefined {
+  const {user} = store.getState();
+  return user?.user;
+}
+
 function getAuthToken(): string | undefined {
   const {user} = store.getState();
   return user?.accessToken;
@@ -180,6 +185,7 @@ export default {
   login,
   isLogin,
   getAuthToken,
+  getInfoMe,
   getUserRole,
   getMe,
   updateMe,

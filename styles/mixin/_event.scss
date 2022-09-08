@@ -7,6 +7,18 @@
   user-select: none;
 }
 
+.btn-back-page {
+  background-color: $primary;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+}
+
 .hover-pointer {
   &:hover {
     cursor: pointer !important;

@@ -1,1 +1,1 @@
-export {Home as default} from "@app/module/home";
+export {AccountManager as default} from "@app/module/account-manager";
