@@ -278,6 +278,12 @@ export interface IPosition {
   description?: string;
 }
 
+export interface IWorkType {
+  id?: number;
+  name?: string;
+  description?: string;
+}
+
 export interface ISetStateModal {
   startDate?: string;
   endDate?: string;
