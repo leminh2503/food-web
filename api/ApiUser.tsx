@@ -1,6 +1,11 @@
 import {fetcher} from "./Fetcher";
 import store from "../redux/store";
-import {IAccountRole, IUserLogin, IWorkType} from "../types";
+import {
+  IAccountRole,
+  IFamilyCircumstance,
+  IUserLogin,
+  IWorkType,
+} from "../types";
 
 export interface ILoginBody {
   email: string;
@@ -15,8 +20,8 @@ export interface IRegisterAccountBody {
   workRoom?: string;
   personId?: string;
   dateOfBirth?: string;
-  position: number;
-  workType: number;
+  position: number | null;
+  workType: number | null;
   address?: string;
   phoneNumber?: string;
   phoneNumberRelative?: string;
@@ -101,6 +106,7 @@ const path = {
   updateInformationAccount: "/users",
   resetPasswordForAccount: "/users/set-password",
   addNewEmployee: "/auth/register",
+  familyCircumstance: "/family-circumstances",
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
@@ -162,6 +168,35 @@ function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
   return fetcher({url: path.addNewEmployee, method: "post", data: body});
 }
 
+function addNewFamilyCircumstance(
+  body: IFamilyCircumstance
+): Promise<IUserLogin> {
+  return fetcher({
+    url: path.familyCircumstance,
+    method: "post",
+    data: body,
+  });
+}
+
+function updateFamilyCircumstance(
+  data: IFamilyCircumstance
+): Promise<IFamilyCircumstance> {
+  const {id} = data;
+  delete data.id;
+  return fetcher({
+    url: path.familyCircumstance + `/${id}`,
+    method: "patch",
+    data,
+  });
+}
+
+function deleteFamilyCircumstance(id: number) {
+  return fetcher({
+    url: path.familyCircumstance + `/${id}`,
+    method: "delete",
+  });
+}
+
 function isLogin(): boolean {
   return !!getAuthToken();
 }
@@ -196,4 +231,7 @@ export default {
   updateInformationAccount,
   resetPasswordForAccount,
   addNewEmployee,
+  addNewFamilyCircumstance,
+  updateFamilyCircumstance,
+  deleteFamilyCircumstance,
 };

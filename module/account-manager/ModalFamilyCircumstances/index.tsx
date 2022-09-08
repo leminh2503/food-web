@@ -1,28 +1,150 @@
 import "./index.scss";
 import React, {useState} from "react";
-import {IRegisterAccountBody} from "@app/api/ApiUser";
-import {IFamilyCircumstance} from "@app/types";
-import {Button, Modal, Table} from "antd";
+import ApiUser from "@app/api/ApiUser";
+import {IFamilyCircumstance, TypeOfAction} from "@app/types";
+import {Button, Modal, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {ModalAddFamily} from "@app/module/account-manager/ModalAddFamily";
+import {useMutation, useQueryClient} from "react-query";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
-  handleConfirmAddEmployee: (data: IRegisterAccountBody) => void;
   handleCloseModalFamily: () => void;
   data: IFamilyCircumstance[];
+  idUser: number;
 }
 
 export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
-  const {
-    isModalVisible,
-    handleConfirmAddEmployee,
-    handleCloseModalFamily,
-    data,
-  } = props;
+  const {isModalVisible, handleCloseModalFamily, data, idUser} = props;
 
   const [isToggleModal, setIsToggleModal] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const defaultValuesDetail = {
+    id: null,
+    userId: idUser,
+    fullName: "",
+    IDCode: null,
+    yearOfBirth: "",
+    relationship: "",
+    phoneNumber: "",
+  };
+
+  const [dataDetail, setDataDetail] =
+    useState<IFamilyCircumstance>(defaultValuesDetail);
+
+  const handleConfirmModal = (
+    data: IFamilyCircumstance,
+    type: TypeOfAction
+  ) => {
+    Modal.confirm({
+      title: "Xác nhận tạo người phụ thuộc?",
+      okType: "primary",
+      okText: "Xác nhận",
+      cancelText: "Huỷ",
+      onOk: () => {
+        // eslint-disable-next-line no-unused-expressions
+        type === TypeOfAction.ADD
+          ? handleAddNewFamily(data)
+          : handleEditFamily(data);
+        setIsToggleModal(false);
+      },
+    });
+  };
+
+  const handleCancelModal = () => {
+    setIsToggleModal(false);
+  };
+
+  const addNewFamily = useMutation(ApiUser.addNewFamilyCircumstance, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Thêm thành công`,
+      });
+      // dataUserAccount.refetch();
+      queryClient.refetchQueries({
+        queryKey: "listUserAccount",
+      });
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Thêm thất bại`,
+      });
+    },
+  });
+
+  const handleAddNewFamily = (data: IFamilyCircumstance): void => {
+    addNewFamily.mutate(data);
+  };
+
+  const editFamily = useMutation(ApiUser.updateFamilyCircumstance, {
+    onSuccess: (data) => {
+      // setDataDetail({
+      //   id: data.id,
+      //   userId: data.userId,
+      //   fullName: data.fullName,
+      //   IDCode: data.IDCode,
+      //   yearOfBirth: data.yearOfBirth,
+      //   relationship: data.relationship,
+      //   phoneNumber: data.phoneNumber,
+      // });
+      notification.success({
+        duration: 1,
+        message: `Sửa thành công`,
+      });
+      // dataUserAccount.refetch();
+      queryClient.refetchQueries({
+        queryKey: "listUserAccount",
+      });
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Sửa thất bại`,
+      });
+    },
+  });
+
+  const handleEditFamily = (data: IFamilyCircumstance): void => {
+    editFamily.mutate(data);
+  };
+
+  const deleteFamily = useMutation(ApiUser.deleteFamilyCircumstance, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Xóa thành công`,
+      });
+      // dataUserAccount.refetch();
+      queryClient.refetchQueries({
+        queryKey: "listUserAccount",
+      });
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Xóa thất bại`,
+      });
+    },
+  });
+
+  const handleDeleteFamily = (id: number): void => {
+    Modal.confirm({
+      title: "Xác nhận xóa người phụ thuộc?",
+      okType: "primary",
+      okText: "Xác nhận",
+      cancelText: "Huỷ",
+      onOk: () => {
+        deleteFamily.mutate(id);
+        setIsToggleModal(false);
+      },
+      onCancel: () => setIsToggleModal(false),
+    });
+  };
 
   const columns: ColumnsType<IFamilyCircumstance> = [
     {
@@ -65,14 +187,15 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
           <Button
             className="mr-2"
             onClick={(): void => {
-              console.log(123);
+              setIsToggleModal(true);
+              setDataDetail(record);
             }}
             icon={<EditOutlined style={{color: "#1890FF"}} />}
           />
           <Button
             className=""
             onClick={(): void => {
-              console.log(123);
+              handleDeleteFamily(record?.id || -1);
             }}
             icon={<DeleteOutlined style={{color: "red"}} />}
           />
@@ -87,7 +210,10 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
         <Button
           style={{backgroundColor: "#1890FF", color: "#fff"}}
           className="mb-4 float-right"
-          onClick={() => setIsToggleModal(true)}
+          onClick={() => {
+            setDataDetail(defaultValuesDetail);
+            setIsToggleModal(true);
+          }}
         >
           Thêm người phụ thuộc
         </Button>
@@ -98,19 +224,18 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
           onRow={(record, rowIndex) => {
             return {
               onDoubleClick: () => {
-                // setDataDetail(record);
-                // setIsModalVisible(true);
-                console.log(123);
+                setIsToggleModal(true);
+                setDataDetail(record);
               },
             };
           }}
         />
         <ModalAddFamily
-          listPositionConvert={[]}
-          listWorkTypeConvert={[]}
           isModalVisible={isToggleModal}
-          handleConfirmAddEmployee={handleConfirmAddEmployee}
-          handleCancelAddEmployee={() => setIsToggleModal(false)}
+          handleConfirmModal={handleConfirmModal}
+          handleCancelModal={handleCancelModal}
+          idUser={idUser}
+          dataFamily={dataDetail}
         />
       </div>
     );

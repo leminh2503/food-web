@@ -36,6 +36,11 @@ export enum IState {
   DELETED,
 }
 
+export enum TypeOfAction {
+  EDIT = "EDIT",
+  ADD = "ADD",
+}
+
 export interface IProfile {
   _id?: string;
   username?: string;
@@ -225,7 +230,7 @@ export interface IUserLogin {
   state?: IState;
   email?: string;
   dateOfBirth?: string;
-  position?: IWorkType;
+  position?: IWorkType | null;
   avatar?: string;
   personId?: string;
   address?: string;
@@ -239,20 +244,21 @@ export interface IUserLogin {
   manageSalary?: number;
   gender?: string;
   manager?: IProfile;
-  workType?: IWorkType;
-  positionId: number;
-  workTypeId: number;
+  workType?: IWorkType | null;
+  positionId?: number;
+  workTypeId?: number;
   deductionOwn: number;
   familyCircumstances: any;
 }
 
 export interface IFamilyCircumstance {
-  id: number;
+  id?: number | null;
   userId: number;
   fullName: string;
-  IDCode: string;
+  IDCode: number | null;
   yearOfBirth: string;
   relationship: string;
+  phoneNumber: string;
 }
 
 export interface IDataProjectSalary {

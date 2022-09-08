@@ -17,6 +17,7 @@ interface ModalInfoProps {
   dataDetail: IUserLogin;
   listPositionConvert: {value: number; label: string}[];
   listWorkTypeConvert: {value: number; label: string}[];
+  defaultValuesDetail: IUserLogin;
 }
 
 export function ModalInfo(props: ModalInfoProps): JSX.Element {
@@ -29,6 +30,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     listWorkTypeConvert,
     setIsModalChangePassVisible,
     setIsModalFamilyVisible,
+    defaultValuesDetail,
   } = props;
   const {
     fullName,
@@ -46,7 +48,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     familyCircumstances,
   } = dataDetail;
 
-  const [adString, setAdString] = useState<IUserLogin>({});
+  const [adString, setAdString] = useState<IUserLogin>(defaultValuesDetail);
   useEffect(() => {
     setAdString({
       fullName,

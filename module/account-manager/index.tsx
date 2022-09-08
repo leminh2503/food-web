@@ -24,7 +24,24 @@ export function AccountManager(): JSX.Element {
     useState(false);
   const [isModalChangePassVisible, setIsModalChangePassVisible] =
     useState(false);
-  const [dataDetail, setDataDetail] = useState<IUserLogin>({});
+
+  const defaultValuesDetail: IUserLogin = {
+    fullName: "",
+    email: "",
+    avatar: "",
+    personId: "",
+    address: "",
+    phoneNumber: "",
+    phoneNumberRelative: "",
+    baseSalary: 0,
+    position: null,
+    workType: null,
+    dateOfBirth: "",
+    deductionOwn: 0,
+    familyCircumstances: null,
+  };
+
+  const [dataDetail, setDataDetail] = useState<IUserLogin>(defaultValuesDetail);
 
   const handleOk = (data: IUserLogin): void => {
     Modal.confirm({
@@ -228,6 +245,7 @@ export function AccountManager(): JSX.Element {
             <Image
               src={record.avatar || "img/avatar/avatar.jpg"}
               fallback="img/avatar/avatar.jpg"
+              preview={false}
             />
           </div>
         );
@@ -397,6 +415,7 @@ export function AccountManager(): JSX.Element {
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}
         dataDetail={dataDetail}
+        defaultValuesDetail={defaultValuesDetail}
         isModalVisible={isModalVisible}
         handleOk={handleOk}
         handleCancel={handleCancel}
@@ -417,9 +436,9 @@ export function AccountManager(): JSX.Element {
       />
       <ModalFamilyCircumstance
         isModalVisible={isModalFamilyVisible}
-        handleConfirmAddEmployee={handleConfirmAddEmployee}
         handleCloseModalFamily={handleCloseModalFamily}
         data={dataDetail.familyCircumstances}
+        idUser={Number(dataDetail?.id)}
       />
     </div>
   );

@@ -32,14 +32,13 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
     workRoom: "",
     personId: "",
     dateOfBirth: "",
-    position: 0,
-    workType: 0,
+    position: null,
+    workType: null,
     address: "",
     phoneNumber: "",
     phoneNumberRelative: "",
     baseSalary: 0,
     manageSalary: 0,
-    manager: 1,
     email: "",
     employeeCode: "",
     fullName: "",
@@ -144,14 +143,6 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
           value={adString?.workType || 0}
           data={listWorkTypeConvert}
         />
-        {/* <SelectInput */}
-        {/*  className="pt-12" */}
-        {/*  label="Người quản lý" */}
-        {/*  keyValue="manager" */}
-        {/*  setValue={setAdString} */}
-        {/*  value={1} */}
-        {/*  data={initDataPosition} */}
-        {/* /> */}
         <InputModal2
           label="Lương cứng"
           required
