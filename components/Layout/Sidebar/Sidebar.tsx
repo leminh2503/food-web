@@ -14,6 +14,7 @@ import Icon from "@app/components/Icon/Icon";
 const RenderMenu = React.memo(() => {
   const router = useRouter();
   const userRole = ApiUser.getUserRole();
+  const isManager = true;
 
   // React.useEffect(() => {
   //   setTimeout(() => {
@@ -54,6 +55,20 @@ const RenderMenu = React.memo(() => {
                 </Menu.Item>
               ))}
             </Menu.SubMenu>
+          );
+        }
+        if (role && role[0] === 3 && isManager === true) {
+          return (
+            <Menu.Item
+              key={path}
+              className="sidebar-item"
+              onClick={(): void => {
+                router.push(path);
+              }}
+            >
+              <Icon icon={icon as string} size={40} color="#fff" />
+              {name}
+            </Menu.Item>
           );
         }
         return (

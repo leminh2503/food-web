@@ -30,22 +30,29 @@ const routes: IRoute[] = [
   // },
   {
     path: "/",
-    name: "Home",
-    icon: "Homepage",
-    isSSR: true,
-    isSidebar: true,
-  },
-  {
-    path: "/account-manager",
     name: "Quản lý tài khoản",
     role: [IAccountRole.ADMIN],
     icon: "Users",
     isSidebar: true,
   },
   {
+    path: "/manager-salary",
+    name: "Quản lý bảng lương",
+    role: [IAccountRole.ADMIN],
+    icon: "Payroll",
+    isSidebar: true,
+  },
+  {
     path: "/salary",
     name: "Bảng lương",
     icon: "Payroll",
+    isSidebar: true,
+  },
+  {
+    path: "/salary-user",
+    name: "Duyệt lương nhân viên",
+    role: [3],
+    icon: "Users",
     isSidebar: true,
   },
   {
