@@ -6,17 +6,18 @@ import {Button, Modal, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {ModalAddFamily} from "@app/module/account-manager/ModalAddFamily";
-import {useMutation, useQueryClient} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
   handleCloseModalFamily: () => void;
-  data: IFamilyCircumstance[];
   idUser: number;
+  accountId: string | undefined;
 }
 
 export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
-  const {isModalVisible, handleCloseModalFamily, data, idUser} = props;
+  const {isModalVisible, handleCloseModalFamily, idUser, accountId} = props;
+  console.log(accountId);
 
   const [isToggleModal, setIsToggleModal] = useState(false);
 
@@ -34,6 +35,16 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
 
   const [dataDetail, setDataDetail] =
     useState<IFamilyCircumstance>(defaultValuesDetail);
+
+  // API get family
+  const getDataFamily = (): Promise<IFamilyCircumstance[]> => {
+    return ApiUser.getDataFamilyOfAccount({filter: {userId: accountId}});
+  };
+
+  const {data: dataFamily, refetch} = useQuery(
+    "getListDataFamily",
+    getDataFamily
+  );
 
   const handleConfirmModal = (
     data: IFamilyCircumstance,
@@ -64,7 +75,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
         duration: 1,
         message: `Thêm thành công`,
       });
-      // dataUserAccount.refetch();
+      refetch();
       queryClient.refetchQueries({
         queryKey: "listUserAccount",
       });
@@ -83,20 +94,11 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
 
   const editFamily = useMutation(ApiUser.updateFamilyCircumstance, {
     onSuccess: (data) => {
-      // setDataDetail({
-      //   id: data.id,
-      //   userId: data.userId,
-      //   fullName: data.fullName,
-      //   IDCode: data.IDCode,
-      //   yearOfBirth: data.yearOfBirth,
-      //   relationship: data.relationship,
-      //   phoneNumber: data.phoneNumber,
-      // });
       notification.success({
         duration: 1,
         message: `Sửa thành công`,
       });
-      // dataUserAccount.refetch();
+      refetch();
       queryClient.refetchQueries({
         queryKey: "listUserAccount",
       });
@@ -219,7 +221,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
         </Button>
         <Table
           columns={columns}
-          dataSource={data || []}
+          dataSource={dataFamily || []}
           bordered
           onRow={(record, rowIndex) => {
             return {

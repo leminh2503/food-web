@@ -12,10 +12,10 @@ import {useMutation, useQuery} from "react-query";
 import Icon from "@app/components/Icon/Icon";
 import {ModalInfo} from "@app/module/account-manager/ModalConfirm";
 import {renameKeys} from "@app/utils/convert/ConvertHelper";
-import {SelectInput2} from "@app/components/Modal/SelectInput2";
 import {ModalChangePass} from "@app/module/account-manager/ModalChangePass";
 import {ModalAddEmployee} from "@app/module/account-manager/ModalAddEmployee";
 import {ModalFamilyCircumstance} from "@app/module/account-manager/ModalFamilyCircumstances";
+import {FilterAccount} from "@app/module/account-manager/FilterAccount";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -24,6 +24,10 @@ export function AccountManager(): JSX.Element {
     useState(false);
   const [isModalChangePassVisible, setIsModalChangePassVisible] =
     useState(false);
+
+  const [filterState, setFilterState] = useState<number>(-1);
+  const [filterText, setFilterText] = useState<string>("");
+  const [filterPosition, setFilterPosition] = useState<number>(-1);
 
   const defaultValuesDetail: IUserLogin = {
     fullName: "",
@@ -99,14 +103,27 @@ export function AccountManager(): JSX.Element {
   };
 
   const getUserAccount = (): Promise<IUserLogin[]> => {
-    return ApiUser.getUserAccount({pageSize: 30, pageNumber: 1});
+    const params = {
+      pageSize: 30,
+      pageNumber: 1,
+      searchFields: ["fullName"],
+      search: filterText,
+      filter: {
+        position: filterPosition !== -1 ? filterPosition : "",
+        state: filterState !== -1 ? filterState : "",
+      },
+    };
+    return ApiUser.getUserAccount(params);
   };
 
-  const dataUserAccount = useQuery("listUserAccount", getUserAccount);
+  const {data: dataUserAccount, refetch} = useQuery(
+    "listUserAccount",
+    getUserAccount
+  );
 
   useEffect(() => {
-    dataUserAccount.refetch();
-  }, []);
+    refetch();
+  }, [filterText, filterPosition, filterState]);
 
   const getListWorkType = (): Promise<IWorkType[]> => {
     return ApiUser.getListWorkType();
@@ -125,6 +142,18 @@ export function AccountManager(): JSX.Element {
   listPosition?.data?.map((el) => {
     const renamedObj = renameKeys(el || {}, newKeys);
     listPositionConvert.push(renamedObj);
+    return listPositionConvert;
+  });
+
+  const newKeysFilter = {id: "value", name: "title"};
+  const listPositionConvertForFilter: {
+    value: number;
+    title: string;
+    default?: boolean;
+  }[] = [];
+  listPosition?.data?.map((el) => {
+    const renamedObj = renameKeys(el || {}, newKeysFilter);
+    listPositionConvertForFilter.push(renamedObj);
     return listPositionConvert;
   });
 
@@ -154,7 +183,7 @@ export function AccountManager(): JSX.Element {
         duration: 1,
         message: `Sửa thành công`,
       });
-      dataUserAccount.refetch();
+      refetch();
     },
     onError: () => {
       notification.error({
@@ -188,7 +217,7 @@ export function AccountManager(): JSX.Element {
         duration: 1,
         message: `Sửa thành công`,
       });
-      dataUserAccount.refetch();
+      refetch();
     },
     onError: () => {
       notification.error({
@@ -212,7 +241,7 @@ export function AccountManager(): JSX.Element {
         duration: 1,
         message: `Thêm thành công`,
       });
-      dataUserAccount.refetch();
+      refetch();
     },
     onError: () => {
       notification.error({
@@ -351,37 +380,12 @@ export function AccountManager(): JSX.Element {
       <Card className="mb-4">
         <div>
           <Row>
-            <Col lg={3}>
-              <SelectInput2
-                className=""
-                keyValue="position"
-                setValue={() => {
-                  console.log(123);
-                }}
-                value={0}
-                data={listPositionConvert}
-              />
-            </Col>
-            <Col lg={3}>
-              <SelectInput2
-                className=""
-                keyValue="position"
-                setValue={() => {
-                  console.log(123);
-                }}
-                value={0}
-                data={listPositionConvert}
-              />
-            </Col>
-            <Col lg={3}>
-              <SelectInput2
-                className=""
-                keyValue="position"
-                setValue={() => {
-                  console.log(123);
-                }}
-                value={0}
-                data={listPositionConvert}
+            <Col lg={9}>
+              <FilterAccount
+                setFilterState={setFilterState}
+                setFilterText={setFilterText}
+                setFilterPosition={setFilterPosition}
+                listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
             <Col lg={15}>
@@ -400,7 +404,7 @@ export function AccountManager(): JSX.Element {
       </Card>
       <Table
         columns={columns}
-        dataSource={dataUserAccount.data}
+        dataSource={dataUserAccount}
         bordered
         onRow={(record, rowIndex) => {
           return {
@@ -434,12 +438,14 @@ export function AccountManager(): JSX.Element {
         handleConfirmChangePass={handleConfirmChangePass}
         handleCancelChangePass={handleCancelChangePass}
       />
-      <ModalFamilyCircumstance
-        isModalVisible={isModalFamilyVisible}
-        handleCloseModalFamily={handleCloseModalFamily}
-        data={dataDetail.familyCircumstances}
-        idUser={Number(dataDetail?.id)}
-      />
+      {isModalFamilyVisible && (
+        <ModalFamilyCircumstance
+          isModalVisible={isModalFamilyVisible}
+          handleCloseModalFamily={handleCloseModalFamily}
+          accountId={dataDetail.id}
+          idUser={Number(dataDetail?.id)}
+        />
+      )}
     </div>
   );
 }

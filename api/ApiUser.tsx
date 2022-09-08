@@ -94,6 +94,10 @@ export interface IParamsGetUser {
   disablePagination?: boolean;
   search?: string;
   searchType?: string;
+  filter?: {
+    state?: number | string;
+    position?: number | string;
+  };
 }
 
 const path = {
@@ -110,7 +114,11 @@ const path = {
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
-  return fetcher({url: path.getUserAccount, method: "get", params: params});
+  return fetcher({
+    url: path.getUserAccount,
+    method: "get",
+    params: params,
+  });
 }
 
 function getListPosition(): Promise<IWorkType[]> {
@@ -168,9 +176,14 @@ function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
   return fetcher({url: path.addNewEmployee, method: "post", data: body});
 }
 
+function getDataFamilyOfAccount(params: any): Promise<IFamilyCircumstance[]> {
+  return fetcher({url: path.familyCircumstance, method: "get", params: params});
+}
+
 function addNewFamilyCircumstance(
   body: IFamilyCircumstance
 ): Promise<IUserLogin> {
+  delete body.id;
   return fetcher({
     url: path.familyCircumstance,
     method: "post",
@@ -234,4 +247,5 @@ export default {
   addNewFamilyCircumstance,
   updateFamilyCircumstance,
   deleteFamilyCircumstance,
+  getDataFamilyOfAccount,
 };
