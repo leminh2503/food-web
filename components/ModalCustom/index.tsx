@@ -9,7 +9,7 @@ interface ModalCustomProps {
   cancelText?: string;
   title: string;
   content: JSX.Element;
-  footer?: null;
+  footer?: any;
 }
 
 export function ModalCustom({

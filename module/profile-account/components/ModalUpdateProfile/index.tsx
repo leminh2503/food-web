@@ -9,7 +9,7 @@ import {useMutation} from "react-query";
 interface ModalUpdateProfile {
   setToggleModal: (value: boolean) => void;
   dataRefetch: () => void;
-  dataProfile: IUserLogin;
+  dataProfile: IUserLogin | null;
 }
 
 export function ModalUpdateProfile({

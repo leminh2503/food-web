@@ -1,21 +1,76 @@
 import {fetcher} from "./Fetcher";
 import store from "../redux/store";
-import {IAccountRole, IUserLogin} from "../types";
+import {
+  IAccountRole,
+  IFamilyCircumstance,
+  IUserLogin,
+  IWorkType,
+} from "../types";
 
 export interface ILoginBody {
   email: string;
   password: string;
 }
 
+export interface IRegisterAccountBody {
+  password?: string;
+  gender?: string;
+  englishCertificate?: string;
+  englishScore?: number;
+  workRoom?: string;
+  personId?: string;
+  dateOfBirth?: string;
+  position: number | null;
+  workType: number | null;
+  address?: string;
+  phoneNumber?: string;
+  phoneNumberRelative?: string;
+  baseSalary: number;
+  manageSalary: number;
+  manager?: number;
+  email: string;
+  employeeCode: string;
+  fullName: string;
+}
+
 export interface IProfileBody {
+  id?: number;
   fullName?: string;
   email?: string;
   dateOfBirth?: string;
-  personId?: number;
+  personId?: string;
   address?: string;
   phoneNumber?: string;
   phoneNumberRelative?: string;
   gender?: string;
+}
+
+export interface IInformationAccountBody {
+  id?: number;
+  gender?: string;
+  englishCertificate?: string;
+  englishScore?: number;
+  workRoom?: string;
+  personId?: string;
+  dateOfBirth?: string;
+  position?: number;
+  workType?: number;
+  address?: string;
+  phoneNumber?: string;
+  phoneNumberRelative?: string;
+  baseSalary?: number;
+  manageSalary?: number;
+  manager?: number;
+  deductionOwn?: number;
+  state?: number;
+  email?: string;
+  employeeCode?: string;
+  fullName?: string;
+}
+
+export interface IResetPasswordBody {
+  id?: number;
+  newPassword?: string;
 }
 
 export interface IUploadAvatarBody {
@@ -39,6 +94,10 @@ export interface IParamsGetUser {
   disablePagination?: boolean;
   search?: string;
   searchType?: string;
+  filter?: {
+    state?: number | string;
+    position?: number | string;
+  };
 }
 
 const path = {
@@ -46,10 +105,28 @@ const path = {
   getMe: "/users/me",
   getUserAccount: "/users",
   uploadAvatar: "/users/set-avatar",
+  workType: "/work-type",
+  position: "/position",
+  updateInformationAccount: "/users",
+  resetPasswordForAccount: "/users/set-password",
+  addNewEmployee: "/auth/register",
+  familyCircumstance: "/family-circumstances",
 };
 
 function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
-  return fetcher({url: path.getUserAccount, method: "get", params: params});
+  return fetcher({
+    url: path.getUserAccount,
+    method: "get",
+    params: params,
+  });
+}
+
+function getListPosition(): Promise<IWorkType[]> {
+  return fetcher({url: path.position, method: "get"});
+}
+
+function getListWorkType(): Promise<IWorkType[]> {
+  return fetcher({url: path.workType, method: "get"});
 }
 
 function getMe(): Promise<IUserLogin> {
@@ -58,6 +135,30 @@ function getMe(): Promise<IUserLogin> {
 
 function updateMe(data: IProfileBody): Promise<IUserLogin> {
   return fetcher({url: path.getMe, method: "put", data});
+}
+
+function updateInformationAccount(
+  data: IInformationAccountBody
+): Promise<IUserLogin> {
+  const {id} = data;
+  delete data.id;
+  return fetcher({
+    url: path.updateInformationAccount + `/${id}`,
+    method: "put",
+    data,
+  });
+}
+
+function resetPasswordForAccount(
+  data: IResetPasswordBody
+): Promise<IUserLogin> {
+  const {id} = data;
+  delete data.id;
+  return fetcher({
+    url: `/users/${id}/set-password`,
+    method: "post",
+    data,
+  });
 }
 
 function updateAvatar(formData: any): Promise<IUserLogin> {
@@ -71,6 +172,44 @@ function login(body: ILoginBody): Promise<ILoginResponse> {
   );
 }
 
+function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
+  return fetcher({url: path.addNewEmployee, method: "post", data: body});
+}
+
+function getDataFamilyOfAccount(params: any): Promise<IFamilyCircumstance[]> {
+  return fetcher({url: path.familyCircumstance, method: "get", params: params});
+}
+
+function addNewFamilyCircumstance(
+  body: IFamilyCircumstance
+): Promise<IUserLogin> {
+  delete body.id;
+  return fetcher({
+    url: path.familyCircumstance,
+    method: "post",
+    data: body,
+  });
+}
+
+function updateFamilyCircumstance(
+  data: IFamilyCircumstance
+): Promise<IFamilyCircumstance> {
+  const {id} = data;
+  delete data.id;
+  return fetcher({
+    url: path.familyCircumstance + `/${id}`,
+    method: "patch",
+    data,
+  });
+}
+
+function deleteFamilyCircumstance(id: number) {
+  return fetcher({
+    url: path.familyCircumstance + `/${id}`,
+    method: "delete",
+  });
+}
+
 function isLogin(): boolean {
   return !!getAuthToken();
 }
@@ -78,6 +217,11 @@ function isLogin(): boolean {
 function getUserRole(): IAccountRole | undefined {
   const {user} = store.getState();
   return user?.user?.role?.id;
+}
+
+function getInfoMe(): IUserLogin | undefined {
+  const {user} = store.getState();
+  return user?.user;
 }
 
 function getAuthToken(): string | undefined {
@@ -89,9 +233,19 @@ export default {
   login,
   isLogin,
   getAuthToken,
+  getInfoMe,
   getUserRole,
   getMe,
   updateMe,
   getUserAccount,
   updateAvatar,
+  getListWorkType,
+  getListPosition,
+  updateInformationAccount,
+  resetPasswordForAccount,
+  addNewEmployee,
+  addNewFamilyCircumstance,
+  updateFamilyCircumstance,
+  deleteFamilyCircumstance,
+  getDataFamilyOfAccount,
 };

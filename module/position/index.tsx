@@ -103,7 +103,7 @@ export function Position(): JSX.Element {
                 <Button
                   className="mr-2"
                   icon={<Icon icon="Edit" size={20} color="#0092ff" />}
-                  onClick={() => {
+                  onClick={(): void => {
                     setPositionId(record.id);
                     showModalEditPosition();
                   }}
@@ -117,6 +117,7 @@ export function Position(): JSX.Element {
           },
         ]}
         dataSource={dataPosition.data}
+        bordered
       />
       <ModalCreatePosition
         isModalVisible={isModalVisible === "modalCreatePosition"}

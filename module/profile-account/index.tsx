@@ -128,7 +128,7 @@ export function ProfileAccount(): JSX.Element {
               <ModalUpdateProfile
                 dataRefetch={dataRefetch}
                 setToggleModal={setToggleModal}
-                dataProfile={dataUser || {}}
+                dataProfile={dataUser || null}
               />
             )}
           </div>

@@ -17,10 +17,17 @@ export interface ISettingId {
   referCode?: string;
 }
 
+export interface IWorkType {
+  id: 1;
+  name: string;
+  description: string;
+}
+
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
   ANONYMOUS = 2,
+  MANAGER,
 }
 
 export enum IState {
@@ -29,15 +36,203 @@ export enum IState {
   DELETED,
 }
 
+export enum TypeOfAction {
+  EDIT = "EDIT",
+  ADD = "ADD",
+}
+
+export interface IProfile {
+  _id?: string;
+  username?: string;
+  email?: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  facebook?: string;
+  twitter?: string;
+  avatar?: string;
+  newEmail?: string;
+}
+
+export interface IDataCost {
+  April: number;
+  August: number;
+  December: number;
+  February: number;
+  January: number;
+  July: number;
+  June: number;
+  March: number;
+  May: number;
+  November: number;
+  October: number;
+  September: number;
+}
+
+export interface IDataProjectList {
+  name?: string;
+  id?: number;
+  state?: number;
+  startDate?: string;
+  endDate?: string;
+  scale?: number;
+  customer?: string;
+  technicality?: string;
+  description?: string;
+  projectManager?: {
+    id: number;
+    avatar: string;
+    fullName: string;
+    email: string;
+    employeeCode: string;
+    personId: string;
+    dateOfBirth: string;
+    address: string;
+    phoneNumber: string;
+    phoneNumberRelative: string;
+  };
+}
+
+export interface IDataOnsite {
+  id: number;
+  dayOnWeek?: string;
+  day?: number | string;
+  onsitePlace?: string;
+  salary?: number;
+  date?: string;
+  state?: number;
+  action?: boolean;
+}
+
+export interface IDataOverTime {
+  id: number;
+  dayOnWeek?: string;
+  day?: number | string;
+  date?: string;
+  state?: number;
+  action?: boolean;
+  hour?: number | string;
+  projectName?: string;
+  project?: {
+    id: number;
+    name: string;
+    projectManager: {
+      state: number;
+      gender: string;
+      englishCertificate: string;
+      role: {
+        id: number;
+        roleName: string;
+        permissions: [
+          {
+            id: number;
+            permissionName: string;
+            permissionKey: "";
+          }
+        ];
+      };
+    };
+  };
+}
+
+export interface IDataProject {
+  id?: number;
+  date?: string;
+  salary?: number;
+  projectName?: string;
+  project?: {
+    id: number;
+    name: string;
+    projectManager: {
+      state: number;
+      gender: string;
+      englishCertificate: string;
+      role: {
+        id: number;
+        roleName: string;
+        permissions: [
+          {
+            id: number;
+            permissionName: string;
+            permissionKey: "";
+          }
+        ];
+      };
+    };
+  };
+}
+
+export interface IDataBonus {
+  id?: number;
+  date?: string;
+  reason?: string;
+  salary?: number;
+  projectName?: string;
+  project?: {
+    id: number;
+    name: string;
+    projectManager: {
+      state: number;
+      gender: string;
+      englishCertificate: string;
+      role: {
+        id: number;
+        roleName: string;
+        permissions: [
+          {
+            id: number;
+            permissionName: string;
+            permissionKey: "";
+          }
+        ];
+      };
+    };
+  };
+}
+
+export interface IDataDeductionDay {
+  id?: number;
+  date?: string;
+  dayOffWork?: number;
+  hourLateWork?: number;
+  deductionSalaryDay?: number | string;
+  deductionSalaryHour?: number | string;
+}
+
+export interface IDataSalary {
+  afterTaxSalary: number;
+  baseSalary: number;
+  bonusSalary: number;
+  createdAt: string;
+  date: string;
+  deductionSalary: number;
+  id: number;
+  manageSalary: number;
+  onsiteSalary: number;
+  overtimeSalary: number;
+  projectSalary: number;
+  state: number;
+  taxSalary: number;
+  totalSalary: number;
+  updatedAt: string;
+}
+
 export interface IUserLogin {
+  date?: string;
+  createdAt?: string;
+  month?: number;
   id?: string;
   fullName?: string;
-  state?: IState;
+  state?: number;
   email?: string;
   dateOfBirth?: string;
-  positionId?: number;
+  position?: IWorkType | null;
   avatar?: string;
-  personId?: number;
+  personId?: string;
   address?: string;
   phoneNumber?: string;
   role?: {
@@ -48,27 +243,27 @@ export interface IUserLogin {
   baseSalary?: number;
   manageSalary?: number;
   gender?: string;
+  manager?: IProfile;
+  workType?: IWorkType | null;
+  positionId?: number;
+  workTypeId?: number;
+  deductionOwn?: number;
+  familyCircumstances?: any;
 }
 
-export interface IProfile {
-  id?: string;
-  avatar?: string;
-  fullName?: string;
-  email?: string;
-  employeeCode?: string;
-  personId?: string;
-  dateOfBirth?: string;
-  address?: string;
-  phoneNumber?: string;
-  phoneNumberRelative?: string;
-  baseSalary?: number;
-  manageSalary?: number;
-  deductionOwn?: number;
-  workRoom?: string;
-  state?: number;
-  gender?: string;
-  englishCertificate?: string;
-  englishScore?: number;
+export interface IFamilyCircumstance {
+  id?: number | null;
+  userId: number;
+  fullName: string;
+  IDCode: number | null;
+  yearOfBirth: string;
+  relationship: string;
+  phoneNumber: string;
+}
+
+export interface IDataProjectSalary {
+  projectName?: string;
+  projectSalary?: number | string;
 }
 
 export interface IAccountInfo {
@@ -111,6 +306,8 @@ export interface IPosition {
   description?: string;
 }
 
+
+
 export interface ISetStateModal {
   startDate?: string;
   endDate?: string;
@@ -123,7 +320,22 @@ export interface ISetStateModal {
   description?: string;
 }
 
+
 export interface IRules{
   tittle?:string;
   startTime?:string
 }
+
+export enum EUserGender {
+  OTHER = "Other",
+  MALE = "Male",
+  FEMALE = "Female",
+}
+
+export enum EEnglishCertificate {
+  TOEIC = "Toeic",
+  TOEFL = "Toefl",
+  IELTS = "Ielts",
+  OTHER = "Other",
+}
+>>>>>>> 9d8f1a6bc16c31b7404ab150a310aff184441663
