@@ -21,6 +21,6 @@
       "@app/*": ["*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "module/rules/data.JS"],
   "exclude": ["node_modules", "test"]
 }

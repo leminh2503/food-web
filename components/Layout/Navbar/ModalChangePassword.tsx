@@ -38,7 +38,7 @@ export function ModalChangePassword({
   const [password,setPassword] = useState(true)
 
   useEffect(()=>{setToggleModal(password)
-    console.log(password)
+    
   },[password])
 
     
@@ -63,9 +63,9 @@ export function ModalChangePassword({
 
    const handleOk = (values) => {
         // const {email, newPass, oldPass } = data;
-        console.log("clickok");
+       
         
-        console.log(data)
+      
       if(!data.oldPassword){
           notification.error({
           message: `Chưa nhập mật khẩu cũ`
@@ -113,7 +113,7 @@ export function ModalChangePassword({
   
     const handleCancel = () => {
       // setIsModalVisible(false)
-      console.log("cancle")
+      
       // setToggleModal(password);
       setPassword(!password)
     
@@ -132,7 +132,7 @@ export function ModalChangePassword({
              
               // router.push("/#");
             //   setSubmitting(false);
-              console.log("success")
+              
               dispatch(logoutUser());
               router.push("/login");
               
@@ -140,7 +140,7 @@ export function ModalChangePassword({
             },
             onError: (error) => {
             //   setSubmitting(false);
-              console.log("error")
+              
             },
           }
 
@@ -184,7 +184,7 @@ data.newPassword=values.newPassword;
               title="Đổi mật khẩu" 
               visible={isModalVisible} 
               onOk={() =>{
-                console.log(values,"submit")
+                
                 handleOk(values);
                 // HandleSubmit(values);
                 

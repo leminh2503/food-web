@@ -122,3 +122,8 @@ export interface ISetStateModal {
   name?: string;
   description?: string;
 }
+
+export interface IRules{
+  tittle?:string;
+  startTime?:string
+}

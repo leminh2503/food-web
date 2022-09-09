@@ -35,7 +35,7 @@ export function InputPassword (props: TextInputProps): JSX.Element {
         <Col span={10}>
       <div  className="label-container ">
       <div className="require-label">*</div>
-        <div className="input-label">{label}</div>
+      <div className="input-label">{label}</div>
       
       </div>
       </Col>
