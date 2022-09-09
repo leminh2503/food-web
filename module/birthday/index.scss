@@ -1,0 +1,27 @@
+.container {
+  width: 100%;
+
+  .birthday-card {
+    .ant-card-cover {
+      width: 80px;
+      height: 80px;
+      margin-top: 30px;
+
+      .birthday-avatar {
+        width: 100%;
+        border-radius: 100%;
+      }
+    }
+
+    .birthday-text {
+      .ant-card-meta-title {
+        color: $blue-color;
+      }
+
+      .ant-card-meta-description {
+        color: $blue-color;
+        text-align: center;
+      }
+    }
+  }
+}

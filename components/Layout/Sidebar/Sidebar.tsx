@@ -8,7 +8,6 @@ import {useRouter} from "next/router";
 import ApiUser from "../../../api/ApiUser";
 import RouteList from "../../../routes/RouteList";
 import {logoutUser} from "@app/redux/slices/UserSlice";
-import {IAccountRole} from "@app/types";
 import Icon from "@app/components/Icon/Icon";
 
 const RenderMenu = React.memo(() => {
@@ -39,7 +38,11 @@ const RenderMenu = React.memo(() => {
         // }
         if (children) {
           return (
-            <Menu.SubMenu key={path} title={name}>
+            <Menu.SubMenu
+              key={path}
+              title={name}
+              icon={<Icon icon={icon as string} size={15} color="#fff" />}
+            >
               {children.map((child) => (
                 <Menu.Item
                   key={path + child.path}
@@ -47,9 +50,11 @@ const RenderMenu = React.memo(() => {
                     router.push(path + child.path);
                   }}
                   className="sidebar-item"
-                  hidden={child.role?.includes(
-                    userRole ?? IAccountRole.ANONYMOUS
-                  )}
+                  hidden={
+                    child?.role && userRole
+                      ? !child.role?.includes(userRole)
+                      : undefined
+                  }
                 >
                   {child.name}
                 </Menu.Item>

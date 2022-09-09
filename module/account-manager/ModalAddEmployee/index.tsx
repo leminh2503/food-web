@@ -127,7 +127,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
         />
         <SelectInput
           className="pt-12"
-          require
+          required
           label="Chức vụ"
           keyValue="position"
           setValue={setAdString}
@@ -136,7 +136,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
         />
         <SelectInput
           className="pt-12"
-          require
+          required
           label="Vị trí"
           keyValue="workType"
           setValue={setAdString}
