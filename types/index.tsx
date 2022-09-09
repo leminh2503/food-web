@@ -17,6 +17,12 @@ export interface ISettingId {
   referCode?: string;
 }
 
+export interface IWorkType {
+  id: 1;
+  name: string;
+  description: string;
+}
+
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
@@ -28,6 +34,28 @@ export enum IState {
   INACTIVE,
   ACTIVE,
   DELETED,
+}
+
+export enum TypeOfAction {
+  EDIT = "EDIT",
+  ADD = "ADD",
+}
+
+export interface IProfile {
+  _id?: string;
+  username?: string;
+  email?: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  facebook?: string;
+  twitter?: string;
+  avatar?: string;
+  newEmail?: string;
 }
 
 export interface IDataCost {
@@ -199,12 +227,12 @@ export interface IUserLogin {
   month?: number;
   id?: string;
   fullName?: string;
-  state?: IState;
+  state?: number;
   email?: string;
   dateOfBirth?: string;
-  positionId?: number;
+  position?: IWorkType | null;
   avatar?: string;
-  personId?: number;
+  personId?: string;
   address?: string;
   phoneNumber?: string;
   role?: {
@@ -215,27 +243,27 @@ export interface IUserLogin {
   baseSalary?: number;
   manageSalary?: number;
   gender?: string;
+  manager?: IProfile;
+  workType?: IWorkType | null;
+  positionId?: number;
+  workTypeId?: number;
+  deductionOwn?: number;
+  familyCircumstances?: any;
+}
+
+export interface IFamilyCircumstance {
+  id?: number | null;
+  userId: number;
+  fullName: string;
+  IDCode: number | null;
+  yearOfBirth: string;
+  relationship: string;
+  phoneNumber: string;
 }
 
 export interface IDataProjectSalary {
   projectName?: string;
   projectSalary?: number | string;
-}
-
-export interface IProfile {
-  _id?: string;
-  username?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  phone?: string;
-  location?: string;
-  website?: string;
-  facebook?: string;
-  twitter?: string;
-  avatar?: string;
-  newEmail?: string;
 }
 
 export interface IAccountInfo {
@@ -294,4 +322,17 @@ export interface ISetStateModal {
   content?: string;
   name?: string;
   description?: string;
+}
+
+export enum EUserGender {
+  OTHER = "Other",
+  MALE = "Male",
+  FEMALE = "Female",
+}
+
+export enum EEnglishCertificate {
+  TOEIC = "Toeic",
+  TOEFL = "Toefl",
+  IELTS = "Ielts",
+  OTHER = "Other",
 }

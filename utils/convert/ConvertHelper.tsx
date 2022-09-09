@@ -24,6 +24,18 @@ function dataURItoBlob(dataURI: string): Blob {
   return new Blob([ab], {type: mimeString});
 }
 
+export function renameKeys(obj: any, newKeys: any) {
+  const keyValues = Object.keys(obj).map((key) => {
+    const newKey = newKeys[key] || key;
+    if (!newKeys[key]) {
+      delete obj[key];
+    }
+    return {[newKey]: obj[key]};
+  });
+  return Object.assign({}, ...keyValues);
+}
+
 export default {
   dataURItoBlob,
+  renameKeys,
 };
