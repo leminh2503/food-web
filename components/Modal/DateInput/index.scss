@@ -6,4 +6,19 @@
     content: "*";
     color: $red-color;
   }
+
+  &.inline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h4 {
+      width: 30%;
+      margin-bottom: unset;
+    }
+
+    input {
+      width: 70%;
+    }
+  }
 }

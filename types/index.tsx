@@ -223,19 +223,24 @@ export interface IDataProjectSalary {
 }
 
 export interface IProfile {
-  _id?: string;
-  username?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  phone?: string;
-  location?: string;
-  website?: string;
-  facebook?: string;
-  twitter?: string;
+  id?: string;
   avatar?: string;
-  newEmail?: string;
+  fullName?: string;
+  email?: string;
+  employeeCode?: string;
+  personId?: string;
+  dateOfBirth?: string;
+  address?: string;
+  phoneNumber?: string;
+  phoneNumberRelative?: string;
+  baseSalary?: number;
+  manageSalary?: number;
+  deductionOwn?: number;
+  workRoom?: string;
+  state?: number;
+  gender?: string;
+  englishCertificate?: string;
+  englishScore?: number;
 }
 
 export interface IAccountInfo {
@@ -282,6 +287,20 @@ export interface IWorkType {
   id?: number;
   name?: string;
   description?: string;
+}
+
+export interface IProject {
+  id?: number;
+  name?: string;
+  startDate?: string;
+  endDate?: string;
+  scale?: number;
+  customer?: string;
+  technicality?: string;
+  use?: string;
+  description?: string;
+  state?: number;
+  projectManager?: IProfile;
 }
 
 export interface ISetStateModal {
