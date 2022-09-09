@@ -1,12 +1,12 @@
 import "../my-salary-detail/index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import ModalCreateOverTime from "./ModalCreateOverTime";
-import {EditFilled} from "@ant-design/icons";
-import {IDataOverTime} from "@app/types";
+import {CheckCircleFilled, EditFilled} from "@ant-design/icons";
+import {IDataOverTime, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
@@ -16,12 +16,15 @@ export default function OverTimeSalaryTable({
   year,
   isManager,
   idUser,
+  listProject,
 }: {
+  listProject?: IDataProjectList[];
   idUser: number | string;
   isManager?: boolean;
   month: number;
   year: number;
 }): JSX.Element {
+  const [disableCheck, setDisableCheck] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = (): void => {
@@ -37,19 +40,42 @@ export default function OverTimeSalaryTable({
   };
 
   const getListOTSalary = (): Promise<IDataOverTime[]> => {
+    if (isManager) {
+      return ApiSalary.getMyListOTSalary(year, month, Number(idUser));
+    }
     return ApiSalary.getMyListOTSalary(year, month);
   };
 
-  const {data: dataOT, refetch} =
-    useQuery("listOTSalaryUser", getListOTSalary) || [];
+  const {
+    data: dataOT,
+    refetch,
+    isRefetching,
+  } = useQuery("listOTSalaryUser" + isManager, getListOTSalary) || [];
+
+  const handleUpdate = (): void => {
+    //
+  };
 
   const columns: ColumnsType<IDataOverTime[]> = [
     {
       title: (
-        <EditFilled
-          onClick={showModal}
-          className="text-[20px] text-[#0092ff]"
-        />
+        <>
+          <EditFilled
+            onClick={showModal}
+            className="text-[20px] text-[#0092ff] mr-3"
+          />
+          {isManager && (
+            <CheckCircleFilled
+              className={
+                disableCheck
+                  ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
+                  : "text-[20px] text-[green]"
+              }
+              onClick={handleUpdate}
+              disabled={disableCheck}
+            />
+          )}
+        </>
       ),
       dataIndex: "col1",
       key: "col1",
@@ -58,6 +84,16 @@ export default function OverTimeSalaryTable({
       fixed: "left",
     },
   ];
+
+  useEffect(() => {
+    setDisableCheck(true);
+    dataOT?.map((el) => {
+      if (el.state === 0) {
+        setDisableCheck(false);
+      }
+      return el;
+    });
+  }, [isRefetching]);
 
   const data: any = [
     {col1: "Ngày"},
@@ -142,6 +178,8 @@ export default function OverTimeSalaryTable({
   return (
     <Card className="max-w-full">
       <ModalCreateOverTime
+        listProject={listProject}
+        idUser={Number(idUser)}
         dataOverTime={dataOT || []}
         month={month}
         refetchDataOT={refetch}
@@ -152,6 +190,7 @@ export default function OverTimeSalaryTable({
       />
       <div className="mb-4 font-bold">Lương Overtime :</div>
       <Table
+        loading={isModalVisible}
         columns={columns}
         dataSource={data}
         bordered

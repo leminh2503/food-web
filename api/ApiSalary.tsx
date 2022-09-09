@@ -14,15 +14,32 @@ const path = {
   getMyListTotalSalary: "/total-salary/me",
   getListTotalSalary: "/total-salary/total-cost",
   getMyListOnsiteSalary: "/onsite-salary/me",
+  getListOnsiteSalary: "/onsite-salary",
   deleteOnsiteSalary: "/onsite-salary/",
   getMyListOTSalary: "/overtime-salary/me",
+  getListOTSalary: "/overtime-salary",
   deleteOTSalary: "/overtime-salary/",
   getMyProjectSalary: "/project-salary/me",
   getMyBonusSalary: "/bonus-salary/me",
   getMyDeductionDaySalary: "/deduction-day-off",
   getMyDeductionHourSalary: "/deduction-hour-late",
   getListProject: "/project",
+  createOTSalary: "/overtime-salary",
+  createOnsiteSalary: "/onsite-salary",
 };
+
+interface IBodyOTSalary {
+  user: number | string;
+  project: number;
+  hour: number;
+  date: string;
+}
+
+interface IBodyOnsiteSalary {
+  user: number | string;
+  onsitePlace: string;
+  date: string;
+}
 
 function getMyListTotalSalary(year: number): Promise<IDataSalary[]> {
   return fetcher({
@@ -40,14 +57,23 @@ function getListTotalSalary(year: number): Promise<IDataCost> {
   });
 }
 
+function createOnsiteSalary(data: IBodyOnsiteSalary[]): Promise<IDataOnsite[]> {
+  return fetcher({
+    url: path.createOnsiteSalary,
+    method: "post",
+    data,
+  });
+}
+
 function getMyListOnsiteSalary(
   year: number,
-  month: number
+  month: number,
+  userId?: number
 ): Promise<IDataOnsite[]> {
   return fetcher({
-    url: path.getMyListOnsiteSalary,
+    url: userId ? path.getListOnsiteSalary : path.getMyListOnsiteSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year}},
+    params: {filter: {date_month: month, date_year: year, userId}},
   });
 }
 
@@ -58,14 +84,23 @@ function deleteOnsiteSalary(id: number): Promise<any> {
   });
 }
 
+function createOTSalary(data: IBodyOTSalary[]): Promise<IDataOnsite[]> {
+  return fetcher({
+    url: path.createOTSalary,
+    method: "post",
+    data,
+  });
+}
+
 function getMyListOTSalary(
   year: number,
-  month: number
+  month: number,
+  userId?: number
 ): Promise<IDataOverTime[]> {
   return fetcher({
-    url: path.getMyListOTSalary,
+    url: userId ? path.getListOTSalary : path.getMyListOTSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year}},
+    params: {filter: {date_month: month, date_year: year, userId}},
   });
 }
 
@@ -117,15 +152,30 @@ function getMyDeductionHourSalary(
   });
 }
 
-function getListProject(name?: string): Promise<IDataProjectList[]> {
+function getListProject(
+  name?: string,
+  projectId?: number,
+  userId?: number
+): Promise<IDataProjectList[]> {
   return fetcher({
     url: path.getListProject,
     method: "get",
-    params: {filter: {name}},
+    params: {filter: {name, projectId: projectId, userId: userId}},
+  });
+}
+
+function getListProjectOfMe(id?: number): Promise<IDataProjectList[]> {
+  return fetcher({
+    url: `/project/${id}/project-participate`,
+    method: "get",
+    params: {id},
   });
 }
 
 export default {
+  createOnsiteSalary,
+  getListProjectOfMe,
+  createOTSalary,
   getListTotalSalary,
   getListProject,
   getMyDeductionDaySalary,

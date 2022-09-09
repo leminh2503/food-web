@@ -74,7 +74,8 @@ export function AcceptSalaryEmployee(): JSX.Element {
           query: {
             month: month,
             year: year,
-            idUser: idProject,
+            idUser: 1,
+            idProject: idProject,
           },
         });
       },

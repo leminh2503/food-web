@@ -17,12 +17,6 @@ export interface ISettingId {
   referCode?: string;
 }
 
-export interface IWorkType {
-  id: 1;
-  name: string;
-  description: string;
-}
-
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
@@ -83,6 +77,10 @@ export interface IDataProjectList {
   customer?: string;
   technicality?: string;
   description?: string;
+  project?: {
+    id: number;
+    name: string;
+  };
   projectManager?: {
     id: number;
     avatar: string;
@@ -117,6 +115,7 @@ export interface IDataOverTime {
   action?: boolean;
   hour?: number | string;
   projectName?: string;
+  projectId?: number;
   project?: {
     id: number;
     name: string;
@@ -201,6 +200,12 @@ export interface IDataDeductionDay {
   hourLateWork?: number;
   deductionSalaryDay?: number | string;
   deductionSalaryHour?: number | string;
+}
+
+export interface IWorkType {
+  id?: number;
+  name?: string;
+  description?: string;
 }
 
 export interface IDataSalary {
@@ -301,12 +306,6 @@ export interface IEvent {
 }
 
 export interface IPosition {
-  id?: number;
-  name?: string;
-  description?: string;
-}
-
-export interface IWorkType {
   id?: number;
   name?: string;
   description?: string;

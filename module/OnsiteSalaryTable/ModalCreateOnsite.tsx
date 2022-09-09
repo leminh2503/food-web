@@ -13,6 +13,7 @@ import ApiSalary from "@app/api/ApiSalary";
 interface IModalCreateOnsite {
   dataOnsite: IDataOnsite[];
   refetchDataOnsite: () => void;
+  idUser: number;
   month: number;
   year: number;
   isModalVisible: boolean;
@@ -138,6 +139,27 @@ export default function ModalCreateOnsite(
   };
 
   const handleOk = (): void => {
+    const body =
+      data?.map((el, index) => {
+        return {
+          user: props.idUser,
+          onsitePlace: el?.onsitePlace || "",
+          date:
+            props.year +
+            "-" +
+            formatNumber(props.month) +
+            "-" +
+            formatNumber(index + 1),
+        };
+      }) || [];
+    if (body.filter((el) => el.onsitePlace !== "")?.length > 0) {
+      ApiSalary.createOnsiteSalary(
+        body.filter((el) => el.onsitePlace !== "")
+      ).then((r) => {
+        props.refetchDataOnsite();
+        notification.success({message: "Tạo thành công"});
+      });
+    }
     props.handleOk();
   };
 

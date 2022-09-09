@@ -1,5 +1,5 @@
 import "../my-salary-detail/index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
@@ -39,11 +39,17 @@ export default function OnsiteSalaryTable({
   };
 
   const getListOnsiteSalary = (): Promise<IDataOnsite[]> => {
+    if (isManager) {
+      return ApiSalary.getMyListOnsiteSalary(year, month, Number(idUser));
+    }
     return ApiSalary.getMyListOnsiteSalary(year, month);
   };
 
-  const {data: dataOnsite, refetch} =
-    useQuery("listOnsiteSalaryUser", getListOnsiteSalary) || [];
+  const {
+    data: dataOnsite,
+    refetch,
+    isRefetching,
+  } = useQuery("listOnsiteSalaryUser" + isManager, getListOnsiteSalary) || [];
 
   const handleUpdate = (): void => {
     //
@@ -61,7 +67,7 @@ export default function OnsiteSalaryTable({
             <CheckCircleFilled
               className={
                 disableCheck
-                  ? "text-[20px] text-[#ADE597FF]"
+                  ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
                   : "text-[20px] text-[green]"
               }
               onClick={handleUpdate}
@@ -85,17 +91,24 @@ export default function OnsiteSalaryTable({
     {col1: "Duyệt"},
   ];
 
-  for (let i = 1; i <= getDayOnMonth(month, year); i++) {
-    let check = 0;
+  useEffect(() => {
+    setDisableCheck(true);
     dataOnsite?.map((el) => {
       if (el.state === 0) {
         setDisableCheck(false);
       }
+      return el;
+    });
+  }, [isRefetching]);
+
+  for (let i = 1; i <= getDayOnMonth(month, year); i++) {
+    let check = 0;
+    dataOnsite?.map((el) => {
       if (
         el.date ===
         year + "-" + formatNumber(month) + "-" + formatNumber(i)
       ) {
-        check++;
+        check += 1;
         columns.push({
           title: "",
           key: i,
@@ -109,7 +122,7 @@ export default function OnsiteSalaryTable({
               return <span>{findDayOnWeek(year, month, i)}</span>;
             }
             if (index.col1 === "Tên dự án") {
-              return <span>{el.onsitePlace}</span>;
+              return <span>{el?.onsitePlace}</span>;
             }
             return (
               <span
@@ -157,6 +170,7 @@ export default function OnsiteSalaryTable({
   return (
     <Card className="max-w-full">
       <ModalCreateOnsite
+        idUser={Number(idUser)}
         dataOnsite={dataOnsite || []}
         month={month}
         refetchDataOnsite={refetch}

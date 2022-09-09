@@ -1,9 +1,9 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Input, notification, Table} from "antd";
+import {Input, notification, Select, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {IDataOverTime} from "@app/types";
+import {IDataOverTime, IDataProjectList} from "@app/types";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import {CloseCircleOutlined} from "@ant-design/icons";
@@ -15,9 +15,11 @@ interface IModalCreateOnsite {
   refetchDataOT: () => void;
   month: number;
   year: number;
+  idUser: number;
   isModalVisible: boolean;
   handleOk: () => void;
   handleCancel: () => void;
+  listProject?: IDataProjectList[];
 }
 
 export default function ModalCreateOverTime(
@@ -42,6 +44,7 @@ export default function ModalCreateOverTime(
             hour: el.hour,
             action: true,
             id: el.id,
+            projectId: el?.project?.id,
             projectName: el?.project?.name || "",
           });
           check += 1;
@@ -89,7 +92,7 @@ export default function ModalCreateOverTime(
             type="number"
             value={_record.hour}
             onChange={(e) => {
-              handleChangeOnsite(e, _record.day);
+              handleChangeOT("hour", e.target.value, _record.day);
             }}
           />
         );
@@ -100,6 +103,23 @@ export default function ModalCreateOverTime(
       dataIndex: "projectName",
       key: "ProjectName",
       align: "center",
+      render: (index, _record): JSX.Element => {
+        return (
+          <Select
+            value={_record?.projectId}
+            style={{width: 120}}
+            onChange={(e) =>
+              handleChangeOT("project", e.toString(), _record.day)
+            }
+          >
+            {props?.listProject?.map((el, index) => (
+              <Select.Option key={index} value={el?.project?.id}>
+                {el?.project?.name}
+              </Select.Option>
+            ))}
+          </Select>
+        );
+      },
     },
     {
       title: "",
@@ -128,13 +148,19 @@ export default function ModalCreateOverTime(
     );
   };
 
-  const handleChangeOnsite = (
-    e: React.ChangeEvent<HTMLInputElement>,
+  const handleChangeOT = (
+    type: string,
+    e: string,
     day: string | number | undefined
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
-        el.hour = e.target.value;
+        if (type === "hour") {
+          el.hour = e;
+        }
+        if (type === "project") {
+          el.projectId = Number(e);
+        }
       }
       return el;
     });
@@ -148,14 +174,36 @@ export default function ModalCreateOverTime(
     });
   };
 
-  const handleOk = (): void => {
+  const handleOkModal = (): void => {
+    const body =
+      data?.map((el, index) => {
+        return {
+          user: props.idUser,
+          project: el?.projectId || -1,
+          hour: Number(el.hour) || 0,
+          date:
+            props.year +
+            "-" +
+            formatNumber(props.month) +
+            "-" +
+            formatNumber(index + 1),
+        };
+      }) || [];
+    if (body.filter((el) => el.project !== -1)?.length > 0) {
+      ApiSalary.createOTSalary(body.filter((el) => el.project !== -1)).then(
+        (r) => {
+          props.refetchDataOT();
+          notification.success({message: "Tạo thành công"});
+        }
+      );
+    }
     props.handleOk();
   };
 
   return (
     <ModalCustom
       isModalVisible={props.isModalVisible}
-      handleOk={handleOk}
+      handleOk={handleOkModal}
       handleCancel={props.handleCancel}
       title="Nhập lương Onsite"
       content={renderContent()}

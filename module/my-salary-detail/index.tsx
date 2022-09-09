@@ -9,6 +9,9 @@ import OtherSalaryTable from "@app/module/my-salary-detail/OtherSalaryTable";
 import OverTimeSalaryTable from "@app/module/OverTimeSalaryTable";
 import ApiUser from "@app/api/ApiUser";
 import DeductionSalaryTable from "@app/module/my-salary-detail/DeductionSalaryTable";
+import {IDataProjectList} from "@app/types";
+import ApiSalary from "@app/api/ApiSalary";
+import {useQuery} from "react-query";
 
 export function MySalaryDetail(): JSX.Element {
   const router = useRouter();
@@ -16,6 +19,12 @@ export function MySalaryDetail(): JSX.Element {
   const {year} = router.query;
   const baseSalary = ApiUser.getInfoMe()?.baseSalary?.toLocaleString();
   const manageSalary = ApiUser.getInfoMe()?.manageSalary?.toLocaleString();
+  const userId = ApiUser.getInfoMe()?.id;
+
+  const getListProject = (): Promise<IDataProjectList[]> => {
+    return ApiSalary.getListProjectOfMe(Number(userId));
+  };
+  const {data: listProject} = useQuery("listProjectMe", getListProject) || [];
 
   return (
     <div>
@@ -49,6 +58,7 @@ export function MySalaryDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <OverTimeSalaryTable
+            listProject={listProject}
             idUser={ApiUser.getInfoMe()?.id || ""}
             month={Number(month)}
             year={Number(year)}
