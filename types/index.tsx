@@ -17,6 +17,12 @@ export interface ISettingId {
   referCode?: string;
 }
 
+export interface IWorkType {
+  id?: number;
+  name?: string;
+  description?: string;
+}
+
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
@@ -28,6 +34,11 @@ export enum IState {
   INACTIVE,
   ACTIVE,
   DELETED,
+}
+
+export enum TypeOfAction {
+  EDIT = "EDIT",
+  ADD = "ADD",
 }
 
 export interface IDataCost {
@@ -193,35 +204,6 @@ export interface IDataSalary {
   updatedAt: string;
 }
 
-export interface IUserLogin {
-  date?: string;
-  createdAt?: string;
-  month?: number;
-  id?: string;
-  fullName?: string;
-  state?: IState;
-  email?: string;
-  dateOfBirth?: string;
-  positionId?: number;
-  avatar?: string;
-  personId?: number;
-  address?: string;
-  phoneNumber?: string;
-  role?: {
-    id?: IAccountRole;
-    roleName?: string;
-  };
-  phoneNumberRelative?: string;
-  baseSalary?: number;
-  manageSalary?: number;
-  gender?: string;
-}
-
-export interface IDataProjectSalary {
-  projectName?: string;
-  projectSalary?: number | string;
-}
-
 export interface IProfile {
   id?: string;
   avatar?: string;
@@ -241,6 +223,51 @@ export interface IProfile {
   gender?: string;
   englishCertificate?: string;
   englishScore?: number;
+}
+
+export interface IUserLogin {
+  date?: string;
+  createdAt?: string;
+  month?: number;
+  id?: string;
+  fullName?: string;
+  state?: number;
+  email?: string;
+  dateOfBirth?: string;
+  position?: IWorkType | null;
+  avatar?: string;
+  personId?: string;
+  address?: string;
+  phoneNumber?: string;
+  role?: {
+    id?: IAccountRole;
+    roleName?: string;
+  };
+  phoneNumberRelative?: string;
+  baseSalary?: number;
+  manageSalary?: number;
+  gender?: string;
+  manager?: IProfile;
+  workType?: IWorkType | null;
+  positionId?: number;
+  workTypeId?: number;
+  deductionOwn?: number;
+  familyCircumstances?: any;
+}
+
+export interface IFamilyCircumstance {
+  id?: number | null;
+  userId: number;
+  fullName: string;
+  IDCode: number | null;
+  yearOfBirth: string;
+  relationship: string;
+  phoneNumber: string;
+}
+
+export interface IDataProjectSalary {
+  projectName?: string;
+  projectSalary?: number | string;
 }
 
 export interface IAccountInfo {
@@ -283,12 +310,6 @@ export interface IPosition {
   description?: string;
 }
 
-export interface IWorkType {
-  id?: number;
-  name?: string;
-  description?: string;
-}
-
 export interface IProject {
   id?: number;
   name?: string;
@@ -313,4 +334,17 @@ export interface ISetStateModal {
   content?: string;
   name?: string;
   description?: string;
+}
+
+export enum EUserGender {
+  OTHER = "Other",
+  MALE = "Male",
+  FEMALE = "Female",
+}
+
+export enum EEnglishCertificate {
+  TOEIC = "Toeic",
+  TOEFL = "Toefl",
+  IELTS = "Ielts",
+  OTHER = "Other",
 }

@@ -1,0 +1,12 @@
+.account-manager-page {
+  .light-status-account {
+    width: 15px;
+    height: 15px;
+    background: #ccc;
+    border-radius: 50%;
+    margin: auto;
+  }
+  .light-status-account.active {
+    background: #28a326;
+  }
+}
