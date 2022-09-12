@@ -1,6 +1,6 @@
 import "./index.scss";
 import {Input} from "antd";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import classNames from "classnames";
 
 interface InputModalProps {
@@ -12,9 +12,11 @@ interface InputModalProps {
   required?: boolean;
   keyValue: string;
   type?: string;
+  rules?: any;
 }
 
 export function InputModal2({
+  rules,
   className,
   label,
   placeholder,
@@ -24,12 +26,18 @@ export function InputModal2({
   keyValue,
   type,
 }: InputModalProps): JSX.Element {
+  const [dataInput, setDataInput] = useState(value);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange((prev: any) => ({
       ...prev,
       [keyValue]: e.target.value,
     }));
   };
+
+  useEffect(() => {
+    setDataInput(value);
+  }, [value]);
+  // console.log(value, keyValue);
 
   return (
     <div className={classNames("input-modal-container2", className)}>
@@ -38,15 +46,17 @@ export function InputModal2({
       </h4>
       {type === "password" ? (
         <Input.Password
+          name={keyValue}
           placeholder={placeholder}
           onChange={handleChange}
           value={value}
         />
       ) : (
         <Input
+          name={keyValue}
           placeholder={placeholder}
           onChange={handleChange}
-          value={value}
+          value={dataInput}
         />
       )}
     </div>

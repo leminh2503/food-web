@@ -1,11 +1,10 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import React, {useEffect, useState} from "react";
-import {SelectInput} from "@app/components/Modal/SelectInput";
-import {InputModal2} from "@app/components/Modal/InputModal2";
-import {DateInput2} from "@app/components/Modal/DateInput2";
+import React, {useEffect} from "react";
 import {IRegisterAccountBody} from "@app/api/ApiUser";
 import {EEnglishCertificate, EUserGender} from "@app/types";
+import {Button, DatePicker, Form, Input, Select} from "antd";
+import {defaultValidateMessages, layout} from "@app/validate/user";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -24,134 +23,176 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
     listWorkTypeConvert,
   } = props;
 
-  const defaultFormValues = {
-    password: "123123",
-    gender: EUserGender.OTHER,
-    englishCertificate: EEnglishCertificate.OTHER,
-    englishScore: 0,
-    workRoom: "",
-    personId: "",
-    dateOfBirth: "",
-    position: null,
-    workType: null,
-    address: "",
-    phoneNumber: "",
-    phoneNumberRelative: "",
-    baseSalary: 0,
-    manageSalary: 0,
-    email: "",
-    employeeCode: "",
-    fullName: "",
+  const [form] = Form.useForm();
+
+  const onFinish = (fieldsValue: IRegisterAccountBody) => {
+    const data = {
+      password: "123123",
+      gender: EUserGender.OTHER,
+      englishCertificate: EEnglishCertificate.OTHER,
+      englishScore: 0,
+      workRoom: "",
+      personId: fieldsValue.personId,
+      dateOfBirth: fieldsValue.dateOfBirth,
+      position: fieldsValue.position,
+      workType: fieldsValue.workType,
+      address: fieldsValue.address,
+      phoneNumber: fieldsValue.phoneNumber,
+      phoneNumberRelative: fieldsValue.phoneNumberRelative,
+      baseSalary: fieldsValue.baseSalary,
+      manageSalary: 0,
+      email: fieldsValue.email,
+      employeeCode: fieldsValue.employeeCode,
+      fullName: fieldsValue.fullName,
+    };
+    handleConfirmAddEmployee(data);
   };
 
-  const [adString, setAdString] =
-    useState<IRegisterAccountBody>(defaultFormValues);
-
   useEffect(() => {
-    setAdString(defaultFormValues);
+    form.resetFields();
   }, [isModalVisible]);
 
   const renderContent = (): JSX.Element => {
     return (
-      <div className="modal-info">
-        <InputModal2
-          label="Họ và tên"
-          required
-          value={adString.fullName || ""}
-          onChange={setAdString}
-          keyValue="fullName"
-          placeholder="Nhập họ và tên"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Mã nhân viên"
-          required
-          value={adString.employeeCode || ""}
-          onChange={setAdString}
-          keyValue="employeeCode"
-          placeholder="Nhập họ và tên"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Email"
-          required
-          value={adString.email || ""}
-          onChange={setAdString}
-          keyValue="email"
-          placeholder="Nhập email"
-          className="pt-12"
-        />
-        <DateInput2
-          className="pt-12"
-          keyValue="dateOfBirth"
-          label="Ngày sinh"
-          value={adString.dateOfBirth ?? ""}
-          onChange={() => {
-            console.log(123);
-          }}
-        />
-        <InputModal2
-          label="Số điện thoại"
-          value={adString.phoneNumber || ""}
-          required
-          onChange={setAdString}
-          keyValue="phoneNumber"
-          placeholder="Nhập số điện thoại"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Số điện thoại người thân"
-          value={adString.phoneNumberRelative || ""}
-          required
-          onChange={setAdString}
-          keyValue="phoneNumberRelative"
-          placeholder="Nhập số điện thoại người thân"
-          className="pt-12"
-        />
-        <InputModal2
-          label="CMND/CCCD"
-          required
-          value={adString.personId?.toString() || ""}
-          onChange={setAdString}
-          keyValue="personId"
-          placeholder="Nhập CMND/CCCD"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Địa chỉ"
-          value={adString.address || ""}
-          onChange={setAdString}
-          keyValue="address"
-          placeholder="Nhập địa chỉ"
-          className="pt-12"
-        />
-        <SelectInput
-          className="pt-12"
-          require
-          label="Chức vụ"
-          keyValue="position"
-          setValue={setAdString}
-          value={adString?.position || 0}
-          data={listPositionConvert}
-        />
-        <SelectInput
-          className="pt-12"
-          require
-          label="Vị trí"
-          keyValue="workType"
-          setValue={setAdString}
-          value={adString?.workType || 0}
-          data={listWorkTypeConvert}
-        />
-        <InputModal2
-          label="Lương cứng"
-          required
-          value={adString.baseSalary?.toString() || ""}
-          onChange={setAdString}
-          keyValue="baseSalary"
-          placeholder="Nhập lương cứng"
-          className="pt-12"
-        />
+      <div className="modal-info modal-add-account-form">
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
+        >
+          <Form.Item
+            name="fullName"
+            label="Họ và tên"
+            rules={[{required: true}, {whitespace: true}, {min: 1}, {max: 30}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="employeeCode"
+            label="Mã nhân viên"
+            rules={[{required: true}, {whitespace: true}, {max: 255}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {type: "email"},
+              {min: 6},
+              {max: 255},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="dateOfBirth" label="Ngày sinh">
+            <DatePicker format="DD/MM/YYYY" />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumber"
+            label="Số điện thoại"
+            rules={[
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Số điện thoại không đúng định dạng!",
+              },
+              {min: 10},
+              {max: 11},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumberRelative"
+            label="Số điện thoại người thân"
+            rules={[
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Số điện thoại không đúng định dạng!",
+              },
+              {min: 10},
+              {max: 11},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="personId"
+            label="CMND/CCCD"
+            rules={[
+              {
+                pattern: /^(?:\d*)$/,
+                message: "CMND/CCCD không đúng định dạng!",
+              },
+              {min: 12},
+              {max: 13},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="address" label="Địa chỉ">
+            <Input />
+          </Form.Item>
+          <Form.Item name="position" label="Chức vụ" rules={[{required: true}]}>
+            <Select>
+              {listPositionConvert?.map((e) => (
+                <Select.Option key={"position" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Vị trí" name="workType" rules={[{required: true}]}>
+            <Select>
+              {listWorkTypeConvert?.map((e) => (
+                <Select.Option key={"workType" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="baseSalary"
+            label="Lương cơ bản"
+            rules={[
+              {required: true},
+              {
+                pattern: /^[1-9]\d*$/,
+                message: "Vui lòng nhập vào số nguyên!",
+              },
+              {
+                max: 11,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item>
+            <div className="footer-modal">
+              <Button
+                className="button-cancel mr-3"
+                type="primary"
+                onClick={() => {
+                  handleCancelAddEmployee();
+                  form.resetFields();
+                }}
+              >
+                Hủy
+              </Button>
+              <Button
+                className="button-confirm"
+                type="primary"
+                htmlType="submit"
+              >
+                Xác Nhận
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -159,12 +200,13 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => {
-        handleConfirmAddEmployee(adString);
+      handleCancel={() => {
+        handleCancelAddEmployee();
+        form.resetFields();
       }}
-      handleCancel={handleCancelAddEmployee}
       title="Tạo tài khoản"
       content={renderContent()}
+      footer={false}
     />
   );
 }

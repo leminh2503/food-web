@@ -1,11 +1,11 @@
 import React from "react";
 import {Filter} from "@app/components/Filter";
-import {useQueryClient} from "react-query";
 
 interface FilterLeaveWorkProps {
   setFilterState: React.Dispatch<React.SetStateAction<number>>;
   setFilterText: React.Dispatch<React.SetStateAction<string>>;
   setFilterPosition: React.Dispatch<React.SetStateAction<number>>;
+  handleOnSearchText: (value: string) => void;
   listPositionConvertForFilter: {
     title: string;
     value: number;
@@ -23,6 +23,7 @@ export function FilterAccount({
   setFilterState,
   setFilterText,
   setFilterPosition,
+  handleOnSearchText,
   listPositionConvertForFilter,
 }: FilterLeaveWorkProps): JSX.Element {
   const dataFilterState: DataFilter[] = [
@@ -39,7 +40,6 @@ export function FilterAccount({
     },
     ...listPositionConvertForFilter,
   ];
-  const queryClient = useQueryClient();
 
   return (
     <Filter
@@ -52,10 +52,7 @@ export function FilterAccount({
             setFilterText(e.target.value);
           },
           handleOnSearch: (value): void => {
-            setFilterText(value);
-            queryClient.refetchQueries({
-              queryKey: "listUserAccount",
-            });
+            handleOnSearchText(value);
           },
         },
         {
