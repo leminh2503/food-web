@@ -1,4 +1,4 @@
-import "./index.scss";
+import "../my-salary-detail/index.scss";
 import React from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
@@ -25,7 +25,7 @@ export default function OtherSalaryTable({
       key: "salary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record?.salary?.toLocaleString()}</div>
+        <div>{record?.salary?.toLocaleString("en-US")}</div>
       ),
     },
     {

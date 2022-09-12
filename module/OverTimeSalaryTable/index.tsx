@@ -1,6 +1,6 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
-import {Card, Table} from "antd";
+import {Card, Modal, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
@@ -8,7 +8,7 @@ import ModalCreateOverTime from "./ModalCreateOverTime";
 import {CheckCircleFilled, EditFilled} from "@ant-design/icons";
 import {IDataOverTime, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
-import {useQuery} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 
 export default function OverTimeSalaryTable({
@@ -17,15 +17,20 @@ export default function OverTimeSalaryTable({
   isManager,
   idUser,
   listProject,
+  projectName,
+  idProject,
 }: {
+  idProject?: number;
   listProject?: IDataProjectList[];
   idUser: number | string;
   isManager?: boolean;
   month: number;
   year: number;
+  projectName?: string;
 }): JSX.Element {
-  const [disableCheck, setDisableCheck] = useState(true);
+  const [disableCheck] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const updateDataOT = useMutation(ApiSalary.updateOTSalary);
 
   const showModal = (): void => {
     setIsModalVisible(true);
@@ -53,8 +58,23 @@ export default function OverTimeSalaryTable({
   } = useQuery("listOTSalaryUser" + isManager, getListOTSalary) || [];
 
   const handleUpdate = (): void => {
-    //
+    const body = dataOT?.map((el) => {
+      el.state = 1;
+      return el;
+    });
+    if (body) {
+      updateDataOT.mutate(body, {onSuccess: refetch});
+    }
   };
+
+  useEffect(() => {
+    // dataOT?.map((el) => {
+    //   if (el.state === 0) {
+    //     setDisableCheck(false);
+    //   }
+    //   return el;
+    // });
+  }, [isRefetching]);
 
   const columns: ColumnsType<IDataOverTime[]> = [
     {
@@ -71,7 +91,15 @@ export default function OverTimeSalaryTable({
                   ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
                   : "text-[20px] text-[green]"
               }
-              onClick={handleUpdate}
+              onClick={(): void => {
+                if (!disableCheck) {
+                  Modal.confirm({
+                    title: "Bạn muốn duyệt tất cả lương OT ?",
+                    centered: true,
+                    onOk: handleUpdate,
+                  });
+                }
+              }}
               disabled={disableCheck}
             />
           )}
@@ -84,16 +112,6 @@ export default function OverTimeSalaryTable({
       fixed: "left",
     },
   ];
-
-  useEffect(() => {
-    setDisableCheck(true);
-    dataOT?.map((el) => {
-      if (el.state === 0) {
-        setDisableCheck(false);
-      }
-      return el;
-    });
-  }, [isRefetching]);
 
   const data: any = [
     {col1: "Ngày"},
@@ -187,6 +205,9 @@ export default function OverTimeSalaryTable({
         isModalVisible={isModalVisible}
         handleOk={handleOk}
         handleCancel={handleCancel}
+        isManager={isManager}
+        projectName={projectName}
+        idProject={idProject}
       />
       <div className="mb-4 font-bold">Lương Overtime :</div>
       <Table

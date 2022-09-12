@@ -191,6 +191,29 @@ export interface IDataDeductionDay {
   deductionSalaryHour?: number | string;
 }
 
+export interface IDataSalaryToTalOfUser {
+  id: number;
+  baseSalary: number;
+  onsiteSalary: number;
+  overtimeSalary: number;
+  projectSalary: number;
+  bonusSalary: number;
+  manageSalary: number;
+  deductionSalary: number;
+  taxSalary: number;
+  date: string;
+  state: number;
+  user: {
+    id: number;
+    avatar: string;
+    fullName: string;
+    email: string;
+  };
+  totalSalary: number;
+  detailTaxSalary: object;
+  afterTaxSalary: number;
+}
+
 export interface IDataSalary {
   afterTaxSalary: number;
   baseSalary: number;

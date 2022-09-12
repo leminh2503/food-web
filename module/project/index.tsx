@@ -122,7 +122,7 @@ export function Project(): JSX.Element {
         dataSource={dataProject?.data}
         bordered
         pagination={{
-          total: dataProject?.meta.totalItems,
+          total: dataProject?.meta?.totalItems,
           defaultPageSize: 50,
           showSizeChanger: true,
           pageSizeOptions: ["50", "100", "150", "200"],

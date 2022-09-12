@@ -1,4 +1,4 @@
-import "./index.scss";
+import "../my-salary-detail/index.scss";
 import React from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
@@ -46,7 +46,7 @@ export default function DeductionSalaryTable({
       key: "deductionSalaryDay",
       align: "center",
       render: (_, record, index) => (
-        <div>{record?.deductionSalaryDay?.toLocaleString()} VND</div>
+        <div>{record?.deductionSalaryDay?.toLocaleString("en-US")} VND</div>
       ),
     },
   ];
@@ -64,7 +64,7 @@ export default function DeductionSalaryTable({
       key: "deductionSalaryHour",
       align: "center",
       render: (_, record, index) => (
-        <div>{record?.deductionSalaryHour?.toLocaleString()} VND</div>
+        <div>{record?.deductionSalaryHour?.toLocaleString("en-US")} VND</div>
       ),
     },
   ];

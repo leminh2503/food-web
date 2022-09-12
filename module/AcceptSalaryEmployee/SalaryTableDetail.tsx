@@ -8,9 +8,7 @@ import {formatNumber} from "@app/utils/fomat/FormatNumber";
 
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
-  const {month} = router.query;
-  const {year} = router.query;
-  const {idUser} = router.query;
+  const {month, projectName, year, idUser, userName, idProject} = router.query;
 
   return (
     <div>
@@ -24,13 +22,14 @@ export function SalaryTableDetail(): JSX.Element {
       </div>
       <div className="flex items-center mb-6">
         <span className="ml-2 text-[18px] font-bold">
-          Nhân viên : {formatNumber(Number(month)) + "/" + year}
+          Nhân viên : {userName}
         </span>
       </div>
       {month && year && (
         <div className="mt-4">
           <OnsiteSalaryTable
             idUser={idUser?.toString() || ""}
+            projectName={projectName?.toString() || ""}
             isManager
             month={Number(month)}
             year={Number(year)}
@@ -40,10 +39,12 @@ export function SalaryTableDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <OverTimeSalaryTable
+            projectName={projectName?.toString() || ""}
             idUser={idUser?.toString() || ""}
             isManager
             month={Number(month)}
             year={Number(year)}
+            idProject={Number(idProject || 0)}
           />
         </div>
       )}

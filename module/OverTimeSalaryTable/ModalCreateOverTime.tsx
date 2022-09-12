@@ -20,6 +20,9 @@ interface IModalCreateOnsite {
   handleOk: () => void;
   handleCancel: () => void;
   listProject?: IDataProjectList[];
+  isManager?: boolean;
+  idProject?: number;
+  projectName?: string;
 }
 
 export default function ModalCreateOverTime(
@@ -44,6 +47,7 @@ export default function ModalCreateOverTime(
             hour: el.hour,
             action: true,
             id: el.id,
+            state: el.state,
             projectId: el?.project?.id,
             projectName: el?.project?.name || "",
           });
@@ -58,6 +62,7 @@ export default function ModalCreateOverTime(
           hour: "",
           action: false,
           id: 0,
+          state: 0,
           projectName: "",
         });
       }
@@ -86,7 +91,9 @@ export default function ModalCreateOverTime(
       width: "90px",
       align: "center",
       render: (index, _record): JSX.Element => {
-        return (
+        return _record.state === 1 ? (
+          <span>{_record.hour}</span>
+        ) : (
           <Input
             min={0}
             type="number"
@@ -104,7 +111,9 @@ export default function ModalCreateOverTime(
       key: "ProjectName",
       align: "center",
       render: (index, _record): JSX.Element => {
-        return (
+        return props.isManager || _record.state === 1 ? (
+          <span>{props?.projectName || _record.projectName}</span>
+        ) : (
           <Select
             value={_record?.projectId}
             style={{width: 120}}
@@ -128,7 +137,8 @@ export default function ModalCreateOverTime(
       align: "center",
       width: "20px",
       render: (index, _record): JSX.Element => {
-        return _record.action ? (
+        return (_record.action && _record.state !== 1) ||
+          (_record.action && props.isManager) ? (
           <CloseCircleOutlined
             onClick={() => deleteOnsite(_record.id)}
             className="text-[red] text-[20px]"
@@ -179,7 +189,9 @@ export default function ModalCreateOverTime(
       data?.map((el, index) => {
         return {
           user: props.idUser,
-          project: el?.projectId || -1,
+          project: props?.isManager
+            ? props?.idProject || -1
+            : el?.projectId || -1,
           hour: Number(el.hour) || 0,
           date:
             props.year +
@@ -190,12 +202,12 @@ export default function ModalCreateOverTime(
         };
       }) || [];
     if (body.filter((el) => el.project !== -1)?.length > 0) {
-      ApiSalary.createOTSalary(body.filter((el) => el.project !== -1)).then(
-        (r) => {
-          props.refetchDataOT();
-          notification.success({message: "Tạo thành công"});
-        }
-      );
+      ApiSalary.createOTSalary(
+        body.filter((el) => el.project !== -1 && el.hour !== 0)
+      ).then((r) => {
+        props.refetchDataOT();
+        notification.success({message: "Tạo thành công"});
+      });
     }
     props.handleOk();
   };
@@ -205,7 +217,7 @@ export default function ModalCreateOverTime(
       isModalVisible={props.isModalVisible}
       handleOk={handleOkModal}
       handleCancel={props.handleCancel}
-      title="Nhập lương Onsite"
+      title="Sửa bảng lương Overtime"
       content={renderContent()}
     />
   );

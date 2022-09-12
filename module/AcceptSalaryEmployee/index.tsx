@@ -1,7 +1,7 @@
 import "./index.scss";
 import {Select, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {useRouter} from "next/router";
 import baseURL from "@app/config/baseURL";
@@ -15,11 +15,12 @@ export function AcceptSalaryEmployee(): JSX.Element {
   const date = new Date();
   const userId = ApiUser.getInfoMe()?.id;
   const [year, setYear] = useState<number>(date.getFullYear());
-  const [idProject, setIdProject] = useState<string>();
+  const [idProject, setIdProject] = useState<string>("0");
+  const [nameProject, setNameProject] = useState<string>();
   const [month, setMonth] = useState<number>(date.getMonth() + 1);
 
   const getListTotalSalary = (): Promise<any> => {
-    return ApiSalary.getMyListTotalSalary(year);
+    return ApiSalary.getUserOfProject(Number(idProject), year, month);
   };
 
   const getListProject = (): Promise<IDataProjectList[]> => {
@@ -28,7 +29,8 @@ export function AcceptSalaryEmployee(): JSX.Element {
 
   const {data: listProject} = useQuery("listProject", getListProject) || [];
 
-  const {data} = useQuery("listTotalSalaryUser", getListTotalSalary) || [];
+  const {data, refetch: listUserRefetch} =
+    useQuery("listUser", getListTotalSalary, {enabled: false}) || [];
 
   const dataYear = (): JSX.Element => {
     const year = [];
@@ -74,8 +76,10 @@ export function AcceptSalaryEmployee(): JSX.Element {
           query: {
             month: month,
             year: year,
-            idUser: 1,
+            idUser: record?.userId,
             idProject: idProject,
+            projectName: nameProject,
+            userName: record?.username,
           },
         });
       },
@@ -88,33 +92,71 @@ export function AcceptSalaryEmployee(): JSX.Element {
       dataIndex: "index",
       key: "index",
       align: "center",
+      width: "5%",
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
+      title: "Dự án",
+      dataIndex: "nameProject",
+      key: "nameProject",
+      align: "center",
+      width: "30%",
+    },
+    {
       title: "Tên nhân viên",
-      dataIndex: "nameEmployee",
+      dataIndex: "username",
       key: "month",
       align: "center",
+      width: "23.75%",
     },
     {
       title: "Số ngày Onsite",
       dataIndex: "totalDayOnsite",
       key: "totalDayOnsite",
       align: "center",
+      width: "23.75%",
     },
     {
       title: "Số giờ OT",
       dataIndex: "totalHourOT",
       key: "totalHourOT",
       align: "center",
+      width: "23.75%",
     },
   ];
 
+  useEffect(() => {
+    if (idProject && year && month) {
+      listUserRefetch();
+    }
+  }, [idProject, year, month]);
+
+  const dataSource = data?.map((el: any, index: number) => {
+    return {
+      index: index + 1,
+      userId: el?.user?.id,
+      username: el?.user?.fullName,
+      nameProject: nameProject,
+      totalHourOT: el?.overtime,
+      totalDayOnsite: el?.onsite,
+    };
+  });
   return (
     <div>
       <div className="flex items-end">
         <span className="text-[15px] font-medium mr-2">Dự án : </span>
-        <Select style={{width: 120}} onChange={(e) => setIdProject(e)}>
+        <Select
+          style={{width: 120}}
+          onChange={(e) => {
+            const namePj = listProject?.filter(
+              (el) => Number(el.id) === Number(e)
+            );
+            if (namePj) {
+              setNameProject(namePj[0].name);
+            }
+            setIdProject(e);
+          }}
+        >
           {listProject?.map((el, index) =>
             el?.projectManager?.id === userId ? (
               <Select.Option key={index} value={el?.id}>
@@ -142,7 +184,7 @@ export function AcceptSalaryEmployee(): JSX.Element {
       </div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={dataSource || []}
         bordered
         className="hover-pointer mt-4"
         onRow={onRow}

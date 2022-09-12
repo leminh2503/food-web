@@ -7,8 +7,11 @@ import {useQuery} from "react-query";
 import Config from "@app/config";
 import ApiSalary from "@app/api/ApiSalary";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
+import baseURL from "@app/config/baseURL";
+import {useRouter} from "next/router";
 
 export function AdminSalaryTable(): JSX.Element {
+  const router = useRouter();
   const date = new Date();
   const [year, setYear] = useState<number>(date.getFullYear());
 
@@ -37,13 +40,13 @@ export function AdminSalaryTable(): JSX.Element {
   const onRow = (record: any): {onDoubleClick: () => void} => {
     return {
       onDoubleClick: (): void => {
-        // router.push({
-        //   pathname: baseURL.SALARY.SALARY_DETAIL,
-        //   query: {
-        //     month: record.month,
-        //     year: year,
-        //   },
-        // });
+        router.push({
+          pathname: baseURL.SALARY.LIST_EMPLOYEE,
+          query: {
+            month: record.month,
+            year: year,
+          },
+        });
       },
     };
   };
@@ -71,7 +74,7 @@ export function AdminSalaryTable(): JSX.Element {
       key: "totalSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record?.totalSalary?.toLocaleString()} VND</div>
+        <div>{record?.totalSalary?.toLocaleString("en-US")} VND</div>
       ),
     },
   ];

@@ -19,6 +19,7 @@ interface IModalCreateOnsite {
   isModalVisible: boolean;
   handleOk: () => void;
   handleCancel: () => void;
+  isManager?: boolean;
 }
 
 export default function ModalCreateOnsite(
@@ -43,6 +44,7 @@ export default function ModalCreateOnsite(
             onsitePlace: el.onsitePlace,
             action: true,
             id: el.id,
+            state: el.state,
           });
           check += 1;
         }
@@ -54,6 +56,7 @@ export default function ModalCreateOnsite(
           dayOnWeek: findDayOnWeek(props.year, props.month, i),
           onsitePlace: "",
           action: false,
+          state: 0,
           id: 0,
         });
       }
@@ -81,13 +84,15 @@ export default function ModalCreateOnsite(
       key: "onsitePlace",
       align: "center",
       render: (index, _record): JSX.Element => {
-        return (
+        return _record.state !== 1 ? (
           <Input
             value={_record.onsitePlace}
             onChange={(e) => {
               handleChangeOnsite(e, _record.day);
             }}
           />
+        ) : (
+          <span>{_record.onsitePlace}</span>
         );
       },
     },
@@ -98,7 +103,8 @@ export default function ModalCreateOnsite(
       align: "center",
       width: "20px",
       render: (index, _record): JSX.Element => {
-        return _record.action ? (
+        return (_record.action && _record.state !== 1) ||
+          (_record.action && props.isManager) ? (
           <CloseCircleOutlined
             onClick={() => deleteOnsite(_record.id)}
             className="text-[red] text-[20px]"
@@ -168,7 +174,7 @@ export default function ModalCreateOnsite(
       isModalVisible={props.isModalVisible}
       handleOk={handleOk}
       handleCancel={props.handleCancel}
-      title="Nhập lương Onsite"
+      title="Sửa bảng lương Onsite"
       content={renderContent()}
     />
   );

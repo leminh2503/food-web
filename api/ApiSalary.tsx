@@ -8,9 +8,11 @@ import {
   IDataProject,
   IDataProjectList,
   IDataSalary,
+  IDataSalaryToTalOfUser,
 } from "@app/types";
 
 const path = {
+  getListSalaryTotalUser: "/total-salary",
   getMyListTotalSalary: "/total-salary/me",
   getListTotalSalary: "/total-salary/total-cost",
   getMyListOnsiteSalary: "/onsite-salary/me",
@@ -26,6 +28,10 @@ const path = {
   getListProject: "/project",
   createOTSalary: "/overtime-salary",
   createOnsiteSalary: "/onsite-salary",
+  createTotalSalary: "/total-salary",
+  getUserOfProject: "/salary",
+  updateOnsiteSalary: "/onsite-salary/update-salaries",
+  updateOTSalary: "/overtime-salary/update-salaries",
 };
 
 interface IBodyOTSalary {
@@ -41,11 +47,30 @@ interface IBodyOnsiteSalary {
   date: string;
 }
 
+function getListSalaryTotalUser(
+  year: number,
+  month: number
+): Promise<IDataSalaryToTalOfUser[]> {
+  return fetcher({
+    url: path.getListSalaryTotalUser,
+    method: "get",
+    params: {filter: {date_month: month, date_year: year}},
+  });
+}
+
 function getMyListTotalSalary(year: number): Promise<IDataSalary[]> {
   return fetcher({
     url: path.getMyListTotalSalary,
     method: "get",
     params: {filter: {date_year: year}},
+  });
+}
+
+function createTotalSalary(id: number, date: string): Promise<IDataSalary[]> {
+  return fetcher({
+    url: path.createTotalSalary,
+    method: "post",
+    data: {user: id, date},
   });
 }
 
@@ -77,6 +102,14 @@ function getMyListOnsiteSalary(
   });
 }
 
+function updateOnsiteSalary(data: IDataOnsite[]): Promise<any> {
+  return fetcher({
+    url: path.updateOnsiteSalary,
+    method: "post",
+    data,
+  });
+}
+
 function deleteOnsiteSalary(id: number): Promise<any> {
   return fetcher({
     url: path.deleteOnsiteSalary + id,
@@ -101,6 +134,14 @@ function getMyListOTSalary(
     url: userId ? path.getListOTSalary : path.getMyListOTSalary,
     method: "get",
     params: {filter: {date_month: month, date_year: year, userId}},
+  });
+}
+
+function updateOTSalary(data: IDataOverTime[]): Promise<any> {
+  return fetcher({
+    url: path.updateOTSalary,
+    method: "post",
+    data,
   });
 }
 
@@ -152,6 +193,19 @@ function getMyDeductionHourSalary(
   });
 }
 
+function createSalaryProject(data: {
+  user: number;
+  project: number;
+  salary: number;
+  date: string;
+}): Promise<any> {
+  return fetcher({
+    url: path.updateOTSalary,
+    method: "post",
+    data,
+  });
+}
+
 function getListProject(
   name?: string,
   projectId?: number,
@@ -172,7 +226,18 @@ function getListProjectOfMe(id?: number): Promise<IDataProjectList[]> {
   });
 }
 
+function getUserOfProject(projectId: number, month: number, year: number) {
+  return fetcher({
+    url: path.getUserOfProject,
+    method: "get",
+    params: {projectId, month, year},
+  });
+}
+
 export default {
+  createTotalSalary,
+  createSalaryProject,
+  getUserOfProject,
   createOnsiteSalary,
   getListProjectOfMe,
   createOTSalary,
@@ -187,4 +252,7 @@ export default {
   deleteOnsiteSalary,
   getMyListOnsiteSalary,
   getMyListTotalSalary,
+  updateOnsiteSalary,
+  updateOTSalary,
+  getListSalaryTotalUser,
 };

@@ -1,13 +1,13 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
-import {Card, Table} from "antd";
+import {Card, Modal, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import ModalCreateOnsite from "./ModalCreateOnsite";
 import {CheckCircleFilled, EditFilled} from "@ant-design/icons";
 import ApiSalary from "@app/api/ApiSalary";
-import {useQuery} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import {IDataOnsite} from "@app/types";
 
@@ -16,15 +16,17 @@ export default function OnsiteSalaryTable({
   month,
   year,
   isManager,
+  projectName,
 }: {
+  projectName?: string;
   idUser: number | string;
   isManager?: boolean;
   month: number;
   year: number;
 }): JSX.Element {
-  const [disableCheck, setDisableCheck] = useState(true);
-
+  const [disableCheck] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const updateDataOnsite = useMutation(ApiSalary.updateOnsiteSalary);
 
   const showModal = (): void => {
     setIsModalVisible(true);
@@ -52,7 +54,13 @@ export default function OnsiteSalaryTable({
   } = useQuery("listOnsiteSalaryUser" + isManager, getListOnsiteSalary) || [];
 
   const handleUpdate = (): void => {
-    //
+    const body = dataOnsite?.map((el) => {
+      el.state = 1;
+      return el;
+    });
+    if (body) {
+      updateDataOnsite.mutate(body, {onSuccess: refetch});
+    }
   };
 
   const columns: ColumnsType<IDataOnsite[]> = [
@@ -70,7 +78,15 @@ export default function OnsiteSalaryTable({
                   ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
                   : "text-[20px] text-[green]"
               }
-              onClick={handleUpdate}
+              onClick={(): void => {
+                if (!disableCheck) {
+                  Modal.confirm({
+                    title: "Bạn muốn duyệt tất cả lương Onsite ?",
+                    centered: true,
+                    onOk: handleUpdate,
+                  });
+                }
+              }}
               disabled={disableCheck}
             />
           )}
@@ -87,18 +103,17 @@ export default function OnsiteSalaryTable({
   const data: any = [
     {col1: "Ngày"},
     {col1: "Thứ"},
-    {col1: "Tên dự án"},
+    {col1: "Địa điểm Onsite"},
     {col1: "Duyệt"},
   ];
 
   useEffect(() => {
-    setDisableCheck(true);
-    dataOnsite?.map((el) => {
-      if (el.state === 0) {
-        setDisableCheck(false);
-      }
-      return el;
-    });
+    // dataOnsite?.map((el) => {
+    //   if (el.state === 0) {
+    //     setDisableCheck(false);
+    //   }
+    //   return el;
+    // });
   }, [isRefetching]);
 
   for (let i = 1; i <= getDayOnMonth(month, year); i++) {
@@ -121,7 +136,7 @@ export default function OnsiteSalaryTable({
             if (index.col1 === "Thứ") {
               return <span>{findDayOnWeek(year, month, i)}</span>;
             }
-            if (index.col1 === "Tên dự án") {
+            if (index.col1 === "Địa điểm Onsite") {
               return <span>{el?.onsitePlace}</span>;
             }
             return (
@@ -159,7 +174,7 @@ export default function OnsiteSalaryTable({
           if (index.col1 === "Thứ") {
             return <span>{findDayOnWeek(year, month, i)}</span>;
           }
-          if (index.col1 === "Tên dự án") {
+          if (index.col1 === "Địa điểm Onsite") {
             return <span> </span>;
           }
           return <span> </span>;
@@ -175,6 +190,7 @@ export default function OnsiteSalaryTable({
         month={month}
         refetchDataOnsite={refetch}
         year={year}
+        isManager={isManager}
         isModalVisible={isModalVisible}
         handleOk={handleOk}
         handleCancel={handleCancel}

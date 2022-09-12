@@ -1,14 +1,14 @@
 import "./index.scss";
 import React from "react";
-import ProjectSalaryTable from "@app/module/my-salary-detail/ProjectSalaryTable";
+import ProjectSalaryTable from "@app/module/ProjectSalaryTable/ProjectSalaryTable";
 import {LeftOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import OnsiteSalaryTable from "@app/module/OnsiteSalaryTable";
-import OtherSalaryTable from "@app/module/my-salary-detail/OtherSalaryTable";
+import OtherSalaryTable from "@app/module/OtherSalaryTable/OtherSalaryTable";
 import OverTimeSalaryTable from "@app/module/OverTimeSalaryTable";
 import ApiUser from "@app/api/ApiUser";
-import DeductionSalaryTable from "@app/module/my-salary-detail/DeductionSalaryTable";
+import DeductionSalaryTable from "@app/module/DeductionSalaryTable/DeductionSalaryTable";
 import {IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
@@ -17,8 +17,9 @@ export function MySalaryDetail(): JSX.Element {
   const router = useRouter();
   const {month} = router.query;
   const {year} = router.query;
-  const baseSalary = ApiUser.getInfoMe()?.baseSalary?.toLocaleString();
-  const manageSalary = ApiUser.getInfoMe()?.manageSalary?.toLocaleString();
+  const baseSalary = ApiUser.getInfoMe()?.baseSalary?.toLocaleString("en-US");
+  const manageSalary =
+    ApiUser.getInfoMe()?.manageSalary?.toLocaleString("en-US");
   const userId = ApiUser.getInfoMe()?.id;
 
   const getListProject = (): Promise<IDataProjectList[]> => {

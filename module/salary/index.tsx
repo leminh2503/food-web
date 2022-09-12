@@ -15,7 +15,7 @@ export function Salary(): JSX.Element {
   const date = new Date();
   const [year, setYear] = useState<number>(date.getFullYear());
 
-  const getListTotalSalary = (): Promise<any> => {
+  const getListTotalSalary = (): Promise<IDataSalary[]> => {
     return ApiSalary.getMyListTotalSalary(year);
   };
 
@@ -67,7 +67,6 @@ export function Salary(): JSX.Element {
       align: "center",
       render: (_, record, index) => {
         const date = new Date(record.date || "");
-        console.log(date);
         return <div>{formatNumber(date.getMonth() + 1)}</div>;
       },
     },
@@ -77,7 +76,7 @@ export function Salary(): JSX.Element {
       key: "fullName",
       align: "center",
       render: (_, record, index) => (
-        <div>{record.projectSalary.toLocaleString()}</div>
+        <div>{record.projectSalary.toLocaleString("en-US")}</div>
       ),
     },
     {
@@ -86,7 +85,7 @@ export function Salary(): JSX.Element {
       key: "overtimeSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record.overtimeSalary.toLocaleString()}</div>
+        <div>{record.overtimeSalary.toLocaleString("en-US")}</div>
       ),
     },
     {
@@ -95,7 +94,7 @@ export function Salary(): JSX.Element {
       key: "onsiteSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record.onsiteSalary.toLocaleString()}</div>
+        <div>{record.onsiteSalary.toLocaleString("en-US")}</div>
       ),
     },
     {
@@ -104,7 +103,7 @@ export function Salary(): JSX.Element {
       key: "baseSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record.baseSalary.toLocaleString()}</div>
+        <div>{record.baseSalary.toLocaleString("en-US")}</div>
       ),
     },
     {
@@ -113,7 +112,7 @@ export function Salary(): JSX.Element {
       key: "deductionSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record.deductionSalary.toLocaleString()}</div>
+        <div>{record.deductionSalary.toLocaleString("en-US")}</div>
       ),
     },
     {
@@ -122,7 +121,7 @@ export function Salary(): JSX.Element {
       key: "totalSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record.totalSalary.toLocaleString()} VND</div>
+        <div>{record.totalSalary.toLocaleString("en-US")} VND</div>
       ),
     },
   ];
@@ -138,7 +137,15 @@ export function Salary(): JSX.Element {
       </Select>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={data?.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+
+          if (dateB.getMonth() > dateA.getMonth()) {
+            return -1;
+          }
+          return 0;
+        })}
         bordered
         className="hover-pointer mt-4"
         onRow={onRow}
