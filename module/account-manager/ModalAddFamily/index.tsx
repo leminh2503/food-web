@@ -1,8 +1,9 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import React, {useEffect, useState} from "react";
-import {InputModal2} from "@app/components/Modal/InputModal2";
+import React, {useEffect} from "react";
 import {IFamilyCircumstance, TypeOfAction} from "@app/types";
+import {defaultValidateMessages, layout} from "@app/validate/user";
+import {Form, Input} from "antd";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -20,61 +21,78 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
     idUser,
     dataFamily,
   } = props;
-
-  const defaultFormValues = {
-    id: dataFamily?.id,
-    userId: idUser,
-    fullName: dataFamily?.fullName,
-    IDCode: dataFamily?.IDCode,
-    yearOfBirth: dataFamily?.yearOfBirth,
-    relationship: dataFamily?.relationship,
-    phoneNumber: dataFamily?.phoneNumber,
-  };
-
-  const [adString, setAdString] =
-    useState<IFamilyCircumstance>(defaultFormValues);
-
-  useEffect(() => {
-    setAdString(defaultFormValues);
-  }, [isModalVisible, dataFamily]);
+  const [form] = Form.useForm();
 
   const type = dataFamily.fullName ? TypeOfAction.EDIT : TypeOfAction.ADD;
 
+  useEffect(() => {
+    form.setFieldsValue({
+      id: dataFamily?.id,
+      userId: idUser,
+      fullName: dataFamily?.fullName,
+      IDCode: dataFamily?.IDCode,
+      yearOfBirth: dataFamily?.yearOfBirth || "",
+      relationship: dataFamily?.relationship,
+      phoneNumber: dataFamily?.phoneNumber,
+    });
+  }, [dataFamily]);
+
+  const onFinish = (fieldsValue: IFamilyCircumstance) => {
+    const data = {
+      id: dataFamily?.id,
+      userId: idUser,
+      fullName: fieldsValue?.fullName,
+      IDCode: fieldsValue?.IDCode,
+      yearOfBirth: fieldsValue?.yearOfBirth || "",
+      relationship: fieldsValue?.relationship,
+      phoneNumber: fieldsValue?.phoneNumber,
+    };
+    handleConfirmModal(data, type);
+  };
+
   const renderContent = (): JSX.Element => {
     return (
-      <div className="modal-info">
-        <InputModal2
-          label="Họ và tên"
-          value={adString.fullName || ""}
-          onChange={setAdString}
-          keyValue="fullName"
-          placeholder="Nhập họ và tên"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Số điện thoại"
-          value={adString.phoneNumber || ""}
-          onChange={setAdString}
-          keyValue="phoneNumber"
-          placeholder="Nhập số điện thoại"
-          className="pt-12"
-        />
-        <InputModal2
-          label="CMND/CCCD"
-          value={adString.IDCode?.toString() || ""}
-          onChange={setAdString}
-          keyValue="IDCode"
-          placeholder="Nhập CMND/CCCD"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Quan hệ"
-          value={adString.relationship || ""}
-          onChange={setAdString}
-          keyValue="relationship"
-          placeholder="Nhập quan hệ"
-          className="pt-12"
-        />
+      <div className="modal-info modal-add-family-circumstance">
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
+        >
+          <Form.Item
+            name="fullName"
+            label="Họ và tên"
+            rules={[{required: true}, {whitespace: true}, {min: 1}, {max: 30}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumber"
+            label="Số điện thoại"
+            rules={[
+              {whitespace: true},
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Số điện thoại không đúng định dạng!",
+              },
+              {min: 10},
+              {max: 11},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="IDCode" label="CMND/CCCD">
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="relationship"
+            label="Quan hệ"
+            rules={[{whitespace: true}, {min: 1}]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -83,9 +101,12 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
     <ModalCustom
       isModalVisible={isModalVisible}
       handleOk={() => {
-        handleConfirmModal(adString, type);
+        form.submit();
       }}
-      handleCancel={handleCancelModal}
+      handleCancel={() => {
+        form.resetFields();
+        handleCancelModal();
+      }}
       title="Thêm/Sửa người phụ thuộc"
       content={renderContent()}
     />

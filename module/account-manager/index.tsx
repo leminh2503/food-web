@@ -28,6 +28,7 @@ import {ModalFamilyCircumstance} from "@app/module/account-manager/ModalFamilyCi
 import {FilterAccount} from "@app/module/account-manager/FilterAccount";
 import {LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {IMetadata} from "@app/api/Fetcher";
+import fileDownload from "js-file-download";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -303,7 +304,8 @@ export function AccountManager(): JSX.Element {
   };
 
   const handleExportExcel = async () => {
-    await ApiUser.exportListAccount();
+    const response = await ApiUser.exportListAccount();
+    fileDownload(response.data, response.headers["x-file-name"] || "user.xlsx");
   };
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (

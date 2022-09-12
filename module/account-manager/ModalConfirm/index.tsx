@@ -109,7 +109,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     handleOk(data);
   };
 
-  const renderContent2 = (): JSX.Element => {
+  const renderContent = (): JSX.Element => {
     return (
       <div className="modal-info modal-add-account-form">
         <div className="avatar-container mb-3">
@@ -284,7 +284,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         });
       }}
       title="Thông tin nhân viên"
-      content={renderContent2()}
+      content={renderContent()}
       footer={false}
     />
   );
