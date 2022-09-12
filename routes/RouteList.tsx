@@ -100,25 +100,27 @@ const routes: IRoute[] = [
     role: [IAccountRole.ADMIN],
   },
   {
-    path: "/settings",
+    path: "",
     name: "Cài đặt",
     icon: "Setting",
     role: [IAccountRole.ADMIN],
     isSidebar: true,
-  },
-  {
-    path: "/position",
-    name: "Chức vụ",
-    icon: "",
-    role: [IAccountRole.ADMIN],
-    isSidebar: true,
-  },
-  {
-    path: "/work-type",
-    name: "Loại hình làm việc",
-    icon: "",
-    role: [IAccountRole.ADMIN],
-    isSidebar: true,
+    children: [
+      {
+        path: "/position",
+        name: "Chức vụ",
+        icon: "",
+        role: [IAccountRole.ADMIN],
+        isSidebar: true,
+      },
+      {
+        path: "/work-type",
+        name: "Loại hình làm việc",
+        icon: "",
+        role: [IAccountRole.ADMIN],
+        isSidebar: true,
+      },
+    ],
   },
 ];
 
