@@ -1,5 +1,16 @@
 import "./index.scss";
-import {Button, Card, Col, Image, Modal, notification, Row, Table} from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Image,
+  Modal,
+  notification,
+  Pagination,
+  PaginationProps,
+  Row,
+  Table,
+} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import React, {useEffect, useState} from "react";
 import ApiUser, {
@@ -16,6 +27,7 @@ import {ModalAddEmployee} from "@app/module/account-manager/ModalAddEmployee";
 import {ModalFamilyCircumstance} from "@app/module/account-manager/ModalFamilyCircumstances";
 import {FilterAccount} from "@app/module/account-manager/FilterAccount";
 import {LockOutlined, UnlockOutlined} from "@ant-design/icons";
+import {IMetadata} from "@app/api/Fetcher";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,6 +40,10 @@ export function AccountManager(): JSX.Element {
   const [filterState, setFilterState] = useState<number>(-1);
   const [filterText, setFilterText] = useState<string>("");
   const [filterPosition, setFilterPosition] = useState<number>(-1);
+  const [pagingCurrent, setPagingCurrent] = useState({
+    currentPage: 1,
+    pageSize: 10,
+  });
 
   const defaultValuesDetail: IUserLogin = {
     fullName: "",
@@ -102,10 +118,10 @@ export function AccountManager(): JSX.Element {
     setIsModalChangePassVisible(false);
   };
 
-  const getUserAccount = (): Promise<IUserLogin[]> => {
+  const getUserAccount = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
     const params = {
-      pageSize: 30,
-      pageNumber: 1,
+      pageSize: pagingCurrent.pageSize,
+      pageNumber: pagingCurrent.currentPage,
       searchFields: ["fullName"],
       search: filterText,
       filter: {
@@ -123,7 +139,12 @@ export function AccountManager(): JSX.Element {
 
   useEffect(() => {
     refetch();
-  }, [filterText, filterPosition, filterState]);
+  }, [filterPosition, filterState, pagingCurrent]);
+
+  const handleOnSearchText = (value: string) => {
+    setFilterText(value);
+    refetch();
+  };
 
   const getListWorkType = (): Promise<IWorkType[]> => {
     return ApiUser.getListWorkType();
@@ -281,6 +302,20 @@ export function AccountManager(): JSX.Element {
     addNewEmployee.mutate(data);
   };
 
+  const handleExportExcel = async () => {
+    await ApiUser.exportListAccount();
+  };
+
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    current,
+    pageSize
+  ) => {
+    setPagingCurrent({
+      currentPage: current,
+      pageSize: pageSize,
+    });
+  };
+
   const columns: ColumnsType<IUserLogin> = [
     {
       title: "STT",
@@ -424,12 +459,15 @@ export function AccountManager(): JSX.Element {
                 setFilterState={setFilterState}
                 setFilterText={setFilterText}
                 setFilterPosition={setFilterPosition}
+                handleOnSearchText={handleOnSearchText}
                 listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
             <Col lg={15}>
               <div className="" style={{float: "right"}}>
-                <Button className="mr-4">Xuất Excel</Button>
+                <Button className="mr-4" onClick={handleExportExcel}>
+                  Xuất Excel
+                </Button>
                 <Button
                   onClick={() => setIsModalAddEmployeeVisible(true)}
                   className=""
@@ -443,8 +481,9 @@ export function AccountManager(): JSX.Element {
       </Card>
       <Table
         columns={columns}
-        dataSource={dataUserAccount}
+        dataSource={dataUserAccount?.data}
         bordered
+        pagination={false}
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {
@@ -453,6 +492,13 @@ export function AccountManager(): JSX.Element {
             },
           };
         }}
+      />
+      <Pagination
+        className="mt-3 float-right"
+        showSizeChanger
+        onShowSizeChange={onShowSizeChange}
+        defaultCurrent={pagingCurrent.currentPage}
+        total={dataUserAccount?.meta.totalItems || 1}
       />
       <ModalInfo
         listPositionConvert={listPositionConvert}

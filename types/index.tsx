@@ -17,12 +17,6 @@ export interface ISettingId {
   referCode?: string;
 }
 
-export interface IWorkType {
-  id?: number;
-  name?: string;
-  description?: string;
-}
-
 export enum IAccountRole {
   USER = 0,
   ADMIN = 1,
@@ -39,6 +33,12 @@ export enum IState {
 export enum TypeOfAction {
   EDIT = "EDIT",
   ADD = "ADD",
+}
+
+export interface IWorkType {
+  id?: number;
+  name?: string;
+  description?: string;
 }
 
 export interface IDataCost {
