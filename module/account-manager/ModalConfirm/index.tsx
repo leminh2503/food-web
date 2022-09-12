@@ -1,12 +1,11 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Avatar, Button} from "antd";
+import {Avatar, Button, DatePicker, Form, Input, Select} from "antd";
 import React, {useEffect, useState} from "react";
-import {SelectInput} from "@app/components/Modal/SelectInput";
-import {IUserLogin} from "@app/types";
-import {InputModal2} from "@app/components/Modal/InputModal2";
-import {DateInput2} from "@app/components/Modal/DateInput2";
-import {initDataPosition} from "@app/utils/constants/user";
+import {EUserGender, IUserLogin} from "@app/types";
+import {defaultValidateMessages, layout} from "@app/validate/user";
+import {IRegisterAccountBody} from "@app/api/ApiUser";
+import moment from "moment";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -48,6 +47,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     familyCircumstances,
   } = dataDetail;
 
+  const [form] = Form.useForm();
+
   const [adString, setAdString] = useState<IUserLogin>(defaultValuesDetail);
   useEffect(() => {
     setAdString({
@@ -68,119 +69,208 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     });
   }, [dataDetail]);
 
-  const renderContent = (): JSX.Element => {
+  const date = dateOfBirth && new Date(dateOfBirth);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      fullName,
+      email,
+      avatar,
+      personId,
+      address,
+      phoneNumber,
+      phoneNumberRelative,
+      baseSalary,
+      position: position?.id || 0,
+      workType: workType?.id || 0,
+      dateOfBirth: moment(date, "DD/MM/YYYY") || null,
+      deductionOwn,
+      familyCircumstances,
+    });
+  }, [dataDetail]);
+
+  const onFinish = (fieldsValue: IRegisterAccountBody) => {
+    const data = {
+      gender: EUserGender.OTHER,
+      workRoom: "",
+      personId: fieldsValue.personId,
+      dateOfBirth: fieldsValue.dateOfBirth,
+      positionId: fieldsValue.position || 0,
+      workTypeId: fieldsValue.workType || 0,
+      address: fieldsValue.address,
+      phoneNumber: fieldsValue.phoneNumber,
+      phoneNumberRelative: fieldsValue.phoneNumberRelative,
+      baseSalary: fieldsValue.baseSalary,
+      email: fieldsValue.email,
+      employeeCode: fieldsValue.employeeCode,
+      fullName: fieldsValue.fullName,
+      deductionOwn: fieldsValue.deductionOwn,
+    };
+    handleOk(data);
+  };
+
+  const renderContent2 = (): JSX.Element => {
     return (
-      <div className="modal-info">
+      <div className="modal-info modal-add-account-form">
         <div className="avatar-container mb-3">
           <Avatar size={150} src={avatar || "/img/avatar/avatar.jpg"} />
         </div>
-        <InputModal2
-          label="Họ và tên"
-          value={adString.fullName || ""}
-          onChange={setAdString}
-          keyValue="fullName"
-          placeholder="Nhập họ và tên"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Email"
-          value={adString.email || ""}
-          onChange={setAdString}
-          keyValue="email"
-          placeholder="Nhập email"
-          className="pt-12"
-        />
-        <DateInput2
-          className="pt-12"
-          keyValue="birthDay"
-          label="Ngày sinh"
-          value={adString.dateOfBirth ?? ""}
-          onChange={() => {
-            console.log(123);
-          }}
-        />
-        <InputModal2
-          label="Số điện thoại"
-          value={adString.phoneNumber || ""}
-          onChange={setAdString}
-          keyValue="phoneNumber"
-          placeholder="Nhập số điện thoại"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Số điện thoại người thân"
-          value={adString.phoneNumberRelative || ""}
-          onChange={setAdString}
-          keyValue="phoneNumberRelative"
-          placeholder="Nhập số điện thoại người thân"
-          className="pt-12"
-        />
-        <InputModal2
-          label="CMND/CCCD"
-          value={adString.personId?.toString() || ""}
-          onChange={setAdString}
-          keyValue="personId"
-          placeholder="Nhập CMND/CCCD"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Địa chỉ"
-          value={adString.address || ""}
-          onChange={setAdString}
-          keyValue="address"
-          placeholder="Nhập địa chỉ"
-          className="pt-12"
-        />
-        <SelectInput
-          className="pt-12"
-          label="Chức vụ"
-          keyValue="positionId"
-          setValue={setAdString}
-          value={adString?.positionId || 0}
-          data={listPositionConvert}
-        />
-        <SelectInput
-          className="pt-12"
-          label="Vị trí"
-          keyValue="workTypeId"
-          setValue={setAdString}
-          value={adString?.workTypeId || 0}
-          data={listWorkTypeConvert}
-        />
-        <SelectInput
-          className="pt-12"
-          label="Người quản lý"
-          keyValue="manager"
-          setValue={setAdString}
-          value={1}
-          data={initDataPosition}
-        />
-        <InputModal2
-          label="Lương cứng"
-          value={adString.baseSalary?.toString() || ""}
-          onChange={setAdString}
-          keyValue="baseSalary"
-          placeholder="Nhập lương cứng"
-          className="pt-12"
-        />
-        <InputModal2
-          label="Giảm trừ gia cảnh bản thân"
-          value={adString.deductionOwn?.toString() || ""}
-          onChange={setAdString}
-          keyValue="deductionOwn"
-          placeholder="Nhập lương cứng"
-          className="pt-12"
-        />
-        <Button
-          onClick={() => setIsModalFamilyVisible(true)}
-          className="mt-3 button-modal-family"
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
         >
-          Số người phụ thuộc: {familyCircumstances?.length}
-        </Button>
+          <Form.Item
+            name="fullName"
+            label="Họ và tên"
+            rules={[{required: true}, {whitespace: true}, {min: 1}, {max: 30}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {type: "email"},
+              {min: 6},
+              {max: 255},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="dateOfBirth" label="Ngày sinh">
+            <DatePicker format="DD/MM/YYYY" />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumber"
+            label="Số điện thoại"
+            rules={[
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Số điện thoại không đúng định dạng!",
+              },
+              {min: 10},
+              {max: 11},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumberRelative"
+            label="Số điện thoại người thân"
+            rules={[
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Số điện thoại không đúng định dạng!",
+              },
+              {min: 10},
+              {max: 11},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="personId"
+            label="CMND/CCCD"
+            rules={[
+              {
+                pattern: /^(?:\d*)$/,
+                message: "CMND/CCCD không đúng định dạng!",
+              },
+              {min: 12},
+              {max: 13},
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="address" label="Địa chỉ">
+            <Input />
+          </Form.Item>
+          <Form.Item name="position" label="Chức vụ" rules={[{required: true}]}>
+            <Select>
+              {listPositionConvert?.map((e) => (
+                <Select.Option key={"position" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Vị trí" name="workType" rules={[{required: true}]}>
+            <Select>
+              {listWorkTypeConvert?.map((e) => (
+                <Select.Option key={"workType" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="baseSalary"
+            label="Lương cơ bản"
+            rules={[
+              {required: true},
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Vui lòng nhập vào số nguyên!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="deductionOwn"
+            label="Giảm trừ gia cảnh"
+            rules={[
+              {required: true},
+              {
+                pattern: /^(?:\d*)$/,
+                message: "Vui lòng nhập vào số nguyên!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Button
+            onClick={() => setIsModalFamilyVisible(true)}
+            className="mt-3 button-modal-family"
+          >
+            Số người phụ thuộc: {familyCircumstances?.length}
+          </Button>
+          <Form.Item>
+            <div className="footer-modal">
+              <Button
+                className="button-cancel mr-3"
+                type="primary"
+                onClick={() => setIsModalChangePassVisible(true)}
+              >
+                Đổi mật khẩu
+              </Button>
+              <Button
+                className="button-cancel mr-3"
+                type="primary"
+                onClick={() => {
+                  handleCancel();
+                }}
+              >
+                Hủy
+              </Button>
+              <Button
+                className="button-confirm"
+                type="primary"
+                htmlType="submit"
+              >
+                Xác Nhận
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     );
   };
-
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
@@ -194,36 +284,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         });
       }}
       title="Thông tin nhân viên"
-      content={renderContent()}
-      footer={[
-        <Button
-          key="changePassword"
-          style={{backgroundColor: "#3333"}}
-          type="default"
-          className="btn-action m-1 hover-pointer"
-          onClick={() => setIsModalChangePassVisible(true)}
-        >
-          Đổi mật khẩu
-        </Button>,
-        <Button
-          key="cancel"
-          style={{backgroundColor: "#3333"}}
-          type="default"
-          className="btn-action m-1 hover-pointer"
-          onClick={handleCancel}
-        >
-          Hủy
-        </Button>,
-        <Button
-          key="save"
-          style={{backgroundColor: "#40a9ff"}}
-          type="primary"
-          className="btn-action m-1 hover-pointer"
-          onClick={() => handleOk(adString)}
-        >
-          Lưu
-        </Button>,
-      ]}
+      content={renderContent2()}
+      footer={false}
     />
   );
 }
