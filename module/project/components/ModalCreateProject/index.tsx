@@ -8,6 +8,7 @@ import {SelectInput} from "@app/components/Modal/SelectInput";
 import ApiUser from "@app/api/ApiUser";
 import {IUserLogin} from "@app/types";
 import {notification} from "antd";
+import {IMetadata} from "@app/api/Fetcher";
 
 interface ModalCreateProjectProps {
   isModalVisible: boolean;
@@ -32,7 +33,7 @@ export function ModalCreateProject({
     description: "",
   });
 
-  const getUser = (): Promise<IUserLogin[]> => {
+  const getUser = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
     return ApiUser.getUserAccount({
       pageSize: 30,
       pageNumber: 1,
@@ -101,7 +102,7 @@ export function ModalCreateProject({
           keyValue="projectManager"
           label="PM dự án:"
           value={data.projectManager}
-          data={dataUser?.map((item) => {
+          data={dataUser?.data.map((item) => {
             return {
               value: Number(item.id),
               label: item.fullName,

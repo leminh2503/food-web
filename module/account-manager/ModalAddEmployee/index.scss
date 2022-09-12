@@ -1,4 +1,4 @@
-.modal-info {
+.modal-add-account-form {
   .avatar-container {
     display: flex;
     justify-content: center;
@@ -16,5 +16,23 @@
     box-shadow: none;
     padding: unset;
     font-weight: 600;
+  }
+  label {
+    float: left;
+  }
+  .footer-modal {
+    float: right;
+  }
+  .ant-picker {
+    width: 100%;
+  }
+  .button-cancel {
+    color: #1c242c;
+  }
+  .button-confirm {
+    background: #1ab7ea;
+  }
+  .ant-form-item-row {
+    justify-content: flex-end;
   }
 }

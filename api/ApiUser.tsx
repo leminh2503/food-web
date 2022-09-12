@@ -1,4 +1,4 @@
-import {fetcher} from "./Fetcher";
+import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
   IAccountRole,
@@ -6,6 +6,7 @@ import {
   IUserLogin,
   IWorkType,
 } from "../types";
+import axios from "axios";
 
 export interface ILoginBody {
   email: string;
@@ -31,6 +32,7 @@ export interface IRegisterAccountBody {
   email: string;
   employeeCode: string;
   fullName: string;
+  deductionOwn?: number;
 }
 
 export interface IProfileBody {
@@ -111,10 +113,13 @@ const path = {
   resetPasswordForAccount: "/users/set-password",
   addNewEmployee: "/auth/register",
   familyCircumstance: "/family-circumstances",
+  exportListAccount: "/users/export-list-user",
 };
 
-function getUserAccount(params?: IParamsGetUser): Promise<IUserLogin[]> {
-  return fetcher({
+function getUserAccount(
+  params?: IParamsGetUser
+): Promise<{data: IUserLogin[]; meta: IMetadata}> {
+  return fetcherWithMetadata({
     url: path.getUserAccount,
     method: "get",
     params: params,
@@ -210,6 +215,18 @@ function deleteFamilyCircumstance(id: number) {
   });
 }
 
+function exportListAccount() {
+  const accessToken = getAuthToken();
+  return axios({
+    url: "http://13.215.91.199:8000/api/v1" + path.exportListAccount,
+    method: "get",
+    responseType: "blob",
+    headers: {
+      authorization: "Bearer " + accessToken,
+    },
+  });
+}
+
 function isLogin(): boolean {
   return !!getAuthToken();
 }
@@ -248,4 +265,5 @@ export default {
   updateFamilyCircumstance,
   deleteFamilyCircumstance,
   getDataFamilyOfAccount,
+  exportListAccount,
 };

@@ -1,7 +1,8 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import React, {useEffect, useState} from "react";
-import {InputModal2} from "@app/components/Modal/InputModal2";
+import React from "react";
+import {defaultValidateMessages, layout} from "@app/validate/user";
+import {Form, Input} from "antd";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -12,39 +13,58 @@ interface ModalInfoProps {
 export function ModalChangePass(props: ModalInfoProps): JSX.Element {
   const {isModalVisible, handleConfirmChangePass, handleCancelChangePass} =
     props;
-  const defaultValuesForm = {
-    newPassword: "",
-    passwordConfirm: "",
-  };
-  const [adString, setAdString] = useState(defaultValuesForm);
 
-  useEffect(() => {
-    setAdString(defaultValuesForm);
-  }, [isModalVisible]);
+  const [form] = Form.useForm();
+
+  const onFinish = (fieldsValue: {
+    newPassword: string;
+    confirmPassword: string;
+  }) => {
+    handleConfirmChangePass(fieldsValue.newPassword);
+  };
 
   const renderContent = (): JSX.Element => {
     return (
-      <div className="modal-info">
-        <InputModal2
-          type="password"
-          label="Mật khẩu mới"
-          value={adString.newPassword || ""}
-          required
-          onChange={setAdString}
-          keyValue="newPassword"
-          placeholder="Nhập mật khẩu mới"
-          className="pt-12"
-        />
-        <InputModal2
-          type="password"
-          label="Nhập lại mật khẩu mới"
-          value={adString.passwordConfirm || ""}
-          required
-          onChange={setAdString}
-          keyValue="passwordConfirm"
-          placeholder="Nhập lại mật khẩu mới"
-          className="pt-12"
-        />
+      <div className="modal-info modal-change-password">
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
+        >
+          <Form.Item
+            label="Mật khẩu mới"
+            name="newPassword"
+            rules={[{required: true, message: "Mật khẩu không được để trống!"}]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label="Xác nhận mật khẩu"
+            name="confirmPassword"
+            dependencies={["newPassword"]}
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: "Mật khẩu xác nhận không được để trống!",
+              },
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("newPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Mật khẩu xác nhận không giống mật khẩu mới!")
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -53,9 +73,12 @@ export function ModalChangePass(props: ModalInfoProps): JSX.Element {
     <ModalCustom
       isModalVisible={isModalVisible}
       handleOk={() => {
-        handleConfirmChangePass(adString.newPassword);
+        form.submit();
       }}
-      handleCancel={handleCancelChangePass}
+      handleCancel={() => {
+        handleCancelChangePass();
+        form.resetFields();
+      }}
       title="Đổi mật khẩu"
       content={renderContent()}
     />
