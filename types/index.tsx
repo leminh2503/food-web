@@ -263,25 +263,11 @@ export interface IFamilyCircumstance {
   phoneNumber: string;
 }
 
-export interface IProject {
-  id?: number;
-  name?: string;
-  startDate?: string;
-  endDate?: string;
-  scale?: number;
-  customer?: string;
-  technicality?: string;
-  use?: string;
-  description?: string;
-  state?: number;
-  projectManager?: IProfile;
-}
-
 export interface IUserLogin {
   date?: string;
   createdAt?: string;
   month?: number;
-  id?: string;
+  id?: number;
   fullName?: string;
   state?: number;
   email?: string;
@@ -350,6 +336,40 @@ export interface IPosition {
   id?: number;
   name?: string;
   description?: string;
+}
+
+export interface IProject {
+  id: number;
+  name?: string;
+  startDate?: string;
+  endDate?: string;
+  scale?: number;
+  customer?: string;
+  technicality?: string;
+  use?: string;
+  description?: string;
+  state?: number;
+  projectManager?: IProfile;
+}
+
+export enum ERolePosition {
+  BACKEND_DEV = 0,
+  FRONTEND_DEV = 1,
+  TESTER = 2,
+  BA = 3,
+  DESIGNER = 4,
+}
+
+export interface IProjectMember {
+  id: number;
+  role?: ERolePosition;
+  contract?: number;
+  reality?: number;
+  overtime?: number;
+  startDate?: string;
+  endDate?: string;
+  project?: IProject;
+  user?: IProfile;
 }
 
 export interface ISetStateModal {
