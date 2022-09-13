@@ -14,7 +14,7 @@ export const validateMessages = {
 };
 
 // eslint-disable-next-line no-template-curly-in-string
-const typeTemplate = "${label} is not a valid ${type}";
+const typeTemplate = "${label} phải có giá trị là ${type}";
 
 export const defaultValidateMessages = {
   // eslint-disable-next-line no-template-curly-in-string
@@ -50,7 +50,7 @@ export const defaultValidateMessages = {
   },
   string: {
     // eslint-disable-next-line no-template-curly-in-string
-    len: "${label} must be exactly ${len} characters",
+    len: "${label} không có độ dài bằng ${len} kí tự",
     // eslint-disable-next-line no-template-curly-in-string
     min: "${label} phải lớn hơn ${min} kí tự",
     // eslint-disable-next-line no-template-curly-in-string
@@ -62,11 +62,11 @@ export const defaultValidateMessages = {
     // eslint-disable-next-line no-template-curly-in-string
     len: "${label} must equal ${len}",
     // eslint-disable-next-line no-template-curly-in-string
-    min: "${label} cannot be less than ${min}",
+    min: "${label} phải lớn hơn ${min}",
     // eslint-disable-next-line no-template-curly-in-string
-    max: "${label} cannot be greater than ${max}",
+    max: "${label} phải nhỏ hơn ${max}",
     // eslint-disable-next-line no-template-curly-in-string
-    range: "'${label}' must be between ${min} and ${max}",
+    range: "'${label}' phải từ ${min} đến ${max}",
   },
   array: {
     // eslint-disable-next-line no-template-curly-in-string

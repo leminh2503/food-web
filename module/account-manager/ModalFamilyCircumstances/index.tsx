@@ -17,8 +17,6 @@ interface ModalInfoProps {
 
 export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
   const {isModalVisible, handleCloseModalFamily, idUser, accountId} = props;
-  console.log(accountId);
-
   const [isToggleModal, setIsToggleModal] = useState(false);
 
   const queryClient = useQueryClient();
@@ -121,7 +119,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
         duration: 1,
         message: `Xóa thành công`,
       });
-      // dataUserAccount.refetch();
+      refetch();
       queryClient.refetchQueries({
         queryKey: "listUserAccount",
       });

@@ -259,8 +259,8 @@ export interface IFamilyCircumstance {
   id?: number | null;
   userId: number;
   fullName: string;
-  IDCode: number | null;
-  yearOfBirth: string;
+  IDCode: string | null;
+  yearOfBirth?: string;
   relationship: string;
   phoneNumber: string;
 }
