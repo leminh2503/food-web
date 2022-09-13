@@ -30,8 +30,8 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
       id: dataFamily?.id,
       userId: idUser,
       fullName: dataFamily?.fullName,
-      IDCode: dataFamily?.IDCode,
-      yearOfBirth: dataFamily?.yearOfBirth || "",
+      personId: dataFamily?.personId,
+      dateOfBirth: dataFamily?.dateOfBirth,
       relationship: dataFamily?.relationship,
       phoneNumber: dataFamily?.phoneNumber,
     });
@@ -42,8 +42,8 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
       id: dataFamily?.id,
       userId: idUser,
       fullName: fieldsValue?.fullName,
-      IDCode: fieldsValue?.IDCode,
-      yearOfBirth: fieldsValue?.yearOfBirth || "",
+      personId: fieldsValue?.personId,
+      yearOfBirth: fieldsValue?.dateOfBirth,
       relationship: fieldsValue?.relationship,
       phoneNumber: fieldsValue?.phoneNumber,
     };
@@ -82,7 +82,7 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="IDCode" label="CMND/CCCD">
+          <Form.Item name="personId" label="CMND/CCCD">
             <Input />
           </Form.Item>
           <Form.Item
