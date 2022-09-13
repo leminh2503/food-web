@@ -1,18 +1,38 @@
 import "../my-salary-detail/index.scss";
-import React from "react";
+import React, {useState} from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataBonus} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
+import {EditFilled} from "@ant-design/icons";
+import ModalOtherSalary from "@app/module/OtherSalaryTable/ModalOtherSalary";
 
 export default function OtherSalaryTable({
   month,
   year,
+  userId,
+  isAdmin,
 }: {
+  isAdmin?: boolean;
+  userId?: number;
   month: number;
   year: number;
 }): JSX.Element {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (): void => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = (): void => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = (): void => {
+    setIsModalVisible(false);
+  };
+
   const getBonusSalary = (): Promise<IDataBonus[]> => {
     return ApiSalary.getMyBonusSalary(year, month);
   };
@@ -43,7 +63,25 @@ export default function OtherSalaryTable({
 
   return (
     <Card className="w-full">
-      <div className="mb-4 font-bold">Lương Khác :</div>
+      {isAdmin && (
+        <ModalOtherSalary
+          month={month}
+          year={year}
+          isModalVisible={isModalVisible}
+          handleOk={handleOk}
+          handleCancel={handleCancel}
+          userId={Number(userId)}
+        />
+      )}
+      <div className="flex items-center justify-between">
+        <div className="mb-4 font-bold">Lương Khác :</div>
+        {isAdmin && (
+          <EditFilled
+            onClick={showModal}
+            className="text-[20px] text-[#0092ff] mr-3"
+          />
+        )}
+      </div>
       <Table
         columns={columns}
         dataSource={data || []}

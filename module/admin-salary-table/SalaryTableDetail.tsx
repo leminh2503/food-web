@@ -48,7 +48,12 @@ export function SalaryTableDetail(): JSX.Element {
             year={Number(year)}
             isAdmin
           />
-          <OtherSalaryTable month={Number(month)} year={Number(year)} />
+          <OtherSalaryTable
+            userId={Number(userId)}
+            isAdmin
+            month={Number(month)}
+            year={Number(year)}
+          />
         </div>
       )}
       {month && year && (
