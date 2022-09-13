@@ -25,7 +25,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
 
   const [form] = Form.useForm();
 
-  const onFinish = (fieldsValue: IRegisterAccountBody) => {
+  const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
       password: "123123",
       gender: EUserGender.OTHER,

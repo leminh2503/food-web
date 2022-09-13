@@ -26,8 +26,8 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
     id: null,
     userId: idUser,
     fullName: "",
-    IDCode: null,
-    yearOfBirth: "",
+    personId: null,
+    dateOfBirth: null,
     relationship: "",
     phoneNumber: "",
   };
@@ -40,15 +40,16 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
     return ApiUser.getDataFamilyOfAccount({filter: {userId: accountId}});
   };
 
-  const {data: dataFamily, refetch} = useQuery(
-    queryKeys.GET_LIST_DATA_FAMILY,
-    getDataFamily
-  );
+  const {
+    data: dataFamily,
+    refetch,
+    isFetching,
+  } = useQuery(queryKeys.GET_LIST_DATA_FAMILY, getDataFamily);
 
   const handleConfirmModal = (
     data: IFamilyCircumstance,
     type: TypeOfAction
-  ) => {
+  ): void => {
     Modal.confirm({
       title: "Xác nhận tạo người phụ thuộc?",
       okType: "primary",
@@ -64,7 +65,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
     });
   };
 
-  const handleCancelModal = () => {
+  const handleCancelModal = (): void => {
     setIsToggleModal(false);
   };
 
@@ -169,7 +170,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
     },
     {
       title: "CMND/CCCD",
-      dataIndex: "IDCode",
+      dataIndex: "personId",
       key: "IDCode",
       align: "center",
     },
@@ -211,7 +212,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
         <Button
           style={{backgroundColor: "#1890FF", color: "#fff"}}
           className="mb-4 float-right"
-          onClick={() => {
+          onClick={(): void => {
             setDataDetail(defaultValuesDetail);
             setIsToggleModal(true);
           }}
@@ -219,12 +220,13 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
           Thêm người phụ thuộc
         </Button>
         <Table
+          loading={isFetching}
           columns={columns}
           dataSource={dataFamily || []}
           bordered
           onRow={(record, rowIndex) => {
             return {
-              onDoubleClick: () => {
+              onDoubleClick: (): void => {
                 setIsToggleModal(true);
                 setDataDetail(record);
               },
