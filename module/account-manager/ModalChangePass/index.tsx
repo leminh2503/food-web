@@ -19,7 +19,7 @@ export function ModalChangePass(props: ModalInfoProps): JSX.Element {
   const onFinish = (fieldsValue: {
     newPassword: string;
     confirmPassword: string;
-  }) => {
+  }): void => {
     handleConfirmChangePass(fieldsValue.newPassword);
   };
 
@@ -72,10 +72,10 @@ export function ModalChangePass(props: ModalInfoProps): JSX.Element {
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => {
+      handleOk={(): void => {
         form.submit();
       }}
-      handleCancel={() => {
+      handleCancel={(): void => {
         handleCancelChangePass();
         form.resetFields();
       }}

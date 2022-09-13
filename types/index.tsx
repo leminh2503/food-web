@@ -225,6 +225,16 @@ export interface IProfile {
   englishScore?: number;
 }
 
+export interface IFamilyCircumstance {
+  id?: number | null;
+  userId: number;
+  fullName: string;
+  personId: string | null;
+  dateOfBirth?: string | null;
+  relationship: string;
+  phoneNumber: string;
+}
+
 export interface IUserLogin {
   date?: string;
   createdAt?: string;
@@ -252,17 +262,7 @@ export interface IUserLogin {
   positionId?: number;
   workTypeId?: number;
   deductionOwn?: number;
-  familyCircumstances?: any;
-}
-
-export interface IFamilyCircumstance {
-  id?: number | null;
-  userId: number;
-  fullName: string;
-  personId?: string | null;
-  dateOfBirth?: string;
-  relationship: string;
-  phoneNumber: string;
+  familyCircumstances?: IFamilyCircumstance[] | null;
 }
 
 export interface IDataProjectSalary {

@@ -181,7 +181,9 @@ function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
   return fetcher({url: path.addNewEmployee, method: "post", data: body});
 }
 
-function getDataFamilyOfAccount(params: any): Promise<IFamilyCircumstance[]> {
+function getDataFamilyOfAccount(params: {
+  filter: {userId?: string};
+}): Promise<IFamilyCircumstance[]> {
   return fetcher({url: path.familyCircumstance, method: "get", params: params});
 }
 

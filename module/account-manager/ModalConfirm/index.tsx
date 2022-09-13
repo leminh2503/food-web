@@ -89,7 +89,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     });
   }, [dataDetail]);
 
-  const onFinish = (fieldsValue: IRegisterAccountBody) => {
+  const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
       gender: EUserGender.OTHER,
       workRoom: "",

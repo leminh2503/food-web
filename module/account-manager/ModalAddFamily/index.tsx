@@ -37,13 +37,13 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
     });
   }, [dataFamily]);
 
-  const onFinish = (fieldsValue: IFamilyCircumstance) => {
+  const onFinish = (fieldsValue: IFamilyCircumstance): void => {
     const data = {
       id: dataFamily?.id,
       userId: idUser,
       fullName: fieldsValue?.fullName,
       personId: fieldsValue?.personId,
-      yearOfBirth: fieldsValue?.dateOfBirth,
+      dateOfBirth: fieldsValue?.dateOfBirth,
       relationship: fieldsValue?.relationship,
       phoneNumber: fieldsValue?.phoneNumber,
     };
@@ -100,10 +100,10 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => {
+      handleOk={(): void => {
         form.submit();
       }}
-      handleCancel={() => {
+      handleCancel={(): void => {
         form.resetFields();
         handleCancelModal();
       }}

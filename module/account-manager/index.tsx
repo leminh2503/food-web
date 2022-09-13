@@ -134,16 +134,17 @@ export function AccountManager(): JSX.Element {
     return ApiUser.getUserAccount(params);
   };
 
-  const {data: dataUserAccount, refetch} = useQuery(
-    queryKeys.GET_LIST_ACCOUNT,
-    getUserAccount
-  );
+  const {
+    data: dataUserAccount,
+    refetch,
+    isFetching,
+  } = useQuery(queryKeys.GET_LIST_ACCOUNT, getUserAccount);
 
   useEffect(() => {
     refetch();
   }, [filterPosition, filterState, pagingCurrent]);
 
-  const handleOnSearchText = (value: string) => {
+  const handleOnSearchText = (value: string): void => {
     setFilterText(value);
     refetch();
   };
@@ -304,7 +305,7 @@ export function AccountManager(): JSX.Element {
     addNewEmployee.mutate(data);
   };
 
-  const handleExportExcel = async () => {
+  const handleExportExcel = async (): Promise<any> => {
     const response = await ApiUser.exportListAccount();
     fileDownload(response.data, response.headers["x-file-name"] || "user.xlsx");
   };
@@ -332,7 +333,7 @@ export function AccountManager(): JSX.Element {
       key: "avatar",
       align: "center",
       width: 80,
-      render: (_, record) => {
+      render: (_, record): JSX.Element => {
         return (
           <div>
             <Image
@@ -368,25 +369,25 @@ export function AccountManager(): JSX.Element {
       key: "address",
       align: "center",
     },
-    // {
-    //   title: "Quản lý",
-    //   dataIndex: "manager",
-    //   key: "manager",
-    //   align: "center",
-    //   render: (_, record) => {
-    //     return (
-    //       <div>
-    //         <span>{record?.manager?.fullName}</span>
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      title: "Quản lý",
+      dataIndex: "manager",
+      key: "manager",
+      align: "center",
+      render: (_, record): JSX.Element => {
+        return (
+          <div>
+            <span>{record?.manager?.fullName}</span>
+          </div>
+        );
+      },
+    },
     {
       title: "Vị trí",
       dataIndex: "workType",
       key: "workType",
       align: "center",
-      render: (_, record) => {
+      render: (_, record): JSX.Element => {
         return (
           <div>
             <span>{record?.workType?.name}</span>
@@ -399,7 +400,7 @@ export function AccountManager(): JSX.Element {
       dataIndex: "position",
       key: "position",
       align: "center",
-      render: (_, record) => {
+      render: (_, record): JSX.Element => {
         return (
           <div>
             <span>{record?.position?.name}</span>
@@ -411,7 +412,7 @@ export function AccountManager(): JSX.Element {
       title: "Trạng thái",
       align: "center",
       key: "state",
-      render: (_, record) => {
+      render: (_, record): JSX.Element => {
         return (
           <div
             className={
@@ -483,6 +484,7 @@ export function AccountManager(): JSX.Element {
         </div>
       </Card>
       <Table
+        loading={isFetching}
         columns={columns}
         dataSource={dataUserAccount?.data}
         bordered
