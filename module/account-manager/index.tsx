@@ -471,7 +471,7 @@ export function AccountManager(): JSX.Element {
                   Xuất Excel
                 </Button>
                 <Button
-                  onClick={() => setIsModalAddEmployeeVisible(true)}
+                  onClick={(): void => setIsModalAddEmployeeVisible(true)}
                   className=""
                 >
                   Tạo tài khoản mới
@@ -488,7 +488,7 @@ export function AccountManager(): JSX.Element {
         pagination={false}
         onRow={(record, rowIndex) => {
           return {
-            onDoubleClick: () => {
+            onDoubleClick: (): void => {
               setDataDetail(record);
               setIsModalVisible(true);
             },

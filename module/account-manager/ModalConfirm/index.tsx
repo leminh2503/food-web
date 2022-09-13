@@ -235,7 +235,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
             <Input />
           </Form.Item>
           <Button
-            onClick={() => setIsModalFamilyVisible(true)}
+            onClick={(): void => setIsModalFamilyVisible(true)}
             className="mt-3 button-modal-family"
           >
             Số người phụ thuộc: {familyCircumstances?.length}
@@ -245,14 +245,14 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
               <Button
                 className="button-cancel mr-3"
                 type="primary"
-                onClick={() => setIsModalChangePassVisible(true)}
+                onClick={(): void => setIsModalChangePassVisible(true)}
               >
                 Đổi mật khẩu
               </Button>
               <Button
                 className="button-cancel mr-3"
                 type="primary"
-                onClick={() => {
+                onClick={(): void => {
                   handleCancel();
                 }}
               >
@@ -274,8 +274,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => handleOk(adString)}
-      handleCancel={() => {
+      handleOk={(): void => handleOk(adString)}
+      handleCancel={(): void => {
         handleCancel();
         setAdString({
           ...adString,
