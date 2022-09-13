@@ -1,6 +1,6 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Avatar, Button, DatePicker, Form, Input, Select} from "antd";
+import {Button, DatePicker, Form, Image, Input, Select} from "antd";
 import React, {useEffect, useState} from "react";
 import {EUserGender, IUserLogin} from "@app/types";
 import {defaultValidateMessages, layout} from "@app/validate/user";
@@ -113,7 +113,12 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     return (
       <div className="modal-info modal-add-account-form">
         <div className="avatar-container mb-3">
-          <Avatar size={150} src={avatar || "/img/avatar/avatar.jpg"} />
+          <Image
+            width={150}
+            src={avatar}
+            style={{borderRadius: "50%"}}
+            fallback="/img/avatar/avatar.jpg"
+          />
         </div>
         <Form
           form={form}

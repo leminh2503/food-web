@@ -368,19 +368,19 @@ export function AccountManager(): JSX.Element {
       key: "address",
       align: "center",
     },
-    {
-      title: "Quản lý",
-      dataIndex: "manager",
-      key: "manager",
-      align: "center",
-      render: (_, record) => {
-        return (
-          <div>
-            <span>{record?.manager?.fullName}</span>
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: "Quản lý",
+    //   dataIndex: "manager",
+    //   key: "manager",
+    //   align: "center",
+    //   render: (_, record) => {
+    //     return (
+    //       <div>
+    //         <span>{record?.manager?.fullName}</span>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       title: "Vị trí",
       dataIndex: "workType",
