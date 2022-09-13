@@ -1,6 +1,6 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Avatar, Button, DatePicker, Form, Input, Select} from "antd";
+import {Button, DatePicker, Form, Image, Input, Select} from "antd";
 import React, {useEffect, useState} from "react";
 import {EUserGender, IUserLogin} from "@app/types";
 import {defaultValidateMessages, layout} from "@app/validate/user";
@@ -89,7 +89,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     });
   }, [dataDetail]);
 
-  const onFinish = (fieldsValue: IRegisterAccountBody) => {
+  const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
       gender: EUserGender.OTHER,
       workRoom: "",
@@ -109,11 +109,16 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     handleOk(data);
   };
 
-  const renderContent2 = (): JSX.Element => {
+  const renderContent = (): JSX.Element => {
     return (
       <div className="modal-info modal-add-account-form">
         <div className="avatar-container mb-3">
-          <Avatar size={150} src={avatar || "/img/avatar/avatar.jpg"} />
+          <Image
+            width={150}
+            src={avatar}
+            style={{borderRadius: "50%"}}
+            fallback="/img/avatar/avatar.jpg"
+          />
         </div>
         <Form
           form={form}
@@ -235,7 +240,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
             <Input />
           </Form.Item>
           <Button
-            onClick={() => setIsModalFamilyVisible(true)}
+            onClick={(): void => setIsModalFamilyVisible(true)}
             className="mt-3 button-modal-family"
           >
             Số người phụ thuộc: {familyCircumstances?.length}
@@ -245,14 +250,14 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
               <Button
                 className="button-cancel mr-3"
                 type="primary"
-                onClick={() => setIsModalChangePassVisible(true)}
+                onClick={(): void => setIsModalChangePassVisible(true)}
               >
                 Đổi mật khẩu
               </Button>
               <Button
                 className="button-cancel mr-3"
                 type="primary"
-                onClick={() => {
+                onClick={(): void => {
                   handleCancel();
                 }}
               >
@@ -274,8 +279,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => handleOk(adString)}
-      handleCancel={() => {
+      handleOk={(): void => handleOk(adString)}
+      handleCancel={(): void => {
         handleCancel();
         setAdString({
           ...adString,
@@ -284,7 +289,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         });
       }}
       title="Thông tin nhân viên"
-      content={renderContent2()}
+      content={renderContent()}
       footer={false}
     />
   );

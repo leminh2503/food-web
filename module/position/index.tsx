@@ -7,6 +7,7 @@ import {useMutation, useQuery} from "react-query";
 import Icon from "@app/components/Icon/Icon";
 import {ModalCreatePosition} from "@app/module/position/components/ModalCreatePosition";
 import {ModalEditPosition} from "@app/module/position/components/ModalEditPosition";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function Position(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
@@ -27,7 +28,10 @@ export function Position(): JSX.Element {
   const getPosition = (): Promise<IPosition[]> => {
     return ApiPosition.getPosition();
   };
-  const dataPosition = useQuery("listPosition", getPosition);
+  const dataPosition = useQuery(
+    queryKeys.GET_LIST_POSITION_FOR_SETTING,
+    getPosition
+  );
 
   const dataRefetch = (): void => {
     dataPosition.refetch();
