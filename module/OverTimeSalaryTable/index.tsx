@@ -19,7 +19,9 @@ export default function OverTimeSalaryTable({
   listProject,
   projectName,
   idProject,
+  baseSalary,
 }: {
+  baseSalary?: number;
   idProject?: number;
   listProject?: IDataProjectList[];
   idUser: number | string;
@@ -193,6 +195,10 @@ export default function OverTimeSalaryTable({
       });
     }
   }
+  const totalSalary =
+    dataOT?.reduce(function (accumulator, element) {
+      return accumulator + (Number(element?.hour) || 0);
+    }, 0) || 0;
   return (
     <Card className="max-w-full">
       <ModalCreateOverTime
@@ -209,7 +215,13 @@ export default function OverTimeSalaryTable({
         projectName={projectName}
         idProject={idProject}
       />
-      <div className="mb-4 font-bold">Lương Overtime :</div>
+      <div className="mb-4 font-bold">
+        Lương Overtime :{" "}
+        {(((totalSalary * (baseSalary || 0)) / 24 / 8) * 1.5).toLocaleString(
+          "en-US"
+        )}{" "}
+        VND
+      </div>
       <Table
         loading={isModalVisible}
         columns={columns}

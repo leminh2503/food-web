@@ -43,8 +43,16 @@ export function MySalaryDetail(): JSX.Element {
       </div>
       {month && year && (
         <div className="flex justify-between">
-          <ProjectSalaryTable month={Number(month)} year={Number(year)} />
-          <OtherSalaryTable month={Number(month)} year={Number(year)} />
+          <ProjectSalaryTable
+            userId={Number(ApiUser.getInfoMe()?.id) || 0}
+            month={Number(month)}
+            year={Number(year)}
+          />
+          <OtherSalaryTable
+            userId={Number(ApiUser.getInfoMe()?.id) || 0}
+            month={Number(month)}
+            year={Number(year)}
+          />
         </div>
       )}
       {month && year && (
@@ -59,6 +67,7 @@ export function MySalaryDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <OverTimeSalaryTable
+            baseSalary={Number(baseSalary || 0)}
             listProject={listProject}
             idUser={ApiUser.getInfoMe()?.id || ""}
             month={Number(month)}
@@ -68,7 +77,11 @@ export function MySalaryDetail(): JSX.Element {
       )}
       {month && year && (
         <div className="mt-4">
-          <DeductionSalaryTable month={Number(month)} year={Number(year)} />
+          <DeductionSalaryTable
+            baseSalary={Number(baseSalary || 0)}
+            month={Number(month)}
+            year={Number(year)}
+          />
         </div>
       )}
     </div>

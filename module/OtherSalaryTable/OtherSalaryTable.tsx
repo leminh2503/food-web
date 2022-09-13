@@ -5,7 +5,7 @@ import {ColumnsType} from "antd/es/table";
 import {IDataBonus} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {EditFilled} from "@ant-design/icons";
+import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
 import ModalOtherSalary from "@app/module/OtherSalaryTable/ModalOtherSalary";
 
 export default function OtherSalaryTable({
@@ -15,7 +15,7 @@ export default function OtherSalaryTable({
   isAdmin,
 }: {
   isAdmin?: boolean;
-  userId?: number;
+  userId: number;
   month: number;
   year: number;
 }): JSX.Element {
@@ -34,31 +34,69 @@ export default function OtherSalaryTable({
   };
 
   const getBonusSalary = (): Promise<IDataBonus[]> => {
-    return ApiSalary.getMyBonusSalary(year, month);
+    return ApiSalary.getMyBonusSalary(year, month, userId);
   };
 
-  const {data: datBonus} = useQuery("bonusSalary", getBonusSalary) || [];
-  const columns: ColumnsType<IDataBonus> = [
-    {
-      title: "Số tiền",
-      dataIndex: "salary",
-      key: "salary",
-      align: "center",
-      render: (_, record, index) => (
-        <div>{record?.salary?.toLocaleString("en-US")}</div>
-      ),
-    },
-    {
-      title: "lý do",
-      dataIndex: "reason",
-      key: "reason",
-      align: "center",
-    },
-  ];
+  const {
+    data: datBonus,
+    refetch,
+    isRefetching,
+  } = useQuery("bonusSalary" + userId, getBonusSalary) || [];
+  const columns: ColumnsType<IDataBonus> = isAdmin
+    ? [
+        {
+          title: "Số tiền",
+          dataIndex: "salary",
+          key: "salary",
+          align: "center",
+          render: (_, record, index) => (
+            <div>{record?.salary?.toLocaleString("en-US")} VND</div>
+          ),
+        },
+        {
+          title: "lý do",
+          dataIndex: "reason",
+          key: "reason",
+          align: "center",
+        },
+        {
+          title: "",
+          align: "center",
+          render: (index, _record): JSX.Element => {
+            return (
+              <CloseCircleOutlined
+                onClick={(): void => {
+                  ApiSalary.deleteBonusSalary(_record?.id || 0).then((r) =>
+                    refetch()
+                  );
+                }}
+                className="text-[red] text-[20px] hover-pointer"
+              />
+            );
+          },
+        },
+      ]
+    : [
+        {
+          title: "Số tiền",
+          dataIndex: "salary",
+          key: "salary",
+          align: "center",
+          render: (_, record, index) => (
+            <div>{record?.salary?.toLocaleString("en-US")} VND</div>
+          ),
+        },
+        {
+          title: "lý do",
+          dataIndex: "reason",
+          key: "reason",
+          align: "center",
+        },
+      ];
 
   const data: IDataBonus[] =
     datBonus?.map((el) => {
-      return {salary: el?.salary, reason: el?.reason};
+      return {salary: el?.salary, reason: el?.reason, id: el.id};
     }) || [];
 
   return (
@@ -67,14 +105,23 @@ export default function OtherSalaryTable({
         <ModalOtherSalary
           month={month}
           year={year}
+          handleRefetch={refetch}
           isModalVisible={isModalVisible}
           handleOk={handleOk}
           handleCancel={handleCancel}
           userId={Number(userId)}
         />
       )}
-      <div className="flex items-center justify-between">
-        <div className="mb-4 font-bold">Lương Khác :</div>
+      <div className="flex items-center mb-4 justify-between">
+        <div className="font-bold">
+          Lương Khác :{" "}
+          {datBonus
+            ?.reduce(function (accumulator, element) {
+              return accumulator + (element?.salary || 0);
+            }, 0)
+            .toLocaleString("en-US")}{" "}
+          VND
+        </div>
         {isAdmin && (
           <EditFilled
             onClick={showModal}
@@ -83,6 +130,7 @@ export default function OtherSalaryTable({
         )}
       </div>
       <Table
+        loading={isRefetching}
         columns={columns}
         dataSource={data || []}
         bordered

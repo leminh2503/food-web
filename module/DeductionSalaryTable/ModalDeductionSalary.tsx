@@ -4,45 +4,43 @@ import {ModalCustom} from "@app/components/ModalCustom";
 import {Form, Input, InputNumber, notification} from "antd";
 import {useMutation} from "react-query";
 import ApiSalary from "@app/api/ApiSalary";
-import {formatNumber} from "@app/utils/fomat/FormatNumber";
 
-interface IModalCreateProject {
+interface IModalCreateDeduction {
   isModalVisible: boolean;
   handleOk: () => void;
   handleCancel: () => void;
   userId: number;
-  month: number;
-  year: number;
   handleRefetch?: () => void;
 }
 
-export default function ModalOtherSalary(
-  props: IModalCreateProject
+export default function ModalDeductionSalary(
+  props: IModalCreateDeduction
 ): JSX.Element {
-  const [reason, setReason] = useState<string>();
-  const [salary, setSalary] = useState<number>();
-  const createBonusSalary = useMutation(ApiSalary.createBonusSalary);
+  const [date, setDate] = useState<string>();
+  const [dayOffWork, setDayOffWork] = useState<number>();
+  const createDeductionDaySalary = useMutation(
+    ApiSalary.createDeductionDaySalary
+  );
   const renderContent = (): JSX.Element => {
     return (
       <div className="modal-info">
-        <Form labelCol={{span: 3}} wrapperCol={{span: 22}}>
-          <Form.Item label="Lý do" name="nameProject">
+        <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
+          <Form.Item label="Ngày nghỉ" name="a">
             <Input
+              type="date"
               className="w-full"
               onChange={(e) => {
-                setReason(e.target.value);
+                setDate(e.target.value);
               }}
             />
           </Form.Item>
-          <Form.Item label="Số tiền" name="salary">
+          <Form.Item label="số ngày nghỉ" name="b">
             <InputNumber
+              max={31}
+              min={0}
               className="w-full"
-              formatter={(value) =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
-              parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
               onChange={(e) => {
-                setSalary(Number(e));
+                setDayOffWork(Number(e));
               }}
             />
           </Form.Item>
@@ -54,16 +52,10 @@ export default function ModalOtherSalary(
   const handleOkModal = (): void => {
     const data = {
       user: props?.userId || 0,
-      reason: reason || "",
-      salary: salary || 0,
-      date:
-        props.year +
-        "/" +
-        formatNumber(props.month) +
-        "/" +
-        formatNumber(props.month),
+      date: date || "",
+      dayOffWork: dayOffWork || 0,
     };
-    createBonusSalary.mutate(data, {
+    createDeductionDaySalary.mutate(data, {
       onSuccess: () => {
         notification.success({message: "create success"});
         if (props?.handleRefetch) {
@@ -80,7 +72,7 @@ export default function ModalOtherSalary(
       isModalVisible={props.isModalVisible}
       handleOk={handleOkModal}
       handleCancel={props.handleCancel}
-      title="Thêm lương dự án"
+      title="Thêm lương khấu trừ"
       content={renderContent()}
     />
   );

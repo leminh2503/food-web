@@ -1,7 +1,7 @@
 import "./index.scss";
-import {Image, Table} from "antd";
+import {Image, Input, Select, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {IDataSalaryToTalOfUser} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
@@ -13,15 +13,21 @@ export function TableSalaryTotalOfUser(): JSX.Element {
   const router = useRouter();
   const {month} = router.query;
   const {year} = router.query;
+  const [searchValue, setSearchValue] = useState<string>();
+  const [state, setState] = useState<number>();
+
   const getListSalaryTotalUser = (): Promise<IDataSalaryToTalOfUser[]> => {
     return ApiSalary.getListSalaryTotalUser(
       Number(year || 0),
-      Number(month || 0)
+      Number(month || 0),
+      state,
+      searchValue === "" ? undefined : searchValue
     );
   };
   const {data, refetch} =
-    useQuery("listSalaryTotalUser", getListSalaryTotalUser, {enabled: false}) ||
-    [];
+    useQuery("listSalaryTotalUser" + month, getListSalaryTotalUser, {
+      enabled: false,
+    }) || [];
 
   useEffect(() => {
     if (year && month) {
@@ -200,7 +206,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
                   ? "Chưa duyệt"
                   : _item.state === 1
                   ? "Đã duyệt"
-                  : "Đã huỷ"}
+                  : "Đã khoá"}
               </span>
             );
           },
@@ -209,6 +215,10 @@ export function TableSalaryTotalOfUser(): JSX.Element {
     },
   ];
 
+  useEffect(() => {
+    refetch();
+  }, [state, searchValue]);
+
   return (
     <div className="account-manager-page">
       <div className="flex items-center mb-6">
@@ -216,11 +226,49 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           <LeftOutlined />
         </button>
       </div>
+      <div className="flex items-center bg-white mb-4 p-4">
+        <Input.Search
+          className="w-[300px]"
+          onChange={(e) => setSearchValue(e.target.value)}
+          onSearch={() => {
+            refetch();
+          }}
+        />
+        <div className="flex items-center ml-4">
+          <span>Trạng thái : </span>
+          <Select
+            placeholder="trạng thái"
+            className="w-[120px] ml-4"
+            onChange={(e) => {
+              if (e === "-1") {
+                setState(undefined);
+              } else {
+                setState(Number(e));
+              }
+            }}
+          >
+            <Select.Option key={1} value="-1">
+              {" "}
+            </Select.Option>
+            <Select.Option key={1} value="0">
+              Chưa duyệt
+            </Select.Option>
+            <Select.Option key={2} value="1">
+              Đã duyệt
+            </Select.Option>
+            <Select.Option key={3} value="3">
+              Đã khoá
+            </Select.Option>
+          </Select>
+        </div>
+      </div>
       <Table
         columns={columns}
         dataSource={data}
         className="hover-pointer"
         bordered
+        scroll={{y: "calc(100vw - 300px)"}}
+        pagination={{pageSize: 100}}
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {
@@ -230,6 +278,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
                   month: month,
                   year: year,
                   userId: record.user.id,
+                  id: record.id,
                 },
               });
             },

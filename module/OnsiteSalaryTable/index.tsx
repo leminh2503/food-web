@@ -195,7 +195,10 @@ export default function OnsiteSalaryTable({
         handleOk={handleOk}
         handleCancel={handleCancel}
       />
-      <div className="mb-4 font-bold">Lương Onsite :</div>
+      <div className="mb-4 font-bold">
+        Lương Onsite :{" "}
+        {((dataOnsite?.length || 0) * 50000).toLocaleString("en-US")} VND
+      </div>
       <Table
         columns={columns}
         dataSource={data}

@@ -5,7 +5,7 @@ import {ColumnsType} from "antd/es/table";
 import {IDataProject, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {EditFilled} from "@ant-design/icons";
+import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
 import ModalProjectSalary from "@app/module/ProjectSalaryTable/ModalProjectSalary";
 
 export default function ProjectSalaryTable({
@@ -16,7 +16,7 @@ export default function ProjectSalaryTable({
   isAdmin,
 }: {
   isAdmin?: boolean;
-  userId?: number;
+  userId: number;
   listProject?: IDataProjectList[];
   month: number;
   year: number;
@@ -28,6 +28,7 @@ export default function ProjectSalaryTable({
   };
 
   const handleOk = (): void => {
+    refetch();
     setIsModalVisible(false);
   };
 
@@ -36,28 +37,63 @@ export default function ProjectSalaryTable({
   };
 
   const getProjectSalary = (): Promise<IDataProject[]> => {
-    return ApiSalary.getMyProjectSalary(year, month);
+    return ApiSalary.getMyProjectSalary(year, month, userId);
   };
 
-  const {data: dataProject} = useQuery("projectSalary", getProjectSalary) || [];
-  const columns: ColumnsType<IDataProject> = [
-    {
-      title: "Dự án",
-      dataIndex: "projectName",
-      key: "projectName",
-      align: "center",
-    },
-    {
-      title: "Lương thưởng dự án",
-      dataIndex: "salary",
-      key: "salary",
-      align: "center",
-    },
-  ];
+  const {
+    data: dataProject,
+    refetch,
+    isRefetching,
+  } = useQuery("projectSalary", getProjectSalary) || [];
+  const columns: ColumnsType<IDataProject> = isAdmin
+    ? [
+        {
+          title: "Dự án",
+          dataIndex: "projectName",
+          key: "projectName",
+          align: "center",
+        },
+        {
+          title: "Lương thưởng dự án",
+          dataIndex: "salary",
+          key: "salary",
+          align: "center",
+        },
+        {
+          title: "",
+          align: "center",
+          render: (index, _record): JSX.Element => {
+            return (
+              <CloseCircleOutlined
+                onClick={(): void => {
+                  ApiSalary.deleteProjectSalary(_record?.id || 0).then((r) =>
+                    refetch()
+                  );
+                }}
+                className="text-[red] text-[20px] hover-pointer"
+              />
+            );
+          },
+        },
+      ]
+    : [
+        {
+          title: "Dự án",
+          dataIndex: "projectName",
+          key: "projectName",
+          align: "center",
+        },
+        {
+          title: "Lương thưởng dự án",
+          dataIndex: "salary",
+          key: "salary",
+          align: "center",
+        },
+      ];
 
   const data: IDataProject[] =
     dataProject?.map((el) => {
-      return {salary: el?.salary, reason: el?.projectName};
+      return {salary: el?.salary, reason: el?.projectName, id: el.id};
     }) || [];
   return (
     <Card className="w-full">
@@ -72,8 +108,16 @@ export default function ProjectSalaryTable({
           userId={Number(userId)}
         />
       )}
-      <div className="flex items-center justify-between">
-        <span className="mb-4 font-bold">Lương dự án :</span>
+      <div className="flex items-center mb-4 justify-between">
+        <span className="font-bold">
+          Lương dự án :
+          {dataProject
+            ?.reduce(function (accumulator, element) {
+              return accumulator + (element?.salary || 0);
+            }, 0)
+            .toLocaleString("en-US")}{" "}
+          VND
+        </span>
         {isAdmin && (
           <EditFilled
             onClick={showModal}
@@ -81,7 +125,13 @@ export default function ProjectSalaryTable({
           />
         )}
       </div>
-      <Table columns={columns} dataSource={data} bordered pagination={false} />
+      <Table
+        loading={isRefetching}
+        columns={columns}
+        dataSource={data}
+        bordered
+        pagination={false}
+      />
     </Card>
   );
 }

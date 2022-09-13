@@ -126,6 +126,14 @@ function getUserAccount(
   });
 }
 
+function getUserInfo(params: {id: number}): Promise<IUserLogin> {
+  return fetcher({
+    url: path.getUserAccount + "/" + params.id,
+    method: "get",
+    params: params,
+  });
+}
+
 function getListPosition(): Promise<IWorkType[]> {
   return fetcher({url: path.position, method: "get"});
 }
@@ -266,4 +274,5 @@ export default {
   deleteFamilyCircumstance,
   getDataFamilyOfAccount,
   exportListAccount,
+  getUserInfo,
 };
