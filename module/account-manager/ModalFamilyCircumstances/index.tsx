@@ -7,6 +7,7 @@ import {ColumnsType} from "antd/es/table";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {ModalAddFamily} from "@app/module/account-manager/ModalAddFamily";
 import {useMutation, useQuery, useQueryClient} from "react-query";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -40,7 +41,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
   };
 
   const {data: dataFamily, refetch} = useQuery(
-    "getListDataFamily",
+    queryKeys.GET_LIST_DATA_FAMILY,
     getDataFamily
   );
 
@@ -75,7 +76,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
       });
       refetch();
       queryClient.refetchQueries({
-        queryKey: "listUserAccount",
+        queryKey: queryKeys.GET_LIST_ACCOUNT,
       });
     },
     onError: () => {
@@ -98,7 +99,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
       });
       refetch();
       queryClient.refetchQueries({
-        queryKey: "listUserAccount",
+        queryKey: queryKeys.GET_LIST_ACCOUNT,
       });
     },
     onError: () => {
@@ -121,7 +122,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
       });
       refetch();
       queryClient.refetchQueries({
-        queryKey: "listUserAccount",
+        queryKey: queryKeys.GET_LIST_ACCOUNT,
       });
     },
     onError: () => {

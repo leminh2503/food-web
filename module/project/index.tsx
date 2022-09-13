@@ -7,6 +7,7 @@ import ApiProject, {IProjectWithMeta} from "@app/api/ApiProject";
 import {useQuery} from "react-query";
 import {ModalCreateProject} from "./components/ModalCreateProject";
 import {useRouter} from "next/router";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function Project(): JSX.Element {
   const router = useRouter();
@@ -32,7 +33,10 @@ export function Project(): JSX.Element {
       search: searchString,
     });
   };
-  const {data: dataProject, refetch} = useQuery("listProject", getProject);
+  const {data: dataProject, refetch} = useQuery(
+    queryKeys.GET_LIST_PROJECT,
+    getProject
+  );
 
   useEffect(() => {
     refetch();
