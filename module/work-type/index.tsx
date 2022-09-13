@@ -7,6 +7,7 @@ import {useMutation, useQuery} from "react-query";
 import Icon from "@app/components/Icon/Icon";
 import {ModalCreateWorkType} from "@app/module/work-type/components/ModalCreateWorkType";
 import {ModalEditWorkType} from "@app/module/work-type/components/ModalEditWorkType";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function WorkType(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
@@ -32,7 +33,10 @@ export function WorkType(): JSX.Element {
       pageNumber: pageNumber,
     });
   };
-  const dataWorkType = useQuery("listWorkType", getWorkType);
+  const dataWorkType = useQuery(
+    queryKeys.GET_LIST_WORK_TYPE_FOR_SETTING,
+    getWorkType
+  );
 
   const dataRefetch = (): void => {
     dataWorkType.refetch();

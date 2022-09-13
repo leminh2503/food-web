@@ -9,6 +9,7 @@ import ApiUser from "@app/api/ApiUser";
 import {IUserLogin} from "@app/types";
 import {notification} from "antd";
 import {IMetadata} from "@app/api/Fetcher";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 interface ModalCreateProjectProps {
   isModalVisible: boolean;
@@ -39,7 +40,10 @@ export function ModalCreateProject({
       pageNumber: 1,
     });
   };
-  const {data: dataUser} = useQuery("listUser", getUser);
+  const {data: dataUser} = useQuery(
+    queryKeys.GET_LIST_USER_FOR_PROJECT,
+    getUser
+  );
 
   const createProjectMutation = useMutation(ApiProject.createProject);
   const handleCreateProject = (values: IProjectBody): void => {

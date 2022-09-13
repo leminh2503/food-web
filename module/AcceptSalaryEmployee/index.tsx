@@ -9,6 +9,7 @@ import Config from "@app/config";
 import ApiSalary from "@app/api/ApiSalary";
 import {IDataProjectList} from "@app/types";
 import ApiUser from "@app/api/ApiUser";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function AcceptSalaryEmployee(): JSX.Element {
   const router = useRouter();
@@ -26,9 +27,11 @@ export function AcceptSalaryEmployee(): JSX.Element {
     return ApiSalary.getListProject();
   };
 
-  const {data: listProject} = useQuery("listProject", getListProject) || [];
+  const {data: listProject} =
+    useQuery(queryKeys.GET_LIST_PROJECT_SALARY, getListProject) || [];
 
-  const {data} = useQuery("listTotalSalaryUser", getListTotalSalary) || [];
+  const {data} =
+    useQuery(queryKeys.GET_LIST_TOTAL_SALARY_OF_USER, getListTotalSalary) || [];
 
   const dataYear = (): JSX.Element => {
     const year = [];

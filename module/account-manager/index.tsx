@@ -29,6 +29,7 @@ import {FilterAccount} from "@app/module/account-manager/FilterAccount";
 import {LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {IMetadata} from "@app/api/Fetcher";
 import fileDownload from "js-file-download";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -134,7 +135,7 @@ export function AccountManager(): JSX.Element {
   };
 
   const {data: dataUserAccount, refetch} = useQuery(
-    "listUserAccount",
+    queryKeys.GET_LIST_ACCOUNT,
     getUserAccount
   );
 
@@ -155,8 +156,8 @@ export function AccountManager(): JSX.Element {
     return ApiUser.getListPosition();
   };
 
-  const listWorkType = useQuery("getListWorkType", getListWorkType);
-  const listPosition = useQuery("getListPosition", getListPosition);
+  const listWorkType = useQuery(queryKeys.GET_LIST_WORK_TYPE, getListWorkType);
+  const listPosition = useQuery(queryKeys.GET_LIST_POSITION, getListPosition);
 
   const newKeys = {id: "value", name: "label"};
 

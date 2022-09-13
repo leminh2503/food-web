@@ -7,11 +7,11 @@ import {toggleMenu} from "@app/redux/slices/MenuSlice";
 import {useQuery} from "react-query";
 import {IUserLogin} from "@app/types";
 import ApiUser from "@app/api/ApiUser";
-import Image from "next/image";
-import {Dropdown, Menu, Modal} from "antd";
+import {Dropdown, Image, Menu, Modal} from "antd";
 import Link from "next/link";
 import Icon from "@app/components/Icon/Icon";
 import {useRouter} from "next/router";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 /**
  *
@@ -26,7 +26,7 @@ export default function Navbar(): JSX.Element {
     return ApiUser.getMe();
   };
 
-  const dataUser = useQuery("dataUser", getMeData);
+  const dataUser = useQuery(queryKeys.GET_DATA_USER_IN_USE, getMeData);
 
   useEffect(() => {
     dataUser.refetch().then((data) => {
@@ -81,9 +81,10 @@ export default function Navbar(): JSX.Element {
         <Dropdown overlay={renderDropdown()} trigger={["click"]}>
           <div className="cursor-pointer flex items-center">
             <Image
-              src="/img/avatar/avatar.jpg"
+              src={dataUser?.data?.avatar}
               width={30}
               height={30}
+              fallback="/img/avatar/avatar.jpg"
               className="rounded-full"
               alt="avatar"
             />

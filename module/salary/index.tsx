@@ -9,6 +9,7 @@ import baseURL from "@app/config/baseURL";
 import Config from "@app/config";
 import ApiSalary from "@app/api/ApiSalary";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function Salary(): JSX.Element {
   const router = useRouter();
@@ -19,7 +20,8 @@ export function Salary(): JSX.Element {
     return ApiSalary.getMyListTotalSalary(year);
   };
 
-  const {data} = useQuery("listTotalSalaryUser", getListTotalSalary) || [];
+  const {data} =
+    useQuery(queryKeys.GET_LIST_TOTAL_SALARY_OF_USER, getListTotalSalary) || [];
 
   const dataYear = (): JSX.Element => {
     const year = [];
