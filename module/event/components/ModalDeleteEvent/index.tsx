@@ -85,6 +85,7 @@ export function ModalDeleteEvent({
             },
           ]}
           dataSource={dataEvent}
+          bordered
         />
       </div>
     );

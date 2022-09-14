@@ -1,19 +1,21 @@
 import React, {useState} from "react";
 import {IUserLogin} from "@app/types";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import ApiUser from "@app/api/ApiUser";
 import {
   Avatar,
   Button,
   Card,
   Descriptions,
+  Image,
   Input,
   Modal,
   notification,
   Tooltip,
 } from "antd";
-import {CameraOutlined, EditOutlined} from "@ant-design/icons";
+import {EditOutlined} from "@ant-design/icons";
 import {ModalUpdateProfile} from "@app/module/profile-account/components/ModalUpdateProfile";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function ProfileAccount(): JSX.Element {
   const [toggleModal, setToggleModal] = useState(false);
@@ -23,17 +25,19 @@ export function ProfileAccount(): JSX.Element {
     return ApiUser.getMe();
   };
 
+  const queryClient = useQueryClient();
+
   const {
     data: dataUser,
     isLoading,
     refetch,
-  } = useQuery("dataUser", getMeData) || {};
+  } = useQuery(queryKeys.GET_DATA_USER_IN_USE, getMeData) || {};
 
   const dataRefetch = (): void => {
     refetch();
   };
 
-  const onFileUpload = () => {
+  const onFileUpload = (): void => {
     if (!fileUpload) {
       notification.error({
         duration: 1,
@@ -51,6 +55,9 @@ export function ProfileAccount(): JSX.Element {
           setToggleModalUpload(false);
           setFileUpload(undefined);
           dataRefetch();
+          queryClient.refetchQueries({
+            queryKey: "dataUser",
+          });
         })
         .catch((error) =>
           notification.warning({
@@ -63,7 +70,7 @@ export function ProfileAccount(): JSX.Element {
     }
   };
 
-  const handleChooseFile = (e: any) => {
+  const handleChooseFile = (e: any): void => {
     const img = e.target.files[0];
     setFileUpload(img);
   };
@@ -95,7 +102,7 @@ export function ProfileAccount(): JSX.Element {
                       Lưu
                     </Button>,
                   ]}
-                  onCancel={() => setToggleModalUpload(false)}
+                  onCancel={(): void => setToggleModalUpload(false)}
                 >
                   <div className="m-2 d-flex">
                     <p className="ml-2 font-bold w-20x">Thêm ảnh</p>
@@ -110,11 +117,13 @@ export function ProfileAccount(): JSX.Element {
                     />
                   </div>
                 </Modal>
-                <Avatar
-                  icon={<CameraOutlined />}
-                  size={140}
+                <Image
+                  width="180px"
+                  preview={false}
+                  style={{borderRadius: "50%"}}
+                  fallback="/img/avatar/avatar.jpg"
                   src={dataUser?.avatar || "/img/avatar/avatar.jpg"}
-                  onClick={() => setToggleModalUpload(true)}
+                  onClick={(): void => setToggleModalUpload(true)}
                 />
               </Tooltip>
             </Avatar.Group>
@@ -128,7 +137,7 @@ export function ProfileAccount(): JSX.Element {
               <ModalUpdateProfile
                 dataRefetch={dataRefetch}
                 setToggleModal={setToggleModal}
-                dataProfile={dataUser || {}}
+                dataProfile={dataUser || null}
               />
             )}
           </div>
@@ -163,7 +172,7 @@ export function ProfileAccount(): JSX.Element {
             type="primary"
             style={{backgroundColor: "#40a9ff"}}
             icon={<EditOutlined />}
-            onClick={() => setToggleModal(true)}
+            onClick={(): void => setToggleModal(true)}
           >
             Sửa thông tin nhân viên
           </Button>

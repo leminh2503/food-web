@@ -3,11 +3,11 @@
   height: 100vh;
   width: $sidebar-width;
   top: 0;
-  left: -$sidebar-width;
+  position: fixed;
+  left: 0;
   transition: left $transition-layout-time;
-  //overflow: auto;
 
-  z-index: 1001;
+  z-index: 2;
 
   &::-webkit-scrollbar {
     width: 0;

@@ -6,17 +6,17 @@ import ApiUser, {IProfileBody} from "@app/api/ApiUser";
 import {InputModal} from "@app/components/Modal/InputModal";
 import {useMutation} from "react-query";
 
-interface ModalUpdateProfile {
+interface IModalUpdateProfile {
   setToggleModal: (value: boolean) => void;
   dataRefetch: () => void;
-  dataProfile: IUserLogin;
+  dataProfile: IUserLogin | null;
 }
 
 export function ModalUpdateProfile({
   setToggleModal,
   dataRefetch,
   dataProfile,
-}: ModalUpdateProfile): JSX.Element {
+}: IModalUpdateProfile): JSX.Element {
   const [data, setData] = useState<IProfileBody>({
     fullName: dataProfile?.fullName,
     email: dataProfile?.email,
@@ -41,7 +41,7 @@ export function ModalUpdateProfile({
     });
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setToggleModal(false);
   };
 
