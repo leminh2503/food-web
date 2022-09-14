@@ -324,6 +324,42 @@ export interface ILeaveWork {
   state?: number;
 }
 
+export interface IWorkSchedule {
+  id: number;
+  state?: number;
+  user?: {
+    id: number;
+    email: string;
+    fullName: string;
+  };
+  workingDay: {
+    day?: number;
+    session?: string;
+    startTime?: string;
+    endTime?: string;
+    note?: string;
+  }[];
+}
+export interface time {
+  hour?: string;
+  minute?: string;
+}
+export interface IWorkScheduleCustom {
+  day?: string;
+  session?: string;
+  startTime?: time;
+  endTime?: time;
+  note?: string;
+}
+
+export interface IWorkingDaySchedule {
+  day?: number;
+  session?: string;
+  startTime?: string;
+  endTime?: string;
+  note?: string;
+}
+
 export interface IEvent {
   id?: number;
   title?: string;
