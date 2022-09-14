@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import {IWorkingDaySchedule, IWorkSchedule} from "@app/types";
-import {fetcher} from "./Fetcher";
+import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 
 const path = {
   getWorkSchedule: "work-schedule/user",
@@ -63,7 +63,9 @@ function updateStateWorkSchedule(
   });
 }
 
-function getAllWorkSchedule(params?: IParams): Promise<IWorkSchedule[]> {
+function getAllWorkSchedule(
+  params?: IParams
+): Promise<IWorkSchedule[]> {
   return fetcher({url: path.getAllWorkSchedule, method: "get", params: params});
 }
 

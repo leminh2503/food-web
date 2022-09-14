@@ -11,6 +11,7 @@ import moment from "moment";
 import Table, {ColumnType} from "antd/lib/table";
 import {Filter} from "@app/components/Filter";
 import {Button, Input, notification} from "antd";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export interface session {
   title: string;
@@ -66,15 +67,18 @@ export function UserWorkSchedule(): JSX.Element {
   const getWorkSchedule = (): Promise<IWorkSchedule> => {
     return ApiWorkSchedule.getWorkSchedule();
   };
-  const dataWorkSchedule = useQuery("listWorkSchedule", getWorkSchedule);
+  const dataWorkSchedule = useQuery(
+    queryKeys.GET_WORK_SCHEDULE,
+    getWorkSchedule
+  );
 
   const dataRefetch = (): void => {
     dataWorkSchedule.refetch();
   };
 
   const data =
-    dataWorkSchedule.status !== "error"
-      ? dataWorkSchedule.data?.workingDay
+    dataWorkSchedule?.status !== "error"
+      ? dataWorkSchedule?.data?.workingDay
       : null;
 
   useEffect(() => {
@@ -244,7 +248,7 @@ export function UserWorkSchedule(): JSX.Element {
       } else {
         updateWorkMutation.mutate(
           {
-            id: dataWorkSchedule.data?.id,
+            id: dataWorkSchedule?.data?.id,
             workingDay: dayArray,
           },
           {
@@ -377,7 +381,7 @@ export function UserWorkSchedule(): JSX.Element {
         ĐĂNG KÝ LỊCH LÀM VIỆC{" "}
         {data === null ? (
           <span className="not_yet_register">(Chưa đăng ký)</span>
-        ) : dataWorkSchedule.data?.state === 0 ? (
+        ) : dataWorkSchedule?.data?.state === 0 ? (
           <span className="pending_approval">(Đang chờ duyệt)</span>
         ) : (
           <span className="done_register">(Đã đăng ký)</span>

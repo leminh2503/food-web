@@ -12,6 +12,8 @@ import {ModalWorkSchedule} from "../ModalWorkSchedule";
 import "../index.scss";
 import {ModalOpenSchedule} from "../ModalOpenSchedule";
 import {ModalLockSchedule} from "../ModalLockSchedule";
+import {IMetadata} from "@app/api/Fetcher";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 interface RecordType {
   id: number;
@@ -96,7 +98,7 @@ export function AdminWorkSchedule(): JSX.Element {
     },
   ];
 
-  const getUserAccount = (): Promise<IUserLogin[]> => {
+  const getUserAccount = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
     return ApiUser.getUserAccount({
       pageSize: 30,
       pageNumber: 1,
@@ -104,7 +106,10 @@ export function AdminWorkSchedule(): JSX.Element {
     });
   };
 
-  const dataUserAccount = useQuery("listUserAccount", getUserAccount);
+  const {data: dataUserAccount, refetch: refetchUserAccount} = useQuery(
+    queryKeys.GET_LIST_ACCOUNT,
+    getUserAccount
+  );
 
   const getAllWorkSchedule = (): Promise<IWorkSchedule[]> => {
     return ApiWorkSchedule.getAllWorkSchedule({
@@ -115,7 +120,7 @@ export function AdminWorkSchedule(): JSX.Element {
   };
 
   const dataAllWorkSchedule = useQuery(
-    "getAllWorkSchedule",
+    queryKeys.GET_ALL_WORK_SCHEDULE,
     getAllWorkSchedule
   );
 
@@ -127,21 +132,22 @@ export function AdminWorkSchedule(): JSX.Element {
       {onSuccess: () => dataAllWorkSchedule.refetch()}
     );
   };
+  console.log(dataAllWorkSchedule);
 
   useEffect(() => {
-    dataAllWorkSchedule.refetch();
+    dataAllWorkSchedule.refetch()
   }, [filterMonth, filterYear]);
 
   useEffect(() => {
-    dataUserAccount.refetch();
+    refetchUserAccount();
   }, [filterState]);
 
   useEffect(() => {
     const records: RecordType[] = [];
-    dataUserAccount.data?.forEach((item) => {
-      if (dataAllWorkSchedule.data) {
+    dataUserAccount?.data.forEach((item) => {
+      if (dataAllWorkSchedule?.data) {
         const getWorkSchedule = (): IWorkSchedule => {
-          const workScheduleData: IWorkSchedule[] = dataAllWorkSchedule.data;
+          const workScheduleData: IWorkSchedule[] = dataAllWorkSchedule?.data;
           const index = workScheduleData.findIndex(
             (work) => work.user?.id === item.id
           );
@@ -162,8 +168,9 @@ export function AdminWorkSchedule(): JSX.Element {
         records.push(recordItem);
       }
     });
+    console.log(records);
     setRecordType(records);
-  }, [dataUserAccount.data, dataAllWorkSchedule.data]);
+  }, [dataUserAccount?.data, dataAllWorkSchedule?.data]);
 
   return (
     <div className="admin_component">

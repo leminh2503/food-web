@@ -11,6 +11,7 @@ interface InputModalProps {
   value: string;
   required?: boolean;
   keyValue: string;
+  suffix?: string;
 }
 
 export function InputModal({
@@ -21,6 +22,7 @@ export function InputModal({
   value,
   required,
   keyValue,
+  suffix,
 }: InputModalProps): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange((prev: any) => ({
@@ -34,7 +36,12 @@ export function InputModal({
       <h4 className={classNames("label-item mb-2", {required: required})}>
         {label}
       </h4>
-      <Input placeholder={placeholder} onChange={handleChange} value={value} />
+      <Input
+        placeholder={placeholder}
+        onChange={handleChange}
+        value={value}
+        suffix={suffix}
+      />
     </div>
   );
 }

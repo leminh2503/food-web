@@ -30,22 +30,29 @@ const routes: IRoute[] = [
   // },
   {
     path: "/",
-    name: "Home",
-    icon: "Homepage",
-    isSSR: true,
-    isSidebar: true,
-  },
-  {
-    path: "/account-manager",
     name: "Quản lý tài khoản",
     role: [IAccountRole.ADMIN],
     icon: "Users",
     isSidebar: true,
   },
   {
+    path: "/manager-salary",
+    name: "Quản lý bảng lương",
+    role: [IAccountRole.ADMIN],
+    icon: "Payroll",
+    isSidebar: true,
+  },
+  {
     path: "/salary",
     name: "Bảng lương",
     icon: "Payroll",
+    isSidebar: true,
+  },
+  {
+    path: "/salary-user",
+    name: "Duyệt lương nhân viên",
+    role: [3],
+    icon: "Users",
     isSidebar: true,
   },
   {
@@ -93,11 +100,27 @@ const routes: IRoute[] = [
     role: [IAccountRole.ADMIN],
   },
   {
-    path: "/settings",
+    path: "",
     name: "Cài đặt",
     icon: "Setting",
     role: [IAccountRole.ADMIN],
     isSidebar: true,
+    children: [
+      {
+        path: "/position",
+        name: "Chức vụ",
+        icon: "",
+        role: [IAccountRole.ADMIN],
+        isSidebar: true,
+      },
+      {
+        path: "/work-type",
+        name: "Loại hình làm việc",
+        icon: "",
+        role: [IAccountRole.ADMIN],
+        isSidebar: true,
+      },
+    ],
   },
 ];
 

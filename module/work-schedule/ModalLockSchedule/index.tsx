@@ -8,7 +8,7 @@ import {useMutation, UseQueryResult} from "react-query";
 interface IModalLockScheduleProps {
   isModalVisible: boolean;
   toggleModal: () => void;
-  dataWorkingSchedule: UseQueryResult<IWorkSchedule[], unknown>;
+  dataWorkingSchedule?: UseQueryResult<IWorkSchedule[], unknown>;
 }
 
 export function ModalLockSchedule({
@@ -38,7 +38,7 @@ export function ModalLockSchedule({
         {state: 3, id: item},
         {
           onSuccess: () => {
-            dataWorkingSchedule.refetch();
+            dataWorkingSchedule?.refetch();
           },
         }
       );
@@ -72,7 +72,7 @@ export function ModalLockSchedule({
             ),
           },
         ]}
-        dataSource={dataWorkingSchedule.data?.filter(
+        dataSource={dataWorkingSchedule?.data?.filter(
           (item) => item.state === 2
         )}
       />
