@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+
+  .header {
+    background-color: #ccc;
+    padding: 20px 10px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .content ul {
+    padding-left: 30px;
+  }
+
+  .content div {
+    margin-bottom: 20px;
+  }
+
+  .content div h4 {
+    margin-bottom: 10px;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: end;
+  }
+}

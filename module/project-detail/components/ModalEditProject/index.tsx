@@ -5,35 +5,52 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import {InputModal} from "@app/components/Modal/InputModal";
 import {SelectInput} from "@app/components/Modal/SelectInput";
 import ApiUser from "@app/api/ApiUser";
-import {IUserLogin} from "@app/types";
+import {IProject, IUserLogin} from "@app/types";
 import {notification} from "antd";
-import {IMetadata} from "@app/api/Fetcher";
-import {queryKeys} from "@app/utils/constants/react-query";
 import {DateInput3} from "@app/components/Modal/DateInput3";
 import moment from "moment";
+import {IMetadata} from "@app/api/Fetcher";
+import {queryKeys} from "@app/utils/constants/react-query";
 
-interface ModalCreateProjectProps {
+interface ModalEditProjectProps {
   isModalVisible: boolean;
   toggleModal: () => void;
+  projectId: number;
 }
 
-export function ModalCreateProject({
+export function ModalEditProject({
   isModalVisible,
   toggleModal,
-}: ModalCreateProjectProps): JSX.Element {
+  projectId,
+}: ModalEditProjectProps): JSX.Element {
   const queryClient = useQueryClient();
-  const defaultValue = {
-    name: "",
-    projectManager: 1,
-    startDate: moment().format("YYYY-MM-DD"),
-    endDate: moment().format("YYYY-MM-DD"),
-    scale: 0,
-    customer: "",
-    technicality: "",
-    use: "",
-    description: "",
+
+  const getProjectById = (): Promise<IProject> => {
+    return ApiProject.getProjectById(projectId);
   };
+
+  const {data: dataProjectById} = useQuery(
+    queryKeys.GET_PROJECT_BY_ID,
+    getProjectById
+  );
+
+  const defaultValue = {
+    name: dataProjectById?.name,
+    projectManager: Number(dataProjectById?.projectManager?.id),
+    startDate: dataProjectById?.startDate,
+    endDate: dataProjectById?.endDate,
+    scale: dataProjectById?.scale,
+    customer: dataProjectById?.customer,
+    technicality: dataProjectById?.technicality,
+    use: dataProjectById?.use,
+    description: dataProjectById?.description,
+  };
+
   const [data, setData] = useState<IProjectBody>(defaultValue);
+
+  useEffect(() => {
+    setData(defaultValue);
+  }, [dataProjectById, isModalVisible]);
 
   const getUser = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
     return ApiUser.getUserAccount();
@@ -43,16 +60,20 @@ export function ModalCreateProject({
     getUser
   );
 
-  useEffect(() => {
-    setData(defaultValue);
-  }, [isModalVisible]);
+  const selectProjectManager = dataUser?.data.map((item) => {
+    return {
+      value: Number(item.id),
+      label: item.fullName,
+    };
+  });
 
-  const createProjectMutation = useMutation(ApiProject.createProject);
-  const handleCreateProject = (values: IProjectBody): void => {
-    createProjectMutation.mutate(
+  const editProjectMutation = useMutation(ApiProject.editProject);
+  const handleEditProject = (values: IProjectBody): void => {
+    editProjectMutation.mutate(
       {
+        id: projectId,
         name: values.name,
-        projectManager: values.projectManager,
+        projectManager: Number(values.projectManager),
         startDate: values.startDate,
         endDate: values.endDate,
         scale: values.scale,
@@ -63,19 +84,20 @@ export function ModalCreateProject({
       },
       {
         onSuccess: () => {
+          setData(defaultValue);
           notification.success({
             duration: 1,
-            message: "Thêm project thành công!",
+            message: "Sửa thông tin dự án thành công!",
           });
           queryClient.refetchQueries({
-            queryKey: queryKeys.GET_LIST_PROJECT,
+            queryKey: queryKeys.GET_PROJECT_BY_ID,
           });
           toggleModal();
         },
         onError: () => {
           notification.error({
             duration: 1,
-            message: "Thêm project thất bại!",
+            message: "Sửa thông tin dự án thất bại!",
           });
         },
       }
@@ -98,13 +120,8 @@ export function ModalCreateProject({
           className="inline"
           keyValue="projectManager"
           label="PM dự án:"
-          value={data.projectManager}
-          data={dataUser?.data.map((item) => {
-            return {
-              value: Number(item.id),
-              label: item.fullName,
-            };
-          })}
+          value={Number(data.projectManager)}
+          data={selectProjectManager}
           setValue={setData}
         />
         <DateInput3
@@ -113,7 +130,7 @@ export function ModalCreateProject({
           label="Bắt đầu:"
           onChange={setData}
           value={data.startDate ?? ""}
-          disabledDate={(d) => {
+          disabledDate={(d): boolean => {
             if (data.endDate !== moment().format("YYYY-MM-DD")) {
               return d.isBefore() || d.isAfter(moment(data.endDate));
             }
@@ -126,7 +143,7 @@ export function ModalCreateProject({
           label="Kết thúc:"
           onChange={setData}
           value={data.endDate ?? ""}
-          disabledDate={(d) =>
+          disabledDate={(d): boolean =>
             d.isBefore() || d.isBefore(moment(data.startDate))
           }
         />
@@ -178,11 +195,11 @@ export function ModalCreateProject({
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => {
-        handleCreateProject(data);
+      handleOk={(): void => {
+        handleEditProject(data);
       }}
       handleCancel={toggleModal}
-      title="Thêm dự án"
+      title="Sửa thông tin dự án"
       content={renderContent()}
     />
   );

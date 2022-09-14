@@ -8,6 +8,7 @@ import {useQuery} from "react-query";
 import {ModalCreateProject} from "./components/ModalCreateProject";
 import {useRouter} from "next/router";
 import {queryKeys} from "@app/utils/constants/react-query";
+import baseURL from "@app/config/baseURL";
 
 export function Project(): JSX.Element {
   const router = useRouter();
@@ -126,7 +127,7 @@ export function Project(): JSX.Element {
         dataSource={dataProject?.data}
         bordered
         pagination={{
-          total: dataProject?.meta?.totalItems,
+          total: dataProject?.meta.totalItems,
           defaultPageSize: 50,
           showSizeChanger: true,
           pageSizeOptions: ["50", "100", "150", "200"],
@@ -135,20 +136,13 @@ export function Project(): JSX.Element {
             setPageSize(numberPerPage);
           },
         }}
-        onRow={(record) => {
+        onRow={(record): {onDoubleClick: () => void} => {
           return {
             onDoubleClick: (): void => {
               router.push({
-                pathname: "/project/project-detail",
+                pathname: baseURL.PROJECT.PROJECT_DETAIL,
                 query: {
-                  name: record.name,
-                  customer: record.customer,
-                  startDate: record.startDate,
-                  endDate: record.endDate,
-                  technicality: record.technicality,
-                  use: record.use,
-                  description: record.description,
-                  state: record.state,
+                  id: record.id,
                 },
               });
             },
@@ -158,7 +152,6 @@ export function Project(): JSX.Element {
       <ModalCreateProject
         isModalVisible={isModalVisible === "modalCreateProject"}
         toggleModal={toggleModal}
-        dataRefetch={refetch}
       />
     </div>
   );

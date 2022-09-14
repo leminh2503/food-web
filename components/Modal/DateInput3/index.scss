@@ -1,0 +1,28 @@
+.date-input-container3 {
+  .label-item {
+    font-weight: $font-weight-medium;
+  }
+  .required::after {
+    content: "*";
+    color: $red-color;
+  }
+
+  .ant-picker {
+    width: 100%;
+  }
+
+  &.inline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h4 {
+      width: 30%;
+      margin-bottom: unset;
+    }
+
+    .ant-picker {
+      width: 70%;
+    }
+  }
+}
