@@ -135,7 +135,7 @@ export function AdminWorkSchedule(): JSX.Element {
   console.log(dataAllWorkSchedule);
 
   useEffect(() => {
-    dataAllWorkSchedule.refetch()
+    dataAllWorkSchedule.refetch();
   }, [filterMonth, filterYear]);
 
   useEffect(() => {
