@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {IWorkingDaySchedule, IWorkSchedule} from "@app/types";
 import {fetcher} from "./Fetcher";
 
