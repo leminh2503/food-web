@@ -12,6 +12,7 @@ interface InputModalProps {
   required?: boolean;
   keyValue: string;
   suffix?: string;
+  disabled?: boolean;
 }
 
 export function InputModal({
@@ -23,6 +24,7 @@ export function InputModal({
   required,
   keyValue,
   suffix,
+  disabled,
 }: InputModalProps): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange((prev: any) => ({
@@ -41,6 +43,7 @@ export function InputModal({
         onChange={handleChange}
         value={value}
         suffix={suffix}
+        disabled={disabled}
       />
     </div>
   );

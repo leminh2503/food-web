@@ -81,7 +81,7 @@ const routes: IRoute[] = [
     isSidebar: true,
   },
   {
-    path: "/rules",
+    path: "/rule",
     name: "Nội quy - Quy định",
     icon: "Rules",
     isSidebar: true,
