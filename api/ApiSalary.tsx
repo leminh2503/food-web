@@ -39,6 +39,8 @@ const path = {
   createDeductionHourSalary: "/deduction-hour-late",
   acceptToTalSalary: "/total-salary/accept",
   lockToTalSalary: "/total-salary/lock",
+  createSalaryAllEmployee: "/total-salary/create-all-user",
+  updateTotalSalary: "/total-salary/",
 };
 
 interface IBodyOTSalary {
@@ -52,6 +54,17 @@ interface IBodyOnsiteSalary {
   user: number | string;
   onsitePlace: string;
   date: string;
+}
+
+function createSalaryAllEmployee(
+  year: number,
+  month: number
+): Promise<IDataOnsite[]> {
+  return fetcher({
+    url: path.createSalaryAllEmployee,
+    method: "post",
+    data: {month, year},
+  });
 }
 
 function lockToTalSalary(ids: number[]): Promise<IDataSalaryToTalOfUser[]> {
@@ -81,7 +94,8 @@ function getListSalaryTotalUser(
     method: "get",
     params: {
       filter: {date_month: month, date_year: year, state: state},
-      search: search,
+      searchFields: ["fullName", "email"],
+      search,
     },
   });
 }
@@ -99,6 +113,25 @@ function createTotalSalary(id: number, date: string): Promise<IDataSalary[]> {
     url: path.createTotalSalary,
     method: "post",
     data: {user: id, date},
+  });
+}
+
+function updateTotalSalary(
+  data: {
+    date?: string;
+    onsiteSalary?: number;
+    bonusSalary?: number;
+    manageSalary?: number;
+    overtimeSalary?: number;
+    projectSalary?: number;
+    deductionSalary?: number;
+  },
+  id: number
+): Promise<IDataSalary[]> {
+  return fetcher({
+    url: path.updateTotalSalary + id,
+    method: "patch",
+    data,
   });
 }
 
@@ -235,12 +268,13 @@ function getMyBonusSalary(
 
 function getMyDeductionDaySalary(
   year: number,
-  month: number
+  month: number,
+  userId?: number
 ): Promise<IDataDeductionDay[]> {
   return fetcher({
     url: path.getMyDeductionDaySalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year}},
+    params: {filter: {date_month: month, date_year: year, userId}},
   });
 }
 
@@ -286,12 +320,13 @@ function deleteDeductionDaySalary(id: number): Promise<IDataDeductionDay[]> {
 
 function getMyDeductionHourSalary(
   year: number,
-  month: number
+  month: number,
+  userId?: number
 ): Promise<IDataDeductionDay[]> {
   return fetcher({
     url: path.getMyDeductionHourSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year}},
+    params: {filter: {date_month: month, date_year: year, userId}},
   });
 }
 
@@ -366,4 +401,6 @@ export default {
   deleteDeductionHourSalary,
   acceptToTalSalary,
   lockToTalSalary,
+  createSalaryAllEmployee,
+  updateTotalSalary,
 };

@@ -1,5 +1,5 @@
 import "./index.scss";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import ProjectSalaryTable from "@app/module/ProjectSalaryTable/ProjectSalaryTable";
 import {LeftOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
@@ -18,12 +18,18 @@ import {ColumnsType} from "antd/es/table";
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
   const {month, year, userId, id} = router.query;
+  const [onsiteSalary, setOnsiteSalary] = useState<number>(0);
+  const [bonusSalary, setBonusSalary] = useState<number>(0);
+  const [overtimeSalary, setOvertimeSalary] = useState<number>(0);
+  const [projectSalary, setProjectSalary] = useState<number>(0);
+  const [deductionSalary, setDeductionSalary] = useState<number>(0);
+
   const getUserInfo = (): Promise<IUserLogin> => {
-    return ApiUser.getUserInfo({id: Number(id)});
+    return ApiUser.getUserInfo({id: Number(userId)});
   };
 
   const {data: dataUser, refetch} =
-    useQuery("userInfo" + id, getUserInfo, {enabled: false}) || [];
+    useQuery("userInfo" + userId, getUserInfo, {enabled: false}) || [];
 
   const getListProject = (): Promise<IDataProjectList[]> => {
     return ApiSalary.getListProject();
@@ -127,6 +133,7 @@ export function SalaryTableDetail(): JSX.Element {
       {month && year && (
         <div className="flex justify-between">
           <ProjectSalaryTable
+            setProjectSalary={setProjectSalary}
             userId={Number(userId)}
             listProject={listProject}
             month={Number(month)}
@@ -134,6 +141,7 @@ export function SalaryTableDetail(): JSX.Element {
             isAdmin
           />
           <OtherSalaryTable
+            setBonusSalary={setBonusSalary}
             userId={Number(userId)}
             isAdmin
             month={Number(month)}
@@ -144,6 +152,7 @@ export function SalaryTableDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <OnsiteSalaryTable
+            setOnsiteSalary={setOnsiteSalary}
             idUser={Number(userId)}
             month={Number(month)}
             year={Number(year)}
@@ -154,6 +163,7 @@ export function SalaryTableDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <OverTimeSalaryTable
+            setOvertimeSalary={setOvertimeSalary}
             baseSalary={dataUser?.baseSalary || 0}
             listProject={listProject}
             idUser={Number(userId)}
@@ -166,6 +176,7 @@ export function SalaryTableDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <DeductionSalaryTable
+            setDeductionSalary={setDeductionSalary}
             baseSalary={dataUser?.baseSalary || 0}
             isAdmin
             userId={Number(userId)}
@@ -185,6 +196,25 @@ export function SalaryTableDetail(): JSX.Element {
               onOk: (): void => {
                 ApiSalary.acceptToTalSalary([Number(id || 0)]).then((r) => {
                   notification.success({message: "accept success"});
+                });
+                console.log(
+                  onsiteSalary,
+                  overtimeSalary,
+                  bonusSalary,
+                  projectSalary,
+                  deductionSalary
+                );
+                ApiSalary.updateTotalSalary(
+                  {
+                    onsiteSalary,
+                    overtimeSalary,
+                    bonusSalary,
+                    projectSalary,
+                    deductionSalary,
+                  },
+                  Number(id || 0)
+                ).then((r) => {
+                  //
                 });
               },
             });

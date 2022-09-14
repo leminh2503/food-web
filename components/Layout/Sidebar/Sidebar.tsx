@@ -76,11 +76,18 @@ const RenderMenu = React.memo(() => {
             </Menu.Item>
           );
         }
+
         return (
           <Menu.Item
             key={path}
             className="sidebar-item"
-            hidden={role && userRole ? !role?.includes(userRole) : undefined}
+            hidden={
+              role && userRole
+                ? !role?.includes(userRole)
+                : role
+                ? !role?.includes(0)
+                : undefined
+            }
             onClick={(): void => {
               router.push(path);
             }}

@@ -1,6 +1,53 @@
 .container {
   width: 100%;
+  .slider {
+    margin: 0 auto;
+    .slick-slide:not(.slick-current) {
+      filter: brightness(0.8) !important;
+    }
+    .name {
+      font-family: cursive;
+      position: absolute;
+      z-index: 100;
+      top: 34%;
+      color: white;
+      width: calc(100% - 100px);
+      display: flex;
+      height: 25px;
+      align-items: center;
+      font-size: 12px;
+      justify-content: center;
+    }
+    .avatar {
+      position: absolute;
+      z-index: 100;
+      top: 42%;
+      left: 37%;
+      width: 26%;
+    }
+    .shadow {
+      margin: 20px auto;
+      border-radius: 50%;
+      width: 50%;
+      height: 70px;
+      box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+      background-color: #f0f2f5;
+    }
+    .slick-slide {
+      transition: 2s;
+      padding: 50px;
 
+      div {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+          rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+      }
+    }
+    .slick-center {
+      transition: 2s;
+    }
+  }
   .birthday-card {
     .ant-card-cover {
       width: 80px;
@@ -24,4 +71,33 @@
       }
     }
   }
+}
+
+slider {
+  max-width: 1110px;
+  margin: 0 auto;
+}
+
+.slick-track {
+  padding-top: 53px;
+  padding-bottom: 53px;
+}
+
+.slick-slide {
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.slick-slide:not(.slick-current) {
+  filter: brightness(0.5);
+}
+
+.slick-slide.slick-current {
+  transform: scale(1.35);
+  position: relative;
+  z-index: 1;
+}
+
+.slick-slide img {
+  width: 100%;
 }

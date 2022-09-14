@@ -1,5 +1,5 @@
 import "../my-salary-detail/index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataDeductionDay} from "@app/types";
@@ -15,7 +15,9 @@ export default function DeductionSalaryTable({
   isAdmin,
   userId,
   baseSalary,
+  setDeductionSalary,
 }: {
+  setDeductionSalary?: (val: number) => void;
   baseSalary: number;
   userId?: number;
   isAdmin?: boolean;
@@ -50,18 +52,24 @@ export default function DeductionSalaryTable({
   };
 
   const getDeductionSalary = (): Promise<IDataDeductionDay[]> => {
-    return ApiSalary.getMyDeductionDaySalary(year, month);
+    return ApiSalary.getMyDeductionDaySalary(year, month, userId);
   };
 
-  const {data: dataDeduction, refetch: dayRefetch} =
-    useQuery("deductionDaySalary", getDeductionSalary) || [];
+  const {
+    data: dataDeduction,
+    refetch: dayRefetch,
+    isRefetching: isRefetchingD,
+  } = useQuery("deductionDaySalary" + userId, getDeductionSalary) || [];
 
   const getDeductionHourSalary = (): Promise<IDataDeductionDay[]> => {
-    return ApiSalary.getMyDeductionHourSalary(year, month);
+    return ApiSalary.getMyDeductionHourSalary(year, month, userId);
   };
 
-  const {data: dataDeductionHour, refetch: hourRefetch} =
-    useQuery("deductionHourSalary", getDeductionHourSalary) || [];
+  const {
+    data: dataDeductionHour,
+    refetch: hourRefetch,
+    isRefetching: isRefetchingH,
+  } = useQuery("deductionHourSalary" + userId, getDeductionHourSalary) || [];
 
   const columns: ColumnsType<IDataDeductionDay> = isAdmin
     ? [
@@ -218,7 +226,12 @@ export default function DeductionSalaryTable({
     data2?.reduce(function (accumulator, element) {
       return accumulator + (Number(element?.deductionSalaryHour) || 0);
     }, 0) || 0;
-
+  useEffect(() => {
+    const totalSalary2 = totalSalaryDay + totalSalaryHour;
+    if (setDeductionSalary) {
+      setDeductionSalary(totalSalary2);
+    }
+  }, [isRefetchingD, isRefetchingH]);
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -239,7 +252,7 @@ export default function DeductionSalaryTable({
       />
       <div className="mb-4 font-bold">
         Lương khấu trừ :{" "}
-        {(totalSalaryHour + totalSalaryDay).toLocaleString("en-US")} VND
+        {(totalSalaryHour + totalSalaryDay)?.toLocaleString("en-US")} VND
       </div>
       <div className="flex">
         <Table

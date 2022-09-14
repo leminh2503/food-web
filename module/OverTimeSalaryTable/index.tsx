@@ -20,7 +20,9 @@ export default function OverTimeSalaryTable({
   projectName,
   idProject,
   baseSalary,
+  setOvertimeSalary,
 }: {
+  setOvertimeSalary?: (val: number) => void;
   baseSalary?: number;
   idProject?: number;
   listProject?: IDataProjectList[];
@@ -70,12 +72,13 @@ export default function OverTimeSalaryTable({
   };
 
   useEffect(() => {
-    // dataOT?.map((el) => {
-    //   if (el.state === 0) {
-    //     setDisableCheck(false);
-    //   }
-    //   return el;
-    // });
+    const totalSalary2 =
+      dataOT?.reduce(function (accumulator, element) {
+        return accumulator + (Number(element?.hour) || 0);
+      }, 0) || 0;
+    if (setOvertimeSalary) {
+      setOvertimeSalary(((totalSalary2 * (baseSalary || 0)) / 24 / 8) * 1.5);
+    }
   }, [isRefetching]);
 
   const columns: ColumnsType<IDataOverTime[]> = [

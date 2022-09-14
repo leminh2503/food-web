@@ -1,5 +1,5 @@
 import "./index.scss";
-import {Image, Input, Select, Table} from "antd";
+import {Button, Image, Input, Modal, notification, Select, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
@@ -7,7 +7,7 @@ import {IDataSalaryToTalOfUser} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import baseURL from "@app/config/baseURL";
-import {LeftOutlined} from "@ant-design/icons";
+import {LeftOutlined, PlusCircleFilled} from "@ant-design/icons";
 
 export function TableSalaryTotalOfUser(): JSX.Element {
   const router = useRouter();
@@ -217,7 +217,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
 
   useEffect(() => {
     refetch();
-  }, [state, searchValue]);
+  }, [state]);
 
   return (
     <div className="account-manager-page">
@@ -226,15 +226,15 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           <LeftOutlined />
         </button>
       </div>
-      <div className="flex items-center bg-white mb-4 p-4">
-        <Input.Search
-          className="w-[300px]"
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={() => {
-            refetch();
-          }}
-        />
-        <div className="flex items-center ml-4">
+      <div className="flex items-center justify-between bg-white mb-4 p-4">
+        <div className="flex items-center">
+          <Input.Search
+            className="w-[300px] mr-4"
+            onChange={(e) => setSearchValue(e.target.value)}
+            onSearch={() => {
+              refetch();
+            }}
+          />
           <span>Trạng thái : </span>
           <Select
             placeholder="trạng thái"
@@ -261,6 +261,27 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             </Select.Option>
           </Select>
         </div>
+        <Button
+          type="primary"
+          onClick={(): void => {
+            Modal.confirm({
+              title: "Bạn chắc chắn muốn taọ lương cho toàn bộ nhân viên ?",
+              onOk: () => {
+                ApiSalary.createSalaryAllEmployee(
+                  Number(year),
+                  Number(month)
+                ).then((r) => {
+                  notification.success({message: "create success"});
+                  refetch();
+                });
+              },
+            });
+          }}
+          className="bg-blue-500 items-center flex"
+          icon={<PlusCircleFilled />}
+        >
+          Tạo lương tất cả nhân viên
+        </Button>
       </div>
       <Table
         columns={columns}

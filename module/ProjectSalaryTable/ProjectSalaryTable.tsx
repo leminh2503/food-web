@@ -1,5 +1,5 @@
 import "../my-salary-detail/index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataProject, IDataProjectList} from "@app/types";
@@ -14,7 +14,9 @@ export default function ProjectSalaryTable({
   listProject,
   userId,
   isAdmin,
+  setProjectSalary,
 }: {
+  setProjectSalary?: (val: number) => void;
   isAdmin?: boolean;
   userId: number;
   listProject?: IDataProjectList[];
@@ -95,6 +97,15 @@ export default function ProjectSalaryTable({
     dataProject?.map((el) => {
       return {salary: el?.salary, reason: el?.projectName, id: el.id};
     }) || [];
+  useEffect(() => {
+    const totalSalary2 =
+      dataProject?.reduce(function (accumulator, element) {
+        return accumulator + (element?.salary || 0);
+      }, 0) || 0;
+    if (setProjectSalary) {
+      setProjectSalary(totalSalary2);
+    }
+  }, [isRefetching]);
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -115,7 +126,7 @@ export default function ProjectSalaryTable({
             ?.reduce(function (accumulator, element) {
               return accumulator + (element?.salary || 0);
             }, 0)
-            .toLocaleString("en-US")}{" "}
+            ?.toLocaleString("en-US")}{" "}
           VND
         </span>
         {isAdmin && (

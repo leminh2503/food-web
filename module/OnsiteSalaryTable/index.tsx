@@ -17,7 +17,9 @@ export default function OnsiteSalaryTable({
   year,
   isManager,
   projectName,
+  setOnsiteSalary,
 }: {
+  setOnsiteSalary?: (val: number) => void;
   projectName?: string;
   idUser: number | string;
   isManager?: boolean;
@@ -108,12 +110,10 @@ export default function OnsiteSalaryTable({
   ];
 
   useEffect(() => {
-    // dataOnsite?.map((el) => {
-    //   if (el.state === 0) {
-    //     setDisableCheck(false);
-    //   }
-    //   return el;
-    // });
+    const totalSalary2 = (dataOnsite?.length || 0) * 50000;
+    if (setOnsiteSalary) {
+      setOnsiteSalary(totalSalary2);
+    }
   }, [isRefetching]);
 
   for (let i = 1; i <= getDayOnMonth(month, year); i++) {
