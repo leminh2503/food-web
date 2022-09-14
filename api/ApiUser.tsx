@@ -39,6 +39,7 @@ export interface IParamsGetUser {
   disablePagination?: boolean;
   search?: string;
   searchType?: string;
+  filter?: object;
 }
 
 const path = {
