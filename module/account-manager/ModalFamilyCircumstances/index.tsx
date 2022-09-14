@@ -13,7 +13,7 @@ interface ModalInfoProps {
   isModalVisible: boolean;
   handleCloseModalFamily: () => void;
   idUser: number;
-  accountId: string | undefined;
+  accountId: number | undefined;
 }
 
 export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
@@ -37,7 +37,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
 
   // API get family
   const getDataFamily = (): Promise<IFamilyCircumstance[]> => {
-    return ApiUser.getDataFamilyOfAccount({filter: {userId: accountId}});
+    return ApiUser.getDataFamilyOfAccount({filter: {userId: accountId + ""}});
   };
 
   const {

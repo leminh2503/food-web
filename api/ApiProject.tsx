@@ -1,16 +1,52 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
-import {IProject} from "../types";
+import {ERolePosition, IProject, IProjectMember} from "../types";
 
 export interface IProjectBody {
   name?: string;
   projectManager?: number;
   startDate?: string;
   endDate?: string;
-  scale?: string;
+  scale?: number;
   customer?: string;
   technicality?: string;
   use?: string;
   description?: string;
+}
+
+export interface IEditProjectBody {
+  id: number;
+  name?: string;
+  projectManager?: number;
+  startDate?: string;
+  endDate?: string;
+  scale?: number;
+  customer?: string;
+  technicality?: string;
+  use?: string;
+  description?: string;
+}
+
+export interface IProjectMemberBody {
+  projectId: number;
+  user?: number;
+  role?: ERolePosition;
+  contract?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface IEditProjectMemberBody {
+  projectId: number;
+  userId: number;
+  role?: ERolePosition;
+  contract?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface IDeleteProjectMemberBody {
+  projectId: number;
+  userIds: number[];
 }
 
 export interface IParamsGetProject {
@@ -26,7 +62,7 @@ export interface IProjectWithMeta {
 }
 
 const path = {
-  getProject: "Project",
+  getProject: "project",
 };
 
 function getProject(params?: IParamsGetProject): Promise<IProjectWithMeta> {
@@ -36,12 +72,92 @@ function getProject(params?: IParamsGetProject): Promise<IProjectWithMeta> {
     params: params,
   });
 }
+function getProjectById(id: number): Promise<IProject> {
+  return fetcher({
+    url: path.getProject + "/" + id,
+    method: "get",
+  });
+}
 
-function createProject(body?: IProjectBody): Promise<IProject[]> {
+function createProject(body: IProjectBody): Promise<IProject> {
   return fetcher({url: path.getProject, method: "post", data: body});
+}
+
+function editProject(body: IEditProjectBody): Promise<IProject> {
+  return fetcher({
+    url: path.getProject + "/" + body.id,
+    method: "put",
+    data: {
+      name: body.name,
+      projectManager: body.projectManager,
+      startDate: body.startDate,
+      endDate: body.endDate,
+      scale: body.scale,
+      customer: body.customer,
+      technicality: body.technicality,
+      use: body.use,
+      description: body.description,
+    },
+  });
+}
+
+function getProjectMember(id: number): Promise<IProjectMember[]> {
+  return fetcher({
+    url: path.getProject + "/" + id + "/member",
+    method: "get",
+  });
+}
+
+function createProjectMember(
+  body: IProjectMemberBody
+): Promise<IProjectMember> {
+  return fetcher({
+    url: path.getProject + "/" + body.projectId + "/member",
+    method: "post",
+    data: {
+      user: body.user,
+      role: body.role,
+      contract: body.contract,
+      startDate: body.startDate,
+      endDate: body.endDate,
+    },
+  });
+}
+
+function editProjectMember(
+  body: IEditProjectMemberBody
+): Promise<IProjectMember> {
+  return fetcher({
+    url: path.getProject + "/" + body.projectId + "/member/" + body.userId,
+    method: "put",
+    data: {
+      role: body.role,
+      contract: body.contract,
+      startDate: body.startDate,
+      endDate: body.endDate,
+    },
+  });
+}
+
+function deleteProjectMember(
+  body: IDeleteProjectMemberBody
+): Promise<IProjectMember> {
+  return fetcher({
+    url: path.getProject + "/" + body.projectId + "/member",
+    method: "delete",
+    data: {
+      ids: body.userIds,
+    },
+  });
 }
 
 export default {
   getProject,
+  getProjectById,
   createProject,
+  editProject,
+  getProjectMember,
+  createProjectMember,
+  editProjectMember,
+  deleteProjectMember,
 };

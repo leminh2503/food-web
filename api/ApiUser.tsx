@@ -99,6 +99,7 @@ export interface IParamsGetUser {
   filter?: {
     state?: number | string;
     position?: number | string;
+    workType?: number | string;
   };
 }
 

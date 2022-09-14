@@ -5,6 +5,18 @@ const SALARY = {
   LIST_EMPLOYEE: "/manager-salary/list-employee",
 };
 
+const PROJECT = {
+  PROJECT_DETAIL: "/project/project-detail",
+};
+
+const RULE = {
+  QUY_DINH_VE_BAO_HIEM: "/rule/quy-dinh-ve-bao-hiem",
+  QUY_DINH_VE_THUONG_GIOI_THIEU: "/rule/quy-dinh-ve-thuong-gioi-thieu",
+  QUY_DINH_VE_THUE_THU_NHAP_CA_NHAN: "/rule/quy-dinh-ve-thue-thu-nhap-ca-nhan",
+};
+
 export default {
   SALARY,
+  PROJECT,
+  RULE,
 };
