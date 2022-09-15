@@ -469,12 +469,15 @@ export function AccountManager(): JSX.Element {
             </Col>
             <Col lg={15}>
               <div className="" style={{float: "right"}}>
-                <Button className="mr-4" onClick={handleExportExcel}>
+                <Button
+                  className="mr-4 bg-blue-500 text-neutral-50"
+                  onClick={handleExportExcel}
+                >
                   Xuất Excel
                 </Button>
                 <Button
                   onClick={(): void => setIsModalAddEmployeeVisible(true)}
-                  className=""
+                  className="bg-blue-500 text-neutral-50"
                 >
                   Tạo tài khoản mới
                 </Button>

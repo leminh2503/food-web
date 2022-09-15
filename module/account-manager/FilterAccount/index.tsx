@@ -27,14 +27,14 @@ export function FilterAccount({
   listPositionConvertForFilter,
 }: FilterLeaveWorkProps): JSX.Element {
   const dataFilterState: DataFilter[] = [
-    {title: "Tất cả", value: -1, default: true},
+    {title: "Trạng thái", value: -1, default: true},
     {title: "Hoạt động", value: 1},
     {title: "Bị khóa", value: 0},
   ];
 
   const dataFilterPosition = [
     {
-      title: "Tất cả",
+      title: "Chức vụ",
       value: -1,
       default: true,
     },

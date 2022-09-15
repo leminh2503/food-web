@@ -7,6 +7,7 @@ import {InputModal} from "@app/components/Modal/InputModal";
 import {useMutation} from "react-query";
 
 interface IModalUpdateProfile {
+  isModalVisible: boolean;
   setToggleModal: (value: boolean) => void;
   dataRefetch: () => void;
   dataProfile: IUserLogin | null;
@@ -16,6 +17,7 @@ export function ModalUpdateProfile({
   setToggleModal,
   dataRefetch,
   dataProfile,
+  isModalVisible,
 }: IModalUpdateProfile): JSX.Element {
   const [data, setData] = useState<IProfileBody>({
     fullName: dataProfile?.fullName,
@@ -135,7 +137,7 @@ export function ModalUpdateProfile({
 
   return (
     <ModalCustom
-      isModalVisible
+      isModalVisible={isModalVisible}
       handleOk={handleConfirmCreate}
       handleCancel={handleCancel}
       title="Sửa thông tin nhân viên"
