@@ -10,7 +10,7 @@ import {Button, Card, Carousel, Empty, Image} from "antd";
 export function Birthday(): JSX.Element {
   const [filterYear, setFilterYear] = useState<number>(moment().year());
   const [filterMonth, setFilterMonth] = useState<number>(moment().month() + 1);
-  const [isList, setIsList] = useState<boolean>(false);
+  const [isList, setIsList] = useState<boolean>(true);
 
   const getBirthday = (): Promise<IProfile[]> => {
     return ApiBirthday.getBirthday({
