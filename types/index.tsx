@@ -38,6 +38,12 @@ export enum IState {
   DELETED,
 }
 
+export enum EUserGender {
+  Other = "Khác",
+  Male = "Nam",
+  Female = "Nữ",
+}
+
 export enum TypeOfAction {
   EDIT = "EDIT",
   ADD = "ADD",
@@ -272,6 +278,9 @@ export interface IFamilyCircumstance {
   phoneNumber: string;
 }
 
+export type UserGender = "Other" | "Male" | "Female";
+export type EnglishCertificate = "Other" | "Toeic" | "Toefl" | "Ielts" | "";
+
 export interface IUserLogin {
   date?: string;
   createdAt?: string;
@@ -293,13 +302,17 @@ export interface IUserLogin {
   phoneNumberRelative?: string;
   baseSalary?: number;
   manageSalary?: number;
-  gender?: string;
+  gender?: UserGender;
   manager?: IProfile;
   workType?: IWorkType | null;
   positionId?: number;
   workTypeId?: number;
   deductionOwn?: number;
   familyCircumstances?: IFamilyCircumstance[] | null;
+  employeeCode?: string;
+  workRoom?: string;
+  englishCertificate?: EnglishCertificate;
+  englishScore?: string;
 }
 
 export interface IDataProjectSalary {
@@ -427,12 +440,6 @@ export interface ISetStateModal {
   content?: string;
   name?: string;
   description?: string;
-}
-
-export enum EUserGender {
-  OTHER = "Other",
-  MALE = "Male",
-  FEMALE = "Female",
 }
 
 export enum EEnglishCertificate {

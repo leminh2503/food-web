@@ -35,6 +35,13 @@ export function renameKeys(obj: any, newKeys: any) {
   return Object.assign({}, ...keyValues);
 }
 
+export function formatCurrencyVnd(currency: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(currency);
+}
+
 export default {
   dataURItoBlob,
   renameKeys,

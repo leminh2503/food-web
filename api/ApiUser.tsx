@@ -12,10 +12,11 @@ export interface ILoginBody {
   email: string;
   password: string;
 }
+type UserGender = "Other" | "Male" | "Female";
 
 export interface IRegisterAccountBody {
   password?: string;
-  gender?: string;
+  gender?: UserGender;
   englishCertificate?: string;
   englishScore?: number;
   workRoom?: string;

@@ -2,7 +2,7 @@ import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
 import React, {useEffect} from "react";
 import {IRegisterAccountBody} from "@app/api/ApiUser";
-import {EEnglishCertificate, EUserGender} from "@app/types";
+import {EEnglishCertificate} from "@app/types";
 import {Button, DatePicker, Form, Input, Select} from "antd";
 import {defaultValidateMessages, layout} from "@app/validate/user";
 
@@ -28,7 +28,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
   const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
       password: "123123",
-      gender: EUserGender.OTHER,
+      gender: undefined,
       englishCertificate: EEnglishCertificate.OTHER,
       englishScore: 0,
       workRoom: "",
