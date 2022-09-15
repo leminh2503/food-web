@@ -250,6 +250,11 @@ export function ProfileAccount(): JSX.Element {
               rules={[
                 {required: true},
                 {whitespace: true},
+                {
+                  pattern:
+                    /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                  message: "Họ và tên không đúng định dạng!",
+                },
                 {min: 1},
                 {max: 30},
               ]}
@@ -319,7 +324,13 @@ export function ProfileAccount(): JSX.Element {
           </Col>
           <Col span={12}>
             <Form.Item name="dateOfBirth" label="Ngày sinh">
-              <DatePicker format="DD/MM/YYYY" />
+              <DatePicker
+                format="DD/MM/YYYY"
+                disabledDate={(current) => {
+                  const customDate = moment().format("DD/MM/YYYY");
+                  return current && current > moment(customDate, "DD/MM/YYYY");
+                }}
+              />
             </Form.Item>
             <Form.Item
               name="personId"
@@ -431,8 +442,9 @@ export function ProfileAccount(): JSX.Element {
                 <div className="profile-avatar-user">
                   <Image
                     width="180px"
+                    height="180px"
                     preview={false}
-                    style={{borderRadius: "50%"}}
+                    style={{borderRadius: "50%", objectFit: "cover"}}
                     fallback="/img/avatar/avatar.jpg"
                     src={dataUser?.avatar || "/img/avatar/avatar.jpg"}
                   />
