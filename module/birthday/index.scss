@@ -6,7 +6,6 @@
       filter: brightness(0.8) !important;
     }
     .name {
-      font-family: cursive;
       position: absolute;
       z-index: 100;
       top: 34%;
@@ -23,7 +22,11 @@
       z-index: 100;
       top: 42%;
       left: 37%;
-      width: 26%;
+      min-width: 26%;
+      max-width: 26%;
+      min-height: 30%;
+      max-height: 30%;
+      object-fit: cover;
     }
     .shadow {
       margin: 20px auto;

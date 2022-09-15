@@ -54,12 +54,12 @@ export function SalaryTableDetail(): JSX.Element {
       title: "Ảnh",
       key: "avatar",
       align: "center",
-      width: 80,
+      width: 150,
       render: (_, record) => {
         return (
           <div>
             <Image
-              src={record?.user?.avatar || "img/avatar/avatar.jpg"}
+              src={record?.avatar || "img/avatar/avatar.jpg"}
               fallback="../img/avatar/avatar.jpg"
               preview={false}
             />

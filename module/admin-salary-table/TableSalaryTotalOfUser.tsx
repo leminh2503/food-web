@@ -66,7 +66,10 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             return (
               <div>
                 <Image
-                  src={"../" + record.user.avatar || "../img/avatar/avatar.jpg"}
+                  src={
+                    "http://13.215.91.199:8000/uploads/" +
+                      (record?.user?.avatar || "") || "../img/avatar/avatar.jpg"
+                  }
                   fallback="../img/avatar/avatar.jpg"
                   preview={false}
                 />
