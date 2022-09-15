@@ -2,7 +2,7 @@ import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
 import {Button, DatePicker, Form, Image, Input, Select} from "antd";
 import React, {useEffect, useState} from "react";
-import {EUserGender, IUserLogin} from "@app/types";
+import {IUserLogin} from "@app/types";
 import {defaultValidateMessages, layout} from "@app/validate/user";
 import {IRegisterAccountBody} from "@app/api/ApiUser";
 import moment from "moment";
@@ -91,7 +91,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
 
   const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
-      gender: EUserGender.OTHER,
+      gender: undefined,
       workRoom: "",
       personId: fieldsValue.personId,
       dateOfBirth: fieldsValue.dateOfBirth,
@@ -115,7 +115,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         <div className="avatar-container mb-3">
           <Image
             width={150}
-            src={avatar}
+            src={avatar || "/img/avatar/avatar.jpg"}
             style={{borderRadius: "50%"}}
             fallback="/img/avatar/avatar.jpg"
           />
