@@ -130,7 +130,17 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
           <Form.Item
             name="fullName"
             label="Họ và tên"
-            rules={[{required: true}, {whitespace: true}, {min: 1}, {max: 30}]}
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {
+                pattern:
+                  /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                message: "Họ và tên không đúng định dạng!",
+              },
+              {min: 1},
+              {max: 30},
+            ]}
           >
             <Input />
           </Form.Item>
@@ -141,6 +151,10 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
               {required: true},
               {whitespace: true},
               {type: "email"},
+              {
+                pattern: /^[^@\s]+@tinasoft.vn$/,
+                message: "Mail không phải domain của Tinasoft!",
+              },
               {min: 6},
               {max: 255},
             ]}
@@ -158,8 +172,21 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 pattern: /^(?:\d*)$/,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              {min: 10},
-              {max: 11},
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue("phoneNumber").length > 11 ||
+                    getFieldValue("phoneNumber").length < 10
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
+                      )
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
           >
             <Input />
@@ -172,8 +199,21 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 pattern: /^(?:\d*)$/,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              {min: 10},
-              {max: 11},
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue("phoneNumberRelative").length > 11 ||
+                    getFieldValue("phoneNumberRelative").length < 10
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
+                      )
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
           >
             <Input />

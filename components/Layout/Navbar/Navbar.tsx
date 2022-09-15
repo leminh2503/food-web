@@ -90,6 +90,7 @@ export default function Navbar(): JSX.Element {
           <div className="cursor-pointer flex items-center">
             <Image
               src={dataUser?.data?.avatar}
+              preview={false}
               width={30}
               height={30}
               fallback="/img/avatar/avatar.jpg"

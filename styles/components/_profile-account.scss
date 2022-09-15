@@ -22,6 +22,9 @@
   }
   .ant-tabs-tab {
     font-weight: 600;
+    .ant-tabs-tab-btn {
+      text-shadow: unset;
+    }
   }
   .ant-tabs {
     height: 100%;
