@@ -1,9 +1,7 @@
-import {IAccountRole} from "../types";
-
 export interface IRoute {
   path: string;
   name: string;
-  role?: Array<IAccountRole>;
+  role?: string;
   icon?: string;
   isSidebar?: boolean;
   isPrivate?: boolean;
@@ -31,72 +29,83 @@ const routes: IRoute[] = [
   {
     path: "/",
     name: "Quản lý tài khoản",
-    role: [IAccountRole.ADMIN],
+    role: "1",
+    isPrivate: true,
     icon: "Users",
     isSidebar: true,
   },
   {
     path: "/manager-salary",
     name: "Quản lý bảng lương",
-    role: [IAccountRole.ADMIN],
+    role: "1",
+    isPrivate: true,
     icon: "Payroll",
     isSidebar: true,
   },
   {
-    path: "/salary",
+    path: "/",
     name: "Bảng lương",
     icon: "Payroll",
-    role: [IAccountRole.USER, 3],
+    role: "0",
+    isPrivate: true,
     isSidebar: true,
   },
   {
     path: "/salary-user",
     name: "Duyệt lương nhân viên",
-    role: [IAccountRole.USER, 3],
+    role: "1",
+    isPrivate: true,
     icon: "Users",
     isSidebar: true,
   },
   {
     path: "/leave-work",
     name: "Quản lý nghỉ phép",
-    role: [IAccountRole.ADMIN],
+    role: "1",
+    isPrivate: true,
     icon: "MangeLeave",
     isSidebar: true,
   },
   {
     path: "/leave-work",
     name: "Đơn xin nghỉ phép",
-    role: [IAccountRole.USER],
+    role: "0",
+    isPrivate: true,
     icon: "MangeLeave",
     isSidebar: true,
   },
   {
     path: "/event",
     name: "Sự kiện công ty",
+    isPrivate: true,
     icon: "Event",
     isSidebar: true,
   },
   {
     path: "/birthday",
     name: "Sinh nhật",
+    isPrivate: true,
     icon: "Birthday",
     isSidebar: true,
   },
   {
     path: "/profile-account",
     name: "Thông tin tài khoản",
+    isPrivate: true,
     icon: "User",
     isSidebar: true,
   },
   {
     path: "/rule",
     name: "Nội quy - Quy định",
+    isPrivate: true,
     icon: "Rules",
     isSidebar: true,
   },
   {
     path: "/work-schedule",
     name: "Lịch làm việc",
+    isPrivate: true,
     icon: "CalenderWork",
     isSidebar: true,
   },
@@ -104,28 +113,31 @@ const routes: IRoute[] = [
     path: "/project",
     name: "Dự án",
     icon: "Project",
+    isPrivate: true,
     isSidebar: true,
-    role: [IAccountRole.ADMIN],
+    role: "1",
   },
   {
     path: "",
     name: "Cài đặt",
     icon: "Setting",
-    role: [IAccountRole.ADMIN],
+    role: "1",
     isSidebar: true,
+    isPrivate: true,
     children: [
       {
         path: "/position",
         name: "Chức vụ",
         icon: "",
-        role: [IAccountRole.ADMIN],
+        role: "1",
         isSidebar: true,
       },
       {
         path: "/work-type",
         name: "Loại hình làm việc",
         icon: "",
-        role: [IAccountRole.ADMIN],
+        isPrivate: true,
+        role: "1",
         isSidebar: true,
       },
     ],

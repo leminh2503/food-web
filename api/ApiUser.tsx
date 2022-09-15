@@ -1,11 +1,6 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
-import {
-  IAccountRole,
-  IFamilyCircumstance,
-  IUserLogin,
-  IWorkType,
-} from "../types";
+import {IFamilyCircumstance, IUserLogin, IWorkType} from "../types";
 import axios from "axios";
 
 export interface ILoginBody {
@@ -243,9 +238,9 @@ function isLogin(): boolean {
   return !!getAuthToken();
 }
 
-function getUserRole(): IAccountRole | undefined {
-  const {user} = store.getState();
-  return user?.user?.role?.id;
+function getUserRole(): string | null {
+  const role = localStorage.getItem("role");
+  return role;
 }
 
 function getInfoMe(): IUserLogin | undefined {

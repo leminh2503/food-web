@@ -9,11 +9,11 @@ import ApiUser from "../../../api/ApiUser";
 import RouteList from "../../../routes/RouteList";
 import {logoutUser} from "@app/redux/slices/UserSlice";
 import Icon from "@app/components/Icon/Icon";
+import {persistor} from "@app/redux/store";
 
 const RenderMenu = React.memo(() => {
   const router = useRouter();
-  const userRole = ApiUser.getUserRole();
-  const isManager = true;
+  const userRole = ApiUser?.getUserRole();
 
   // React.useEffect(() => {
   //   setTimeout(() => {
@@ -36,37 +36,35 @@ const RenderMenu = React.memo(() => {
         // if (role?.includes(userRole ?? IAccountRole.ANONYMOUS)) {
         //   return null;
         // }
-        if (children) {
-          return (
-            <Menu.SubMenu
-              key={path}
-              title={name}
-              icon={<Icon icon={icon as string} size={15} color="#fff" />}
-            >
-              {children.map((child) => (
-                <Menu.Item
-                  key={path + child.path}
-                  onClick={(): void => {
-                    router.push(path + child.path);
-                  }}
-                  className="sidebar-item"
-                  hidden={
-                    child?.role && userRole
-                      ? !child.role?.includes(userRole)
-                      : undefined
-                  }
-                >
-                  {child.name}
-                </Menu.Item>
-              ))}
-            </Menu.SubMenu>
-          );
-        }
-        if (role && role[0] === 3 && isManager === true) {
+        if (role) {
+          if (children) {
+            return (
+              <Menu.SubMenu
+                key={path}
+                title={name}
+                icon={<Icon icon={icon as string} size={15} color="#fff" />}
+              >
+                {children.map((child) => (
+                  <Menu.Item
+                    key={path + child.path}
+                    onClick={(): void => {
+                      router.push(path + child.path);
+                    }}
+                    className="sidebar-item"
+                    hidden={child.role !== userRole}
+                  >
+                    {child.name}
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+            );
+          }
+
           return (
             <Menu.Item
               key={path}
               className="sidebar-item"
+              hidden={role !== userRole}
               onClick={(): void => {
                 router.push(path);
               }}
@@ -76,18 +74,10 @@ const RenderMenu = React.memo(() => {
             </Menu.Item>
           );
         }
-
         return (
           <Menu.Item
             key={path}
             className="sidebar-item"
-            hidden={
-              role && userRole
-                ? !role?.includes(userRole)
-                : role
-                ? !role?.includes(0)
-                : undefined
-            }
             onClick={(): void => {
               router.push(path);
             }}
@@ -108,13 +98,22 @@ RenderMenu.displayName = "RenderMenu";
 export default function Sidebar(): JSX.Element {
   // const isOpen = useSelector((state: IRootState) => state.menu.isOpen);
   const dispatch = useDispatch();
-
   const handleLogout = (): void => {
     Modal.confirm({
       title: "Đăng xuất",
       content: "Bạn có chắc chắn?",
       onOk: () => {
-        dispatch(logoutUser());
+        persistor
+          .purge()
+          .then(() => {
+            dispatch(logoutUser());
+          })
+          .catch(() => {
+            // eslint-disable-next-line no-alert
+            window.alert(
+              "Trình duyệt bị lỗi. Xóa Cookie trình duyệt và thử lại"
+            );
+          });
       },
     });
   };
