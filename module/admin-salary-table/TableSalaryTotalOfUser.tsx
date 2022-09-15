@@ -169,7 +169,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           ),
         },
         {
-          title: "Thuế",
+          title: "Thuế thu nhập cá nhân",
           align: "center",
           key: "taxSalary",
           dataIndex: "taxSalary",
@@ -300,6 +300,8 @@ export function TableSalaryTotalOfUser(): JSX.Element {
                   year: year,
                   userId: record.user.id,
                   id: record.id,
+                  total: record.totalSalary,
+                  tax: record.taxSalary,
                 },
               });
             },

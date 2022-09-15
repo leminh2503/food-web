@@ -118,6 +118,15 @@ export function Salary(): JSX.Element {
       ),
     },
     {
+      title: "Thuế thu nhập cá nhân",
+      align: "center",
+      key: "taxSalary",
+      dataIndex: "taxSalary",
+      render: (_, record, index) => (
+        <div>{record?.taxSalary.toLocaleString("en-US")}</div>
+      ),
+    },
+    {
       title: "Tổng lương",
       dataIndex: "totalSalary",
       key: "totalSalary",

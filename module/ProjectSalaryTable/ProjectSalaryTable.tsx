@@ -30,7 +30,6 @@ export default function ProjectSalaryTable({
   };
 
   const handleOk = (): void => {
-    refetch();
     setIsModalVisible(false);
   };
 
@@ -95,7 +94,7 @@ export default function ProjectSalaryTable({
 
   const data: IDataProject[] =
     dataProject?.map((el) => {
-      return {salary: el?.salary, reason: el?.projectName, id: el.id};
+      return {salary: el?.salary, projectName: el?.project?.name, id: el.id};
     }) || [];
   useEffect(() => {
     const totalSalary2 =
@@ -112,6 +111,7 @@ export default function ProjectSalaryTable({
         <ModalProjectSalary
           month={month}
           year={year}
+          handleRefetch={refetch}
           listProject={listProject}
           isModalVisible={isModalVisible}
           handleOk={handleOk}

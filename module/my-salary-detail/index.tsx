@@ -1,5 +1,5 @@
 import "./index.scss";
-import React from "react";
+import React, {useEffect} from "react";
 import ProjectSalaryTable from "@app/module/ProjectSalaryTable/ProjectSalaryTable";
 import {LeftOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
@@ -9,9 +9,11 @@ import OtherSalaryTable from "@app/module/OtherSalaryTable/OtherSalaryTable";
 import OverTimeSalaryTable from "@app/module/OverTimeSalaryTable";
 import ApiUser from "@app/api/ApiUser";
 import DeductionSalaryTable from "@app/module/DeductionSalaryTable/DeductionSalaryTable";
-import {IDataProjectList} from "@app/types";
+import {IDataProjectList, IDataSalary} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
+import {queryKeys} from "@app/utils/constants/react-query";
+import {Dropdown} from "antd";
 
 export function MySalaryDetail(): JSX.Element {
   const router = useRouter();
@@ -25,7 +27,60 @@ export function MySalaryDetail(): JSX.Element {
   const getListProject = (): Promise<IDataProjectList[]> => {
     return ApiSalary.getListProjectOfMe(Number(userId));
   };
-  const {data: listProject} = useQuery("listProjectMe", getListProject) || [];
+  const {data: listProject, refetch: listProjectRefetch} =
+    useQuery("listProjectMe", getListProject, {enabled: false}) || [];
+  const getListTotalSalary = (): Promise<IDataSalary[]> => {
+    return ApiSalary.getMyListTotalSalary(Number(year), Number(month));
+  };
+
+  const {data: dataSalary, refetch: dataSalaryRefetch} =
+    useQuery(queryKeys.GET_LIST_TOTAL_SALARY_OF_USER, getListTotalSalary, {
+      enabled: false,
+    }) || [];
+
+  useEffect(() => {
+    if (month && year) {
+      listProjectRefetch();
+      dataSalaryRefetch();
+    }
+  }, [month, year]);
+
+  const menu = (
+    <div className="p-4 bg-white shadow-2xl">
+      {dataSalary?.map((el, index) => (
+        <>
+          <p className=" font-bold" key={index}>
+            Tổng lương : {el?.totalSalary?.toLocaleString("en-US")} VND
+          </p>
+          <p className="mt-2 font-bold" key={index}>
+            Giảm trừ gia cảnh cá nhân:{" "}
+            {el?.detailTaxSalary?.deductionFamilyCircumstances?.toLocaleString(
+              "en-US"
+            )}{" "}
+            VND
+          </p>
+          <p className="mt-2 font-bold" key={index}>
+            Giảm trừ gia cảnh người phụ thuộc :{" "}
+            {el?.detailTaxSalary?.deductionFamilyCircumstances?.toLocaleString(
+              "en-US"
+            )}{" "}
+            VND
+          </p>
+          <p className="mt-2 font-bold" key={index}>
+            Thu nhập chịu thuế :{" "}
+            {el?.detailTaxSalary?.taxableSalary?.toLocaleString("en-US")} VND
+          </p>
+          <p className="mt-2 font-bold" key={index}>
+            Thuế suất : {el?.detailTaxSalary?.tax?.toLocaleString("en-US")} %
+          </p>
+          <p className="mt-2 font-bold" key={index}>
+            Thuế thu nhập cá nhân :{" "}
+            {el?.detailTaxSalary?.taxSalary?.toLocaleString("en-US")} VND
+          </p>
+        </>
+      ))}
+    </div>
+  );
 
   return (
     <div>
@@ -84,6 +139,25 @@ export function MySalaryDetail(): JSX.Element {
           />
         </div>
       )}
+      <div className="mt-6 h-[150px] w-[300px] bg-white p-4">
+        {dataSalary?.map((el, index) => (
+          <>
+            <Dropdown
+              overlay={menu}
+              placement="top"
+              trigger={["click"]}
+              arrow={{pointAtCenter: true}}
+            >
+              <p className="font-bold hover-pointer" key={index}>
+                Thuế thu nhập cá nhân : {el?.taxSalary}
+              </p>
+            </Dropdown>
+            <p className="mt-2 font-bold" key={index}>
+              Tổng lương : {el?.totalSalary?.toLocaleString("en-US")} VND
+            </p>
+          </>
+        ))}
+      </div>
     </div>
   );
 }

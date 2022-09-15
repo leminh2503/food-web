@@ -1,5 +1,13 @@
 import React from "react";
 
+export interface IDetailTax {
+  deductionFamilyCircumstances?: number;
+  deductionOwn?: number;
+  taxableSalary?: number;
+  taxSalary?: number;
+  tax?: number;
+}
+
 export interface CommonReduxAction {
   type: string;
 }
@@ -230,6 +238,7 @@ export interface IDataSalary {
   taxSalary: number;
   totalSalary: number;
   updatedAt: string;
+  detailTaxSalary: IDetailTax;
 }
 
 export interface IProfile {

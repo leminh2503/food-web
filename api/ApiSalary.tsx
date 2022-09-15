@@ -100,11 +100,14 @@ function getListSalaryTotalUser(
   });
 }
 
-function getMyListTotalSalary(year: number): Promise<IDataSalary[]> {
+function getMyListTotalSalary(
+  year: number,
+  month?: number
+): Promise<IDataSalary[]> {
   return fetcher({
     url: path.getMyListTotalSalary,
     method: "get",
-    params: {filter: {date_year: year}},
+    params: {filter: {date_year: year, date_month: month}},
   });
 }
 
@@ -227,7 +230,7 @@ function getMyProjectSalary(
 
 function deleteProjectSalary(id: number): Promise<IDataBonus[]> {
   return fetcher({
-    url: path.deleteProjectSalary + id,
+    url: path.deleteProjectSalary + "/" + id,
     method: "delete",
     params: {id},
   });
@@ -337,9 +340,9 @@ function createSalaryProject(data: {
   date: string;
 }): Promise<any> {
   return fetcher({
-    url: path.updateOTSalary,
+    url: path.getMyProjectSalary,
     method: "post",
-    data,
+    data: [data],
   });
 }
 

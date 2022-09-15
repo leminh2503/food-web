@@ -17,7 +17,7 @@ import {ColumnsType} from "antd/es/table";
 
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
-  const {month, year, userId, id} = router.query;
+  const {month, year, userId, id, total, tax} = router.query;
   const [onsiteSalary, setOnsiteSalary] = useState<number>(0);
   const [bonusSalary, setBonusSalary] = useState<number>(0);
   const [overtimeSalary, setOvertimeSalary] = useState<number>(0);
@@ -113,6 +113,15 @@ export function SalaryTableDetail(): JSX.Element {
     },
   ];
 
+  const totalSalary =
+    onsiteSalary +
+    overtimeSalary +
+    bonusSalary +
+    projectSalary -
+    deductionSalary +
+    Number(total || 0) -
+    Number(tax || 0);
+
   return (
     <div>
       <div className="flex items-center mb-6">
@@ -185,6 +194,16 @@ export function SalaryTableDetail(): JSX.Element {
           />
         </div>
       )}
+      <div className="mt-6 h-[150px] w-[300px] bg-white p-4">
+        <p className="font-bold hover-pointer">
+          Thuế thu nhập cá nhân : {Number(tax || 0)?.toLocaleString("en-US")}{" "}
+          VND
+        </p>
+
+        <p className="mt-2 font-bold">
+          Tổng lương : {Number(totalSalary || 0)?.toLocaleString("en-US")} VND
+        </p>
+      </div>
       <div className="w-full row-all-center mt-8 mb-16">
         <Button
           type="primary"
@@ -197,13 +216,6 @@ export function SalaryTableDetail(): JSX.Element {
                 ApiSalary.acceptToTalSalary([Number(id || 0)]).then((r) => {
                   notification.success({message: "accept success"});
                 });
-                console.log(
-                  onsiteSalary,
-                  overtimeSalary,
-                  bonusSalary,
-                  projectSalary,
-                  deductionSalary
-                );
                 ApiSalary.updateTotalSalary(
                   {
                     onsiteSalary,
