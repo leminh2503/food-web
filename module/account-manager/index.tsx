@@ -124,7 +124,7 @@ export function AccountManager(): JSX.Element {
     const params = {
       pageSize: pagingCurrent.pageSize,
       pageNumber: pagingCurrent.currentPage,
-      searchFields: ["fullName"],
+      searchFields: ["fullName", "email"],
       search: filterText,
       filter: {
         position: filterPosition !== -1 ? filterPosition : "",
@@ -505,6 +505,7 @@ export function AccountManager(): JSX.Element {
           columns={columns}
           dataSource={dataUserAccount?.data}
           bordered
+          scroll={{x: "100vw"}}
           pagination={false}
           onRow={(record, rowIndex) => {
             return {
