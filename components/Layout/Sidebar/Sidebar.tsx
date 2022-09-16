@@ -3,13 +3,14 @@ import {Menu, Modal} from "antd";
 import Image from "next/image";
 import {ArrowLeftOutlined} from "@ant-design/icons";
 import classNames from "classnames";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/router";
 import ApiUser from "../../../api/ApiUser";
 import RouteList from "../../../routes/RouteList";
 import {logoutUser} from "@app/redux/slices/UserSlice";
 import Icon from "@app/components/Icon/Icon";
-import {persistor} from "@app/redux/store";
+import {IRootState, persistor} from "@app/redux/store";
+import {closeMenu, openMenu} from "@app/redux/slices/MenuSlice";
 
 const RenderMenu = React.memo(() => {
   const router = useRouter();
@@ -96,7 +97,7 @@ RenderMenu.displayName = "RenderMenu";
  *
  */
 export default function Sidebar(): JSX.Element {
-  // const isOpen = useSelector((state: IRootState) => state.menu.isOpen);
+  const isOpen = useSelector((state: IRootState) => state.menu.isOpen);
   const dispatch = useDispatch();
   const handleLogout = (): void => {
     Modal.confirm({
@@ -138,7 +139,16 @@ export default function Sidebar(): JSX.Element {
 
       {/* Sidebar */}
 
-      <div className={classNames("sidebar")}>
+      {/* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */}
+      <div
+        className={classNames("sidebar", {open: isOpen})}
+        onMouseOver={(): void => {
+          dispatch(closeMenu());
+        }}
+        onMouseLeave={(): void => {
+          dispatch(openMenu());
+        }}
+      >
         <div className="logo-container">
           <Image
             src="/img/logo_detail.png"
@@ -154,7 +164,7 @@ export default function Sidebar(): JSX.Element {
           onClick={handleLogout}
         >
           <ArrowLeftOutlined />
-          <span>Đăng xuất</span>
+          {!isOpen && <span>Đăng xuất</span>}
         </div>
       </div>
     </>

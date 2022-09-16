@@ -72,7 +72,7 @@ export function Position(): JSX.Element {
   };
 
   return (
-    <div className="container">
+    <div className="container-position">
       <div className="mb-5 flex justify-end">
         <Button className="btn-primary w-48" onClick={showModalCreatePosition}>
           Thêm chức vụ

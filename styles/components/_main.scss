@@ -1,6 +1,13 @@
 .main {
   width: calc(100vw - #{$sidebar-width});
   max-width: calc(1920 - #{$sidebar-width});
-  margin-left: $sidebar-width;
+  position: fixed;
+  right: 0;
   padding-left: 0;
+  transition: width $transition-layout-time;
+  &.open {
+    width: calc(100vw - #{$sidebar-width-close});
+    margin-left: $sidebar-width-close;
+    max-width: calc(1920 - #{$sidebar-width-close});
+  }
 }

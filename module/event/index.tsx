@@ -20,7 +20,7 @@ export function Event(): JSX.Element {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container-event">
       <EventCalendar dataEvent={dataEvent.data} dataRefetch={dataRefetch} />
     </div>
   );

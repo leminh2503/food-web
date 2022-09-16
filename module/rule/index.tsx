@@ -40,7 +40,7 @@ export function Rule(): JSX.Element {
   }, [onSearch]);
 
   return (
-    <div className="container">
+    <div className="container-rule">
       <div className="mb-5">
         <Filter
           listSearch={[
