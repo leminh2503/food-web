@@ -77,7 +77,7 @@ export function WorkType(): JSX.Element {
   };
 
   return (
-    <div className="container">
+    <div className="container-work-type">
       <div className="mb-5 flex justify-end">
         <Button className="btn-primary w-48" onClick={showModalCreateWorkType}>
           Thêm chức vụ

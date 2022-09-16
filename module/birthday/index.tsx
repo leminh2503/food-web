@@ -35,7 +35,7 @@ export function Birthday(): JSX.Element {
     : [1, 2, 3, 4];
 
   return (
-    <div className="container">
+    <div className="container-birthday">
       <div className="flex">
         <FilterBirthday
           setFilterYear={setFilterYear}

@@ -5,6 +5,7 @@ import {IRegisterAccountBody} from "@app/api/ApiUser";
 import {EEnglishCertificate} from "@app/types";
 import {Button, DatePicker, Form, Input, Select} from "antd";
 import {defaultValidateMessages, layout} from "@app/validate/user";
+import moment from "moment";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -65,14 +66,32 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
           <Form.Item
             name="fullName"
             label="Họ và tên"
-            rules={[{required: true}, {whitespace: true}, {min: 1}, {max: 30}]}
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {
+                pattern:
+                  /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                message: "Họ và tên không đúng định dạng!",
+              },
+              {min: 1},
+              {max: 30},
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="employeeCode"
             label="Mã nhân viên"
-            rules={[{required: true}, {whitespace: true}, {max: 255}]}
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {
+                pattern: /^(?=.*[A-Za-z])([A-Za-z\d]|[A-Za-z]){1,}$/,
+                message: "Mã nhân viên không đúng định dạng!",
+              },
+              {max: 255},
+            ]}
           >
             <Input />
           </Form.Item>
@@ -83,6 +102,10 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
               {required: true},
               {whitespace: true},
               {type: "email"},
+              {
+                pattern: /^[^@\s]+@tinasoft.vn$/,
+                message: "Mail không phải domain của Tinasoft!",
+              },
               {min: 6},
               {max: 255},
             ]}
@@ -90,7 +113,13 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             <Input />
           </Form.Item>
           <Form.Item name="dateOfBirth" label="Ngày sinh">
-            <DatePicker format="DD/MM/YYYY" />
+            <DatePicker
+              format="DD/MM/YYYY"
+              disabledDate={(current) => {
+                const customDate = moment().format("DD/MM/YYYY");
+                return current && current > moment(customDate, "DD/MM/YYYY");
+              }}
+            />
           </Form.Item>
           <Form.Item
             name="phoneNumber"
@@ -100,8 +129,21 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
                 pattern: /^(?:\d*)$/,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              {min: 10},
-              {max: 11},
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue("phoneNumber").length > 11 ||
+                    getFieldValue("phoneNumber").length < 10
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
+                      )
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
           >
             <Input />
@@ -114,8 +156,21 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
                 pattern: /^(?:\d*)$/,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              {min: 10},
-              {max: 11},
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue("phoneNumberRelative").length > 11 ||
+                    getFieldValue("phoneNumberRelative").length < 10
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
+                      )
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
           >
             <Input />

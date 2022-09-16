@@ -98,7 +98,7 @@ export function EventCalendar({
     }
 
     return (
-      <div className="container flex justify-between">
+      <div className="flex justify-between">
         <div className="p-2 mb-4">
           <Select
             className="mr-4 w-40"

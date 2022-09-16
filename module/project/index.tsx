@@ -44,7 +44,7 @@ export function Project(): JSX.Element {
   }, [pageSize, pageNumber, onSearch]);
 
   return (
-    <div className="container">
+    <div className="container-project">
       <div className="flex justify-between mb-5">
         <Filter
           listSearch={[

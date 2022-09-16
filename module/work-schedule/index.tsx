@@ -9,7 +9,7 @@ export function WorkSchedule(): JSX.Element {
   const role = useSelector((state: IRootState) => state.user.role);
 
   return (
-    <div className="container">
+    <div className="container-work-schedule">
       {role ? <AdminWorkSchedule /> : <UserWorkSchedule />}
     </div>
   );

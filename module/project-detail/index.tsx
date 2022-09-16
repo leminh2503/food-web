@@ -92,7 +92,7 @@ export function ProjectDetail(): JSX.Element {
   };
 
   return (
-    <div className="container">
+    <div className="container-project">
       <div className="flex justify-between items-center mb-5">
         <button type="button" className="btn-back-page" onClick={router.back}>
           <LeftOutlined />

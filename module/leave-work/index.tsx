@@ -277,7 +277,7 @@ export function LeaveWork(): JSX.Element {
   ];
 
   return (
-    <div className="container">
+    <div className="container-leave-work">
       <div className="flex justify-between mb-5">
         <FilterLeaveWork
           setFilterState={setFilterState}

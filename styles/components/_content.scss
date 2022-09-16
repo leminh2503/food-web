@@ -3,5 +3,8 @@
   @media (min-width: $grid-breakpoints-md) {
     padding: 20px;
   }
+  max-height: calc(100vh - #{$navbar-height});
+  height: calc(100vh - #{$navbar-height});
+  overflow: auto;
   z-index: 0;
 }

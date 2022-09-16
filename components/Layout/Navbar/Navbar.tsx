@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {MenuOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {IRootState} from "@app/redux/store";
+import {IRootState, persistor} from "@app/redux/store";
 import {loginUser, logoutUser} from "@app/redux/slices/UserSlice";
 import {toggleMenu} from "@app/redux/slices/MenuSlice";
 import {useQuery} from "react-query";
@@ -10,14 +10,12 @@ import ApiUser from "@app/api/ApiUser";
 import {Dropdown, Image, Menu, Modal} from "antd";
 import Link from "next/link";
 import Icon from "@app/components/Icon/Icon";
-import {useRouter} from "next/router";
 import {queryKeys} from "@app/utils/constants/react-query";
 
 /**
  *
  */
 export default function Navbar(): JSX.Element {
-  const router = useRouter();
   const user = useSelector((state: IRootState) => state.user);
 
   const dispatch = useDispatch();
@@ -39,8 +37,18 @@ export default function Navbar(): JSX.Element {
       title: "Đăng xuất",
       content: "Bạn có chắc chắn?",
       onOk: () => {
-        dispatch(logoutUser());
-        router.push("/");
+        persistor
+          .purge()
+          .then(() => {
+            dispatch(logoutUser());
+          })
+          .catch(() => {
+            // eslint-disable-next-line no-alert
+            window.alert(
+              "Trình duyệt bị lỗi. Xóa Cookie trình duyệt và thử lại"
+            );
+          });
+        window.location.reload();
       },
     });
   };
@@ -82,6 +90,7 @@ export default function Navbar(): JSX.Element {
           <div className="cursor-pointer flex items-center">
             <Image
               src={dataUser?.data?.avatar}
+              preview={false}
               width={30}
               height={30}
               fallback="/img/avatar/avatar.jpg"

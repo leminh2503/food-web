@@ -124,7 +124,7 @@ export function AccountManager(): JSX.Element {
     const params = {
       pageSize: pagingCurrent.pageSize,
       pageNumber: pagingCurrent.currentPage,
-      searchFields: ["fullName"],
+      searchFields: ["fullName", "email"],
       search: filterText,
       filter: {
         position: filterPosition !== -1 ? filterPosition : "",
@@ -320,6 +320,16 @@ export function AccountManager(): JSX.Element {
     });
   };
 
+  const handleChangePagination: PaginationProps["onChange"] = (
+    pageNumber,
+    pageSize
+  ) => {
+    setPagingCurrent({
+      currentPage: pageNumber,
+      pageSize: pageSize,
+    });
+  };
+
   const columns: ColumnsType<IUserLogin> = [
     {
       title: "STT",
@@ -337,9 +347,12 @@ export function AccountManager(): JSX.Element {
         return (
           <div>
             <Image
+              width="40px"
+              height="40px"
+              style={{objectFit: "cover"}}
               src={record.avatar || "img/avatar/avatar.jpg"}
               fallback="img/avatar/avatar.jpg"
-              preview={false}
+              // preview={false}
             />
           </div>
         );
@@ -486,28 +499,32 @@ export function AccountManager(): JSX.Element {
           </Row>
         </div>
       </Card>
-      <Table
-        loading={isFetching}
-        columns={columns}
-        dataSource={dataUserAccount?.data}
-        bordered
-        pagination={false}
-        onRow={(record, rowIndex) => {
-          return {
-            onDoubleClick: (): void => {
-              setDataDetail(record);
-              setIsModalVisible(true);
-            },
-          };
-        }}
-      />
-      <Pagination
-        className="mt-3 float-right"
-        showSizeChanger
-        onShowSizeChange={onShowSizeChange}
-        defaultCurrent={pagingCurrent.currentPage}
-        total={dataUserAccount?.meta.totalItems || 1}
-      />
+      <Card>
+        <Table
+          loading={isFetching}
+          columns={columns}
+          dataSource={dataUserAccount?.data}
+          bordered
+          scroll={{x: "100vw"}}
+          pagination={false}
+          onRow={(record, rowIndex) => {
+            return {
+              onDoubleClick: (): void => {
+                setDataDetail(record);
+                setIsModalVisible(true);
+              },
+            };
+          }}
+        />
+        <Pagination
+          className="mt-3 float-right"
+          showSizeChanger
+          onShowSizeChange={onShowSizeChange}
+          onChange={handleChangePagination}
+          defaultCurrent={pagingCurrent.currentPage}
+          total={dataUserAccount?.meta.totalItems || 1}
+        />
+      </Card>
       <ModalInfo
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}
