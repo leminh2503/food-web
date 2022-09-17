@@ -233,6 +233,8 @@ export function AccountManager(): JSX.Element {
       email: values.email,
       fullName: values.fullName,
       deductionOwn: values.deductionOwn,
+      englishCertificate: values.englishCertificate,
+      englishScore: values.englishScore,
     };
     updateProfile.mutate(body);
   };
@@ -313,7 +315,7 @@ export function AccountManager(): JSX.Element {
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
     pageSize
-  ) => {
+  ): void => {
     setPagingCurrent({
       currentPage: current,
       pageSize: pageSize,
@@ -382,19 +384,19 @@ export function AccountManager(): JSX.Element {
       key: "address",
       align: "center",
     },
-    {
-      title: "Quản lý",
-      dataIndex: "manager",
-      key: "manager",
-      align: "center",
-      render: (_, record): JSX.Element => {
-        return (
-          <div>
-            <span>{record?.manager?.fullName}</span>
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: "Quản lý",
+    //   dataIndex: "manager",
+    //   key: "manager",
+    //   align: "center",
+    //   render: (_, record): JSX.Element => {
+    //     return (
+    //       <div>
+    //         <span>{record?.manager?.fullName}</span>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       title: "Vị trí",
       dataIndex: "workType",
@@ -471,7 +473,7 @@ export function AccountManager(): JSX.Element {
       <Card className="mb-4">
         <div>
           <Row>
-            <Col lg={9}>
+            <Col lg={9} xs={24} sm={24}>
               <FilterAccount
                 setFilterState={setFilterState}
                 setFilterText={setFilterText}
@@ -480,7 +482,7 @@ export function AccountManager(): JSX.Element {
                 listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
-            <Col lg={15}>
+            <Col lg={15} xs={24} sm={24}>
               <div className="" style={{float: "right"}}>
                 <Button
                   className="mr-4 bg-blue-500 text-neutral-50"

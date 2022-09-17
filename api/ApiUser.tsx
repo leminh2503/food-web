@@ -1,6 +1,11 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
-import {IFamilyCircumstance, IUserLogin, IWorkType} from "../types";
+import {
+  EnglishCertificate,
+  IFamilyCircumstance,
+  IUserLogin,
+  IWorkType,
+} from "../types";
 import axios from "axios";
 
 export interface ILoginBody {
@@ -12,7 +17,7 @@ type UserGender = "Other" | "Male" | "Female";
 export interface IRegisterAccountBody {
   password?: string;
   gender?: UserGender;
-  englishCertificate?: string;
+  englishCertificate?: EnglishCertificate;
   englishScore?: number;
   workRoom?: string;
   personId?: string;

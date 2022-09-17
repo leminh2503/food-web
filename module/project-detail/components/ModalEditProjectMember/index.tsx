@@ -1,157 +1,226 @@
+import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
 import React, {useEffect, useState} from "react";
 import ApiProject, {IEditProjectMemberBody} from "@app/api/ApiProject";
+import {IProject, IProjectMember} from "@app/types";
 import {useMutation, useQueryClient} from "react-query";
-import {InputModal} from "@app/components/Modal/InputModal";
-import {SelectInput} from "@app/components/Modal/SelectInput";
-import {ERolePosition, IProjectMember} from "@app/types";
-import {notification} from "antd";
-import {DateInput3} from "@app/components/Modal/DateInput3";
+import {Button, DatePicker, Form, Input, notification, Select} from "antd";
 import moment from "moment";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {defaultValidateMessages, layout} from "@app/validate/user";
 
 interface ModalEditProjectMemberProps {
   isModalVisible: boolean;
   toggleModal: () => void;
   projectId: number;
+  dataProjectById: IProject;
   member: IProjectMember;
-}
-
-interface IDataState {
-  user?: number;
-  role?: ERolePosition;
-  contract?: number;
-  startDate?: string;
-  endDate?: string;
+  listPosition: {value: number; label: string}[];
 }
 
 export function ModalEditProjectMember({
   isModalVisible,
   toggleModal,
   projectId,
+  dataProjectById,
   member,
+  listPosition,
 }: ModalEditProjectMemberProps): JSX.Element {
   const queryClient = useQueryClient();
+  const [form] = Form.useForm();
 
-  const defaultValue = {
-    role: member?.role,
-    contract: member?.contract,
-    startDate: moment(member.startDate).format("YYYY-MM-DD"),
-    endDate: moment(member.endDate).format("YYYY-MM-DD"),
-  };
-  const [data, setData] = useState<IDataState>(defaultValue);
+  const [date, setDate] = useState({
+    startDate: moment(member.startDate).format("DD/MM/YYYY"),
+    endDate: moment(member.endDate).format("DD/MM/YYYY"),
+  });
 
   useEffect(() => {
-    setData(defaultValue);
-  }, [isModalVisible]);
+    form.setFieldsValue({
+      fullName: member.user.fullName,
+      role: member.role,
+      contract: member.contract,
+      reality: member.reality === null ? 0 : member.reality,
+      startDate: moment(member.startDate),
+      endDate: moment(member.endDate),
+    });
 
-  const positions = [
-    {
-      value: ERolePosition.BACKEND_DEV,
-      lable: "Backend Dev",
-    },
-    {
-      value: ERolePosition.FRONTEND_DEV,
-      lable: "Frontend Dev",
-    },
-    {
-      value: ERolePosition.TESTER,
-      lable: "Tester",
-    },
-    {
-      value: ERolePosition.BA,
-      lable: "BA",
-    },
-    {
-      value: ERolePosition.DESIGNER,
-      lable: "Designer",
-    },
-  ];
+    setDate({
+      startDate: moment(member.startDate).format("DD/MM/YYYY"),
+      endDate: moment(member.endDate).format("DD/MM/YYYY"),
+    });
+  }, [member, isModalVisible]);
+
+  const onFinish = (fieldsValue: IEditProjectMemberBody): void => {
+    const data = {
+      projectId: projectId,
+      userId: member.id,
+      role: fieldsValue.role,
+      contract: Number(fieldsValue.contract),
+      reality: Number(fieldsValue.reality),
+      startDate: moment(fieldsValue.startDate).format("YYYY-MM-DD"),
+      endDate: moment(fieldsValue.endDate).format("YYYY-MM-DD"),
+    };
+    handleEditProjectMember(data);
+  };
 
   const EditProjectMemberMutation = useMutation(ApiProject.editProjectMember);
-  const handleEditProjectMember = (values: IEditProjectMemberBody): void => {
-    EditProjectMemberMutation.mutate(
-      {
-        projectId: values.projectId,
-        userId: values.userId,
-        role: values.role,
-        contract: Number(values.contract),
-        startDate: values.startDate,
-        endDate: values.endDate,
+  const handleEditProjectMember = (data: IEditProjectMemberBody): void => {
+    EditProjectMemberMutation.mutate(data, {
+      onSuccess: () => {
+        notification.success({
+          duration: 1,
+          message: "Sửa thông tin  thành viên dự án thành công!",
+        });
+        queryClient.refetchQueries({
+          queryKey: queryKeys.GET_LIST_PROJECT_MEMBER,
+        });
+        toggleModal();
       },
-      {
-        onSuccess: () => {
-          notification.success({
-            duration: 1,
-            message: "Sửa thông tin  thành viên dự án thành công!",
-          });
-          queryClient.refetchQueries({
-            queryKey: queryKeys.GET_LIST_PROJECT_MEMBER,
-          });
-          toggleModal();
-        },
-        onError: () => {
-          notification.error({
-            duration: 1,
-            message: "Sửa thông tin thành viên dự án thất bại!",
-          });
-        },
-      }
-    );
+      onError: () => {
+        notification.error({
+          duration: 1,
+          message: "Sửa thông tin thành viên dự án thất bại!",
+        });
+      },
+    });
   };
 
   const renderContent = (): JSX.Element => {
     return (
-      <div className="modal-edit-project-member">
-        <InputModal
-          className="inline"
-          label="Họ tên"
-          onChange={setData}
-          value={member.user?.fullName ?? ""}
-          keyValue="fullName"
-          disabled
-        />
-        <SelectInput
-          className="inline"
-          keyValue="role"
-          label="Vai trò:"
-          value={data.role}
-          data={positions?.map((item) => {
-            return {
-              value: item.value,
-              label: item.lable,
-            };
-          })}
-          setValue={setData}
-        />
-        <InputModal
-          className="inline"
-          keyValue="contract"
-          label="Hợp đồng"
-          value={data.contract + ""}
-          onChange={setData}
-        />
-        <DateInput3
-          className="inline"
-          keyValue="startDate"
-          label="Bắt đầu:"
-          value={data.startDate ?? ""}
-          onChange={setData}
-          disabledDate={(d) => {
-            if (data.endDate !== moment().format("YYYY-MM-DD")) {
-              return d.isAfter(data.endDate);
-            }
-            return false;
-          }}
-        />
-        <DateInput3
-          className="inline"
-          keyValue="endDate"
-          label="Kết thúc:"
-          onChange={setData}
-          value={data.endDate ?? ""}
-          disabledDate={(d) => d.isBefore(moment(data.startDate))}
-        />
+      <div className="modal-edit-project-member-form">
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
+        >
+          <Form.Item name="fullName" label="Tên thành viên">
+            <Input style={{color: "#a0a0a0"}} disabled />
+          </Form.Item>
+          <Form.Item name="role" label="Vai trò" rules={[{required: true}]}>
+            <Select
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option!.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
+              {listPosition.map((e) => (
+                <Select.Option key={"listPosition" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="contract"
+            label="Hợp đồng"
+            rules={[
+              {required: true},
+              {
+                pattern: /^([1-9][0-9]*)$/,
+                message: "Hợp đồng phải là số nguyên dương!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="reality"
+            label="Thực tế"
+            rules={[
+              {
+                pattern: /^(\s*|^([1-9][0-9]*)|([0]+)$)$/,
+                message: "Thực tế phải là số nguyên dương!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="startDate"
+            label="Ngày bắt đầu"
+            rules={[{required: true}]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              onChange={(value, dateString): void => {
+                setDate((prev) => ({
+                  ...prev,
+                  startDate:
+                    dateString === ""
+                      ? moment(dataProjectById.startDate).format("DD/MM/YYYY")
+                      : dateString,
+                }));
+              }}
+              disabledDate={(d): boolean => {
+                return (
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
+                    moment(
+                      moment(dataProjectById.startDate).format("DD/MM/YYYY"),
+                      "DD/MM/YYYY"
+                    ) ||
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+                    moment(date.endDate, "DD/MM/YYYY")
+                );
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="endDate"
+            label="Ngày kết thúc"
+            rules={[{required: true}]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              onChange={(value, dateString): void => {
+                setDate((prev) => ({
+                  ...prev,
+                  endDate:
+                    dateString === ""
+                      ? moment(dataProjectById.startDate).format("DD/MM/YYYY")
+                      : dateString,
+                }));
+              }}
+              disabledDate={(d): boolean => {
+                return (
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
+                    moment(date.startDate, "DD/MM/YYYY") ||
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+                    moment(
+                      moment(dataProjectById.endDate).format("DD/MM/YYYY"),
+                      "DD/MM/YYYY"
+                    )
+                );
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <div className="footer-modal">
+              <Button
+                className="button-cancel mr-3"
+                type="primary"
+                onClick={(): void => {
+                  toggleModal();
+                  form.resetFields();
+                }}
+              >
+                Hủy
+              </Button>
+              <Button
+                className="button-confirm"
+                type="primary"
+                htmlType="submit"
+              >
+                Xác Nhận
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -159,16 +228,12 @@ export function ModalEditProjectMember({
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => {
-        handleEditProjectMember({
-          ...data,
-          projectId: projectId,
-          userId: member.id,
-        });
+      handleCancel={(): void => {
+        toggleModal();
       }}
-      handleCancel={toggleModal}
       title="Sửa thông tin thành viên dự án"
       content={renderContent()}
+      footer={null}
     />
   );
 }

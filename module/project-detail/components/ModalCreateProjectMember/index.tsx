@@ -1,176 +1,229 @@
+import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
 import React, {useEffect, useState} from "react";
 import ApiProject, {IProjectMemberBody} from "@app/api/ApiProject";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {InputModal} from "@app/components/Modal/InputModal";
-import {SelectInput} from "@app/components/Modal/SelectInput";
-import ApiUser from "@app/api/ApiUser";
-import {ERolePosition, IUserLogin} from "@app/types";
-import {notification} from "antd";
-import {DateInput3} from "@app/components/Modal/DateInput3";
+import {useMutation, useQueryClient} from "react-query";
+import {ERolePosition, IProject} from "@app/types";
+import {Button, DatePicker, Form, Input, notification, Select} from "antd";
 import moment from "moment";
-import {IMetadata} from "@app/api/Fetcher";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {defaultValidateMessages, layout} from "@app/validate/user";
 
 interface ModalCreateProjectMemberProps {
   isModalVisible: boolean;
   toggleModal: () => void;
   projectId: number;
-}
-
-interface IDataState {
-  user?: number;
-  role?: ERolePosition;
-  contract?: number;
-  startDate?: string;
-  endDate?: string;
+  dataProjectById: IProject;
+  listUserConvert: {value: number; label: string}[];
+  listPosition: {value: number; label: string}[];
 }
 
 export function ModalCreateProjectMember({
   isModalVisible,
   toggleModal,
   projectId,
+  dataProjectById,
+  listUserConvert,
+  listPosition,
 }: ModalCreateProjectMemberProps): JSX.Element {
   const queryClient = useQueryClient();
+  const [form] = Form.useForm();
 
-  const defaultValue = {
-    user: 1,
-    role: ERolePosition.BACKEND_DEV,
-    contract: 0,
-    startDate: moment().format("YYYY-MM-DD"),
-    endDate: moment().format("YYYY-MM-DD"),
-  };
-
-  const [data, setData] = useState<IDataState>(defaultValue);
-
+  const [date, setDate] = useState({
+    startDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
+    endDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
+  });
   useEffect(() => {
-    setData(defaultValue);
+    form.resetFields();
+    form.setFieldsValue({
+      user: 1,
+      role: ERolePosition.BACKEND_DEV,
+      startDate: moment(dataProjectById.startDate),
+      endDate: moment(dataProjectById.startDate),
+    });
+    setDate({
+      startDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
+      endDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
+    });
   }, [isModalVisible]);
 
-  const getUser = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
-    return ApiUser.getUserAccount();
+  const onFinish = (fieldsValue: IProjectMemberBody): void => {
+    const data = {
+      projectId: projectId,
+      user: fieldsValue.user,
+      role: fieldsValue.role,
+      contract: Number(fieldsValue.contract),
+      startDate: fieldsValue.startDate,
+      endDate: fieldsValue.endDate,
+    };
+    handleCreateProjectMember(data);
   };
-  const {data: dataUser} = useQuery(
-    queryKeys.GET_LIST_USER_FOR_PROJECT,
-    getUser
-  );
-
-  const positions = [
-    {
-      value: ERolePosition.BACKEND_DEV,
-      lable: "Backend Dev",
-    },
-    {
-      value: ERolePosition.FRONTEND_DEV,
-      lable: "Frontend Dev",
-    },
-    {
-      value: ERolePosition.TESTER,
-      lable: "Tester",
-    },
-    {
-      value: ERolePosition.BA,
-      lable: "BA",
-    },
-    {
-      value: ERolePosition.DESIGNER,
-      lable: "Designer",
-    },
-  ];
 
   const createProjectMemberMutation = useMutation(
     ApiProject.createProjectMember
   );
   const handleCreateProjectMember = (values: IProjectMemberBody): void => {
-    createProjectMemberMutation.mutate(
-      {
-        projectId: values.projectId,
-        user: values.user,
-        role: values.role,
-        contract: Number(values.contract),
-        startDate: values.startDate,
-        endDate: values.endDate,
+    createProjectMemberMutation.mutate(values, {
+      onSuccess: () => {
+        notification.success({
+          duration: 1,
+          message: "Thêm thành viên dự án thành công!",
+        });
+        queryClient.refetchQueries({
+          queryKey: queryKeys.GET_LIST_PROJECT_MEMBER,
+        });
+        toggleModal();
       },
-      {
-        onSuccess: () => {
-          notification.success({
-            duration: 1,
-            message: "Thêm thành viên dự án thành công!",
-          });
-          queryClient.refetchQueries({
-            queryKey: queryKeys.GET_LIST_PROJECT_MEMBER,
-          });
-          toggleModal();
-        },
-        onError: () => {
-          notification.error({
-            duration: 1,
-            message: "Thêm thành viên dự án thất bại!",
-          });
-        },
-      }
-    );
+      onError: () => {
+        notification.error({
+          duration: 1,
+          message: "Thêm thành viên dự án thất bại!",
+        });
+      },
+    });
   };
 
   const renderContent = (): JSX.Element => {
     return (
-      <div className="modal-create-project-member">
-        <SelectInput
-          className="inline"
-          keyValue="user"
-          label="Tên thành viên:"
-          value={data.user}
-          data={dataUser?.data.map((item) => {
-            return {
-              value: Number(item.id),
-              label: item.fullName,
-            };
-          })}
-          setValue={setData}
-        />
-        <SelectInput
-          className="inline"
-          keyValue="role"
-          label="Vai trò:"
-          value={data.role}
-          data={positions?.map((item) => {
-            return {
-              value: item.value,
-              label: item.lable,
-            };
-          })}
-          setValue={setData}
-        />
-        <InputModal
-          className="inline"
-          keyValue="contract"
-          label="Hợp đồng"
-          value={data.contract + ""}
-          onChange={setData}
-        />
-        <DateInput3
-          className="inline"
-          keyValue="startDate"
-          label="Bắt đầu:"
-          onChange={setData}
-          value={data.startDate ?? ""}
-          disabledDate={(d) => {
-            if (data.endDate !== moment().format("YYYY-MM-DD")) {
-              return d.isBefore() || d.isAfter(moment(data.endDate));
-            }
-            return d.isBefore();
-          }}
-        />
-        <DateInput3
-          className="inline"
-          keyValue="endDate"
-          label="Kết thúc:"
-          onChange={setData}
-          value={data.endDate ?? ""}
-          disabledDate={(d) =>
-            d.isBefore() || d.isBefore(moment(data.startDate))
-          }
-        />
+      <div className="modal-create-project-member-form">
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
+        >
+          <Form.Item
+            name="user"
+            label="Tên thành viên"
+            rules={[{required: true}]}
+          >
+            <Select
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option): boolean =>
+                (option?.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
+              {listUserConvert.map((e) => (
+                <Select.Option
+                  key={"listUserConvert" + e.value}
+                  value={e.value}
+                >
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="role" label="Vai trò" rules={[{required: true}]}>
+            <Select
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option): boolean =>
+                (option?.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
+              {listPosition.map((e) => (
+                <Select.Option key={"listPosition" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="contract"
+            label="Hợp đồng"
+            rules={[
+              {required: true},
+              {
+                pattern: /^([1-9][0-9]*)$/,
+                message: "Hợp đồng phải là số nguyên dương!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="startDate"
+            label="Ngày bắt đầu"
+            rules={[{required: true}]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              onChange={(value, dateString): void => {
+                setDate((prev) => ({
+                  ...prev,
+                  startDate:
+                    dateString === ""
+                      ? moment(dataProjectById.startDate).format("DD/MM/YYYY")
+                      : dateString,
+                }));
+              }}
+              disabledDate={(d): boolean => {
+                return (
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
+                    moment(date.startDate, "DD/MM/YYYY") ||
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+                    moment(date.endDate, "DD/MM/YYYY")
+                );
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="endDate"
+            label="Ngày kết thúc"
+            rules={[{required: true}]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              onChange={(value, dateString): void => {
+                setDate((prev) => ({
+                  ...prev,
+                  endDate:
+                    dateString === ""
+                      ? moment(dataProjectById.startDate).format("DD/MM/YYYY")
+                      : dateString,
+                }));
+              }}
+              disabledDate={(d): boolean => {
+                return (
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
+                    moment(date.startDate, "DD/MM/YYYY") ||
+                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+                    moment(
+                      moment(dataProjectById.endDate).format("DD/MM/YYYY"),
+                      "DD/MM/YYYY"
+                    )
+                );
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <div className="footer-modal">
+              <Button
+                className="button-cancel mr-3"
+                type="primary"
+                onClick={(): void => {
+                  toggleModal();
+                }}
+              >
+                Hủy
+              </Button>
+              <Button
+                className="button-confirm"
+                type="primary"
+                htmlType="submit"
+              >
+                Xác Nhận
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -178,12 +231,12 @@ export function ModalCreateProjectMember({
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={() => {
-        handleCreateProjectMember({...data, projectId: projectId});
+      handleCancel={(): void => {
+        toggleModal();
       }}
-      handleCancel={toggleModal}
-      title="Thêm thành viên vào dự án"
+      title="Thêm thành viên dự án"
       content={renderContent()}
+      footer={null}
     />
   );
 }
