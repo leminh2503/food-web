@@ -248,7 +248,7 @@ export interface IDataSalary {
 }
 
 export interface IProfile {
-  id?: string;
+  id: string;
   avatar?: string;
   fullName?: string;
   email?: string;
@@ -426,8 +426,8 @@ export interface IProjectMember {
   overtime?: number;
   startDate?: string;
   endDate?: string;
-  project?: IProject;
-  user?: IProfile;
+  project: IProject;
+  user: IProfile;
 }
 
 export interface ISetStateModal {
@@ -447,4 +447,11 @@ export enum EEnglishCertificate {
   TOEFL = "Toefl",
   IELTS = "Ielts",
   OTHER = "Other",
+}
+
+export enum EProjectState {
+  MOI_KHOI_TAO = 0,
+  DANG_THUC_HIEN = 1,
+  DA_KET_THUC = 2,
+  DA_HUY = 3,
 }

@@ -231,7 +231,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
               <Button
                 className="button-cancel mr-3"
                 type="primary"
-                onClick={() => {
+                onClick={(): void => {
                   handleCancelAddEmployee();
                   form.resetFields();
                 }}
@@ -261,7 +261,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
       }}
       title="Tạo tài khoản"
       content={renderContent()}
-      footer={false}
+      footer={null}
     />
   );
 }
