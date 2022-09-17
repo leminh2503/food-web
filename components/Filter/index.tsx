@@ -27,7 +27,7 @@ export function Filter({
   startFilter,
 }: FilterProps): JSX.Element {
   return (
-    <div className="flex justify-start">
+    <div className="filter-account-management flex justify-start flex-wrap">
       {listSearch.map((item, index) => (
         <div key={index}>
           <SelectSearch

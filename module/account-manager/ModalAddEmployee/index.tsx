@@ -126,24 +126,26 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             label="Số điện thoại"
             rules={[
               {
-                pattern: /^(?:\d*)$/,
-                message: "Số điện thoại không đúng định dạng!",
+                pattern: /^[0-9+]{10,12}$/,
+                message:
+                  "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
               },
-              ({getFieldValue}) => ({
-                validator(_, value) {
-                  if (
-                    getFieldValue("phoneNumber").length > 11 ||
-                    getFieldValue("phoneNumber").length < 10
-                  ) {
-                    return Promise.reject(
-                      new Error(
-                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
-                      )
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
+              // ({getFieldValue}) => ({
+              //   validator(_, value) {
+              //     if (
+              //       (getFieldValue("phoneNumber").length > 0 &&
+              //         getFieldValue("phoneNumber").length > 12) ||
+              //       getFieldValue("phoneNumber").length < 10
+              //     ) {
+              //       return Promise.reject(
+              //         new Error(
+              //           "Số điện thoại phải có độ dài từ 10 đến 12 kí tự!"
+              //         )
+              //       );
+              //     }
+              //     return Promise.resolve();
+              //   },
+              // }),
             ]}
           >
             <Input />
@@ -153,24 +155,10 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             label="Số điện thoại người thân"
             rules={[
               {
-                pattern: /^(?:\d*)$/,
-                message: "Số điện thoại không đúng định dạng!",
+                pattern: /^[0-9+]{10,12}$/,
+                message:
+                  "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
               },
-              ({getFieldValue}) => ({
-                validator(_, value) {
-                  if (
-                    getFieldValue("phoneNumberRelative").length > 11 ||
-                    getFieldValue("phoneNumberRelative").length < 10
-                  ) {
-                    return Promise.reject(
-                      new Error(
-                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
-                      )
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
             ]}
           >
             <Input />
@@ -189,7 +177,11 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="address" label="Địa chỉ">
+          <Form.Item
+            name="address"
+            label="Địa chỉ"
+            rules={[{type: "string"}, {max: 255}]}
+          >
             <Input />
           </Form.Item>
           <Form.Item name="position" label="Chức vụ" rules={[{required: true}]}>
@@ -220,7 +212,8 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
                 message: "Vui lòng nhập vào số nguyên!",
               },
               {
-                max: 11,
+                pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
+                message: "Lương cơ bản phải chia hết cho 1000!",
               },
             ]}
           >
