@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {EnglishCertificate, EUserGender, IUserLogin} from "@app/types";
+import {EnglishCertificate, IUserLogin} from "@app/types";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import ApiUser, {IProfileBody, IRegisterAccountBody} from "@app/api/ApiUser";
 import {
@@ -168,71 +168,6 @@ export function ProfileAccount(): JSX.Element {
     }
   };
 
-  const contentDetail = (): JSX.Element => {
-    return (
-      <div className="profile flex flex-col justify-between">
-        <div className="profile-detail-information">
-          <div className="information-detail mt-10">
-            <Row>
-              <Col span="12">
-                <p>
-                  <span>Giới tính: </span>
-                  <span>
-                    {dataUser?.gender && EUserGender[dataUser?.gender]}
-                  </span>
-                </p>
-                <p>
-                  <span>Vị trí: </span>
-                  <span>{dataUser?.workType?.name}</span>
-                </p>
-                <p>
-                  <span>Số điện thoại: </span>
-                  <span>{dataUser?.phoneNumber}</span>
-                </p>
-                <p>
-                  <span>Số điện thoại người thân: </span>
-                  <span>{dataUser?.phoneNumberRelative}</span>
-                </p>
-                <p>
-                  <span>Email: </span>
-                  <span>{dataUser?.email}</span>
-                </p>
-              </Col>
-              <Col span="12">
-                <p>
-                  <span>Ngày sinh: </span>
-                  <span>
-                    {moment(dataUser?.dateOfBirth).format("DD-MM-YYYY")}
-                  </span>
-                </p>
-                <p>
-                  <span>CMND/CCCD: </span>
-                  <span>{dataUser?.personId}</span>
-                </p>
-                <p>
-                  <span>Địa chỉ: </span>
-                  <span>{dataUser?.address}</span>
-                </p>
-                <p>
-                  <span>Phòng làm việc: </span>
-                  <span>{dataUser?.workRoom}</span>
-                </p>
-                <p>
-                  <span>Chứng chỉ ngoại ngữ: </span>
-                  <span>{dataUser?.englishCertificate}</span>
-                </p>
-                <p>
-                  <span>Điểm Chứng chỉ: </span>
-                  <span>{dataUser?.englishScore}</span>
-                </p>
-              </Col>
-            </Row>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const contentUpdate = (): JSX.Element => {
     return (
       <Form
@@ -255,7 +190,7 @@ export function ProfileAccount(): JSX.Element {
                     /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
                   message: "Họ và tên không đúng định dạng!",
                 },
-                {min: 1},
+                {min: 5},
                 {max: 30},
               ]}
             >
@@ -279,9 +214,9 @@ export function ProfileAccount(): JSX.Element {
               label="Số điện thoại"
               rules={[
                 {
-                  pattern: /^[0-9+]{10,12}$/,
-                  message:
-                    "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                  pattern:
+                    /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                  message: "Số điện thoại không đúng định dạng!",
                 },
               ]}
             >
@@ -292,9 +227,9 @@ export function ProfileAccount(): JSX.Element {
               label="Số điện thoại người thân"
               rules={[
                 {
-                  pattern: /^[0-9+]{10,12}$/,
-                  message:
-                    "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                  pattern:
+                    /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                  message: "Số điện thoại không đúng định dạng!",
                 },
               ]}
             >
@@ -324,10 +259,9 @@ export function ProfileAccount(): JSX.Element {
             <Form.Item name="dateOfBirth" label="Ngày sinh">
               <DatePicker
                 format="DD/MM/YYYY"
-                disabledDate={(current) => {
-                  const customDate = moment().format("DD/MM/YYYY");
-                  return current && current > moment(customDate, "DD/MM/YYYY");
-                }}
+                disabledDate={(current) =>
+                  current.isAfter(moment().subtract(18, "years"))
+                }
               />
             </Form.Item>
             <Form.Item
@@ -338,19 +272,56 @@ export function ProfileAccount(): JSX.Element {
                   pattern: /^(?:\d*)$/,
                   message: "CMND/CCCD không đúng định dạng!",
                 },
-                {min: 12},
-                {max: 13},
+                {min: 9},
+                {max: 12},
               ]}
             >
               <Input />
             </Form.Item>
-            <Form.Item name="address" label="Địa chỉ">
+            <Form.Item
+              name="address"
+              label="Địa chỉ"
+              rules={[
+                {type: "string"},
+                {whitespace: true},
+                {
+                  pattern:
+                    /^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                  message: "Địa chỉ không hợp lệ!",
+                },
+                {max: 255},
+              ]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item name="workRoom" label="Phòng làm việc">
+            <Form.Item
+              name="workRoom"
+              label="Phòng làm việc"
+              rules={[{type: "string"}, {whitespace: true}, {max: 255}]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item name="englishScore" label="Điểm chứng chỉ">
+            <Form.Item
+              name="englishScore"
+              label="Điểm chứng chỉ"
+              rules={[
+                {
+                  pattern:
+                    /^(0*[1-9][0-9]*(\.[0-9]*)?|0*\.[0-9]*[1-9][0-9]*)$/gm,
+                  message: "Điểm không đúng định dạng!",
+                },
+                {
+                  // eslint-disable-next-line consistent-return
+                  validator: async (rule, value) => {
+                    if (value > 990) {
+                      return Promise.reject(
+                        new Error("Điểm không được vượt quá 990!")
+                      );
+                    }
+                  },
+                },
+              ]}
+            >
               <Input
                 disabled={
                   !form.getFieldValue("englishCertificate") ||
@@ -488,9 +459,6 @@ export function ProfileAccount(): JSX.Element {
               loading={isLoading}
             >
               <Tabs defaultActiveKey="1">
-                <Tabs.TabPane tab="Thông tin chung" key="1">
-                  <div className="tab-detail-profile">{contentDetail()}</div>
-                </Tabs.TabPane>
                 <Tabs.TabPane tab="Cập nhật thông tin" key="2">
                   <div className="tab-update-profile mt-5">
                     {contentUpdate()}
@@ -501,12 +469,6 @@ export function ProfileAccount(): JSX.Element {
           </Col>
         </Row>
       </div>
-      {/* <ModalUpdateProfile */}
-      {/*  isModalVisible={toggleModal} */}
-      {/*  dataRefetch={dataRefetch} */}
-      {/*  setToggleModal={setToggleModal} */}
-      {/*  dataProfile={dataUser || null} */}
-      {/* /> */}
     </div>
   );
 }

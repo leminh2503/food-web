@@ -71,7 +71,7 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
                   /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
                 message: "Họ và tên không đúng định dạng!",
               },
-              {min: 1},
+              {min: 5},
               {max: 30},
             ]}
           >
@@ -84,8 +84,7 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
               {whitespace: true},
               {
                 pattern: /^[0-9+]{10,12}$/,
-                message:
-                  "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                message: "Số điện thoại không đúng định dạng!",
               },
             ]}
           >
