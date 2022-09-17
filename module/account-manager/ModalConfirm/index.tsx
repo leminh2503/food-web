@@ -1,8 +1,8 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Button, DatePicker, Form, Image, Input, Select} from "antd";
+import {Button, Col, DatePicker, Form, Image, Input, Row, Select} from "antd";
 import React, {useEffect, useState} from "react";
-import {IUserLogin} from "@app/types";
+import {EnglishCertificate, IUserLogin} from "@app/types";
 import {defaultValidateMessages, layout} from "@app/validate/user";
 import {IRegisterAccountBody} from "@app/api/ApiUser";
 import moment from "moment";
@@ -45,11 +45,18 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     dateOfBirth,
     deductionOwn,
     familyCircumstances,
+    englishCertificate,
+    englishScore,
+    workRoom,
   } = dataDetail;
 
   const [form] = Form.useForm();
 
   const [adString, setAdString] = useState<IUserLogin>(defaultValuesDetail);
+
+  const [typeCertificateEnglish, setTypeCertificateEnglish] =
+    useState<EnglishCertificate>(dataDetail?.englishCertificate || "");
+
   useEffect(() => {
     setAdString({
       fullName,
@@ -66,6 +73,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       dateOfBirth,
       deductionOwn,
       familyCircumstances,
+      englishCertificate,
+      englishScore,
+      workRoom,
     });
   }, [dataDetail]);
 
@@ -86,13 +96,16 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       dateOfBirth: moment(date, "DD/MM/YYYY") || null,
       deductionOwn,
       familyCircumstances,
+      englishCertificate,
+      englishScore,
+      workRoom,
     });
-  }, [dataDetail]);
+  }, [dataDetail, typeCertificateEnglish, isModalVisible]);
 
   const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
       gender: undefined,
-      workRoom: "",
+      workRoom: fieldsValue?.workRoom,
       personId: fieldsValue.personId,
       dateOfBirth: fieldsValue.dateOfBirth,
       positionId: fieldsValue.position || 0,
@@ -105,8 +118,20 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       employeeCode: fieldsValue.employeeCode,
       fullName: fieldsValue.fullName,
       deductionOwn: fieldsValue.deductionOwn,
+      englishCertificate: fieldsValue?.englishCertificate,
+      englishScore: fieldsValue?.englishScore,
     };
     handleOk(data);
+  };
+
+  const handleChangeCertificate = (value: {
+    value: EnglishCertificate;
+    label: React.ReactNode;
+  }) => {
+    setTypeCertificateEnglish(value.value);
+    if (form.getFieldValue("englishCertificate") === "") {
+      form.setFieldValue("englishScore", "");
+    }
   };
 
   const renderContent = (): JSX.Element => {
@@ -115,8 +140,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
         <div className="avatar-container mb-3">
           <Image
             width={150}
+            height={150}
             src={avatar || "/img/avatar/avatar.jpg"}
-            style={{borderRadius: "50%"}}
+            style={{borderRadius: "50%", objectFit: "cover"}}
             fallback="/img/avatar/avatar.jpg"
           />
         </div>
@@ -127,158 +153,194 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
           onFinish={onFinish}
           validateMessages={defaultValidateMessages}
         >
-          <Form.Item
-            name="fullName"
-            label="Họ và tên"
-            rules={[
-              {required: true},
-              {whitespace: true},
-              {
-                pattern:
-                  /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
-                message: "Họ và tên không đúng định dạng!",
-              },
-              {min: 1},
-              {max: 30},
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              {required: true},
-              {whitespace: true},
-              {type: "email"},
-              {
-                pattern: /^[^@\s]+@tinasoft.vn$/,
-                message: "Mail không phải domain của Tinasoft!",
-              },
-              {min: 6},
-              {max: 255},
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="dateOfBirth" label="Ngày sinh">
-            <DatePicker format="DD/MM/YYYY" />
-          </Form.Item>
-          <Form.Item
-            name="phoneNumber"
-            label="Số điện thoại"
-            rules={[
-              {
-                pattern: /^(?:\d*)$/,
-                message: "Số điện thoại không đúng định dạng!",
-              },
-              ({getFieldValue}) => ({
-                validator(_, value) {
-                  if (
-                    getFieldValue("phoneNumber").length > 11 ||
-                    getFieldValue("phoneNumber").length < 10
-                  ) {
-                    return Promise.reject(
-                      new Error(
-                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
-                      )
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                name="fullName"
+                label="Họ và tên"
+                rules={[
+                  {required: true},
+                  {whitespace: true},
+                  {
+                    pattern:
+                      /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                    message: "Họ và tên không đúng định dạng!",
+                  },
+                  {min: 1},
+                  {max: 30},
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[
+                  {required: true},
+                  {whitespace: true},
+                  {type: "email"},
+                  {
+                    pattern: /^[^@\s]+@tinasoft.vn$/,
+                    message: "Mail không phải domain của Tinasoft!",
+                  },
+                  {min: 6},
+                  {max: 255},
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name="dateOfBirth" label="Ngày sinh">
+                <DatePicker
+                  format="DD/MM/YYYY"
+                  disabledDate={(current) => {
+                    const customDate = moment().format("DD/MM/YYYY");
+                    return (
+                      current && current > moment(customDate, "DD/MM/YYYY")
                     );
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="phoneNumber"
+                label="Số điện thoại"
+                rules={[
+                  {
+                    pattern: /^[0-9+]{10,12}$/,
+                    message:
+                      "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="phoneNumberRelative"
+                label="Số điện thoại người thân"
+                rules={[
+                  {
+                    pattern: /^[0-9+]{10,12}$/,
+                    message:
+                      "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name="englishCertificate" label="Chứng chỉ ngoại ngữ">
+                <Select onChange={handleChangeCertificate}>
+                  <Select.Option key="1" value="Toeic">
+                    Toeic
+                  </Select.Option>
+                  <Select.Option key="2" value="Toefl">
+                    Toefl
+                  </Select.Option>
+                  <Select.Option key="3" value="Ielts">
+                    Ielts
+                  </Select.Option>
+                  <Select.Option key="3" value="Other">
+                    Khác
+                  </Select.Option>
+                  <Select.Option key="0" value="">
+                    Không
+                  </Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="englishScore" label="Điểm chứng chỉ">
+                <Input
+                  disabled={
+                    !form.getFieldValue("englishCertificate") ||
+                    typeCertificateEnglish === ""
                   }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="phoneNumberRelative"
-            label="Số điện thoại người thân"
-            rules={[
-              {
-                pattern: /^(?:\d*)$/,
-                message: "Số điện thoại không đúng định dạng!",
-              },
-              ({getFieldValue}) => ({
-                validator(_, value) {
-                  if (
-                    getFieldValue("phoneNumberRelative").length > 11 ||
-                    getFieldValue("phoneNumberRelative").length < 10
-                  ) {
-                    return Promise.reject(
-                      new Error(
-                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
-                      )
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="personId"
-            label="CMND/CCCD"
-            rules={[
-              {
-                pattern: /^(?:\d*)$/,
-                message: "CMND/CCCD không đúng định dạng!",
-              },
-              {min: 12},
-              {max: 13},
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="address" label="Địa chỉ">
-            <Input />
-          </Form.Item>
-          <Form.Item name="position" label="Chức vụ" rules={[{required: true}]}>
-            <Select>
-              {listPositionConvert?.map((e) => (
-                <Select.Option key={"position" + e.value} value={e.value}>
-                  {e.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="Vị trí" name="workType" rules={[{required: true}]}>
-            <Select>
-              {listWorkTypeConvert?.map((e) => (
-                <Select.Option key={"workType" + e.value} value={e.value}>
-                  {e.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="baseSalary"
-            label="Lương cơ bản"
-            rules={[
-              {required: true},
-              {
-                pattern: /^(?:\d*)$/,
-                message: "Vui lòng nhập vào số nguyên!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="deductionOwn"
-            label="Giảm trừ gia cảnh"
-            rules={[
-              {required: true},
-              {
-                pattern: /^(?:\d*)$/,
-                message: "Vui lòng nhập vào số nguyên!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="personId"
+                label="CMND/CCCD"
+                rules={[
+                  {
+                    pattern: /^(?:\d*)$/,
+                    message: "CMND/CCCD không đúng định dạng!",
+                  },
+                  {min: 12},
+                  {max: 13},
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="address"
+                label="Địa chỉ"
+                rules={[{type: "string"}, {max: 255}]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name="workRoom" label="Phòng làm việc">
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="position"
+                label="Chức vụ"
+                rules={[{required: true}]}
+              >
+                <Select>
+                  {listPositionConvert?.map((e) => (
+                    <Select.Option key={"position" + e.value} value={e.value}>
+                      {e.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Vị trí"
+                name="workType"
+                rules={[{required: true}]}
+              >
+                <Select>
+                  {listWorkTypeConvert?.map((e) => (
+                    <Select.Option key={"workType" + e.value} value={e.value}>
+                      {e.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="baseSalary"
+                label="Lương cơ bản"
+                rules={[
+                  {required: true},
+                  {
+                    pattern: /^(?:\d*)$/,
+                    message: "Vui lòng nhập vào số nguyên!",
+                  },
+                  {
+                    pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
+                    message: "Lương cơ bản phải chia hết cho 1000!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="deductionOwn"
+                label="Giảm trừ gia cảnh"
+                rules={[
+                  {required: true},
+                  {
+                    pattern: /^(?:\d*)$/,
+                    message: "Vui lòng nhập vào số nguyên!",
+                  },
+                  {
+                    pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
+                    message: "Giảm trừ gia cảnh phải chia hết cho 1000!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
           <Button
             onClick={(): void => setIsModalFamilyVisible(true)}
             className="mt-3 button-modal-family"
@@ -318,6 +380,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
   };
   return (
     <ModalCustom
+      width="1000px"
       isModalVisible={isModalVisible}
       handleOk={(): void => handleOk(adString)}
       handleCancel={(): void => {

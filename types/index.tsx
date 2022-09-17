@@ -312,7 +312,7 @@ export interface IUserLogin {
   employeeCode?: string;
   workRoom?: string;
   englishCertificate?: EnglishCertificate;
-  englishScore?: string;
+  englishScore?: number;
 }
 
 export interface IDataProjectSalary {

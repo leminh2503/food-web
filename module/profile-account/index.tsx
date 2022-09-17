@@ -279,11 +279,10 @@ export function ProfileAccount(): JSX.Element {
               label="Số điện thoại"
               rules={[
                 {
-                  pattern: /^(?:\d*)$/,
-                  message: "Số điện thoại không đúng định dạng!",
+                  pattern: /^[0-9+]{10,12}$/,
+                  message:
+                    "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
                 },
-                {min: 10},
-                {max: 11},
               ]}
             >
               <Input />
@@ -293,11 +292,10 @@ export function ProfileAccount(): JSX.Element {
               label="Số điện thoại người thân"
               rules={[
                 {
-                  pattern: /^(?:\d*)$/,
-                  message: "Số điện thoại không đúng định dạng!",
+                  pattern: /^[0-9+]{10,12}$/,
+                  message:
+                    "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
                 },
-                {min: 10},
-                {max: 11},
               ]}
             >
               <Input />
