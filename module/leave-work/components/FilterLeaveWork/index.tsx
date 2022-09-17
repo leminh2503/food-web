@@ -2,10 +2,13 @@ import React from "react";
 import {Filter} from "@app/components/Filter";
 import moment from "moment";
 
+interface IFilterLeaveWork {
+  state: number[];
+  month: number;
+  year: number;
+}
 interface FilterLeaveWorkProps {
-  setFilterState: React.Dispatch<React.SetStateAction<number[]>>;
-  setFilterYear: React.Dispatch<React.SetStateAction<number>>;
-  setFilterMonth: React.Dispatch<React.SetStateAction<number>>;
+  setFilter: React.Dispatch<React.SetStateAction<IFilterLeaveWork>>;
 }
 
 interface DataFilter {
@@ -15,9 +18,7 @@ interface DataFilter {
 }
 
 export function FilterLeaveWork({
-  setFilterState,
-  setFilterYear,
-  setFilterMonth,
+  setFilter,
 }: FilterLeaveWorkProps): JSX.Element {
   const dataFilterState: DataFilter[] = [
     {title: "Tất cả", value: 3, default: true},
@@ -36,7 +37,7 @@ export function FilterLeaveWork({
       };
       years[0] = {...years[0], default: true};
     }
-    return years;
+    return years.reverse();
   };
 
   const dataFilterMonth = (): DataFilter[] => {
@@ -57,9 +58,9 @@ export function FilterLeaveWork({
           data: dataFilterState,
           handleOnChange: (value: number): void => {
             if (value === 3) {
-              setFilterState([0, 1, 2]);
+              setFilter((prev) => ({...prev, state: [0, 1, 2]}));
             } else {
-              setFilterState([value]);
+              setFilter((prev) => ({...prev, state: [value]}));
             }
           },
         },
@@ -68,7 +69,7 @@ export function FilterLeaveWork({
           isSelect: true,
           data: dataFilterYear(),
           handleOnChange: (value: number): void => {
-            setFilterYear(value);
+            setFilter((prev) => ({...prev, year: value}));
           },
         },
         {
@@ -76,7 +77,7 @@ export function FilterLeaveWork({
           isSelect: true,
           data: dataFilterMonth(),
           handleOnChange: (value: number): void => {
-            setFilterMonth(value);
+            setFilter((prev) => ({...prev, month: value}));
           },
         },
       ]}

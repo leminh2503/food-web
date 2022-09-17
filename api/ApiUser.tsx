@@ -1,6 +1,11 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
-import {IFamilyCircumstance, IUserLogin, IWorkType} from "../types";
+import {
+  IFamilyCircumstance,
+  IPermission,
+  IUserLogin,
+  IWorkType,
+} from "../types";
 import axios from "axios";
 
 export interface ILoginBody {
@@ -79,8 +84,9 @@ export interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
   role?: {
-    id?: number;
-    roleName?: string;
+    id: number;
+    roleName: string;
+    permissions: IPermission[];
   };
 }
 
