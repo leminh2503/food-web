@@ -393,7 +393,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       }}
       title="Thông tin nhân viên"
       content={renderContent()}
-      footer={false}
+      footer={null}
     />
   );
 }

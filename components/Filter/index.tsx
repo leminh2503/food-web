@@ -37,6 +37,7 @@ export function Filter({
             handleChange={item.handleOnChange}
           />
           <InputSearch
+            index={index}
             visible={item.isSearch && item.visible}
             onSearchString={item.handleOnSearch}
             searchString={searchString}

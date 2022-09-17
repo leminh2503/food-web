@@ -1,5 +1,7 @@
+import "./index.scss";
 import {Input} from "antd";
 import React, {ChangeEvent} from "react";
+import classNames from "classnames";
 
 interface InputSearchProps {
   searchString?: string;
@@ -13,6 +15,7 @@ interface InputSearchProps {
   visible?: boolean;
   placeholder: string;
   onChangeSearch?: (event: ChangeEvent<HTMLInputElement>) => void;
+  index: number;
 }
 
 export function InputSearch({
@@ -21,9 +24,12 @@ export function InputSearch({
   visible,
   placeholder,
   onChangeSearch,
+  index,
 }: InputSearchProps): JSX.Element {
   return (
-    <div>
+    <div
+      className={classNames("search-input-container", {"pl-5": index !== 0})}
+    >
       {visible && onChangeSearch && (
         <Input.Search
           defaultValue={searchString}

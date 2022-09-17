@@ -17,7 +17,6 @@ export interface IEditProjectBody {
   id: number;
   name?: string;
   projectManager?: number;
-  startDate?: string;
   endDate?: string;
   scale?: number;
   customer?: string;
@@ -40,6 +39,7 @@ export interface IEditProjectMemberBody {
   userId: number;
   role?: ERolePosition;
   contract?: number;
+  reality?: number;
   startDate?: string;
   endDate?: string;
 }
@@ -50,10 +50,15 @@ export interface IDeleteProjectMemberBody {
 }
 
 export interface IParamsGetProject {
-  pageSize?: number;
-  pageNumber?: number;
-  searchFields?: string[];
-  search?: string;
+  pageSize: number;
+  pageNumber: number;
+  searchProjectFields: string[];
+  searchProjectManagerFields: string[];
+  search: string;
+  filter: {
+    state_IN: number[];
+  };
+  sort: string[];
 }
 
 export interface IProjectWithMeta {
@@ -90,7 +95,6 @@ function editProject(body: IEditProjectBody): Promise<IProject> {
     data: {
       name: body.name,
       projectManager: body.projectManager,
-      startDate: body.startDate,
       endDate: body.endDate,
       scale: body.scale,
       customer: body.customer,
@@ -133,6 +137,7 @@ function editProjectMember(
     data: {
       role: body.role,
       contract: body.contract,
+      reality: body.reality,
       startDate: body.startDate,
       endDate: body.endDate,
     },
