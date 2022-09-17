@@ -7,14 +7,23 @@ import {
 import {Modal, notification, Table} from "antd";
 import moment from "moment";
 import {useRouter} from "next/router";
-import React, {useState} from "react";
-import {ERolePosition, IProject, IProjectMember} from "@app/types";
+import React, {useEffect, useState} from "react";
+import {
+  EProjectState,
+  ERolePosition,
+  IProject,
+  IProjectMember,
+  IUserLogin,
+} from "@app/types";
 import ApiProject from "@app/api/ApiProject";
 import {useMutation, useQuery} from "react-query";
 import {ModalCreateProjectMember} from "@app/module/project-detail/components/ModalCreateProjectMember";
 import {ModalEditProjectMember} from "./components/ModalEditProjectMember";
 import {ModalEditProject} from "@app/module/project-detail/components/ModalEditProject";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {IMetadata} from "@app/api/Fetcher";
+import ApiUser from "@app/api/ApiUser";
+import {renameKeys} from "@app/utils/convert/ConvertHelper";
 
 export function ProjectDetail(): JSX.Element {
   const router = useRouter();
@@ -26,10 +35,70 @@ export function ProjectDetail(): JSX.Element {
     return ApiProject.getProjectById(Number(id));
   };
 
-  const {data: dataProjectById} = useQuery(
+  const getUser = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
+    return ApiUser.getUserAccount();
+  };
+
+  const getProjectMember = (): Promise<IProjectMember[]> => {
+    return ApiProject.getProjectMember(Number(id));
+  };
+
+  const {data: dataProjectById, refetch: refetchProjectById} = useQuery(
     queryKeys.GET_PROJECT_BY_ID,
-    getProjectById
+    getProjectById,
+    {enabled: false}
   );
+
+  const {data: dataUser} = useQuery(
+    queryKeys.GET_LIST_USER_FOR_PROJECT,
+    getUser
+  );
+
+  const {data: dataProjectMember, refetch: refetchProjectMember} = useQuery(
+    queryKeys.GET_LIST_PROJECT_MEMBER,
+    getProjectMember,
+    {
+      enabled: false,
+    }
+  );
+
+  useEffect(() => {
+    if (id) {
+      refetchProjectById();
+      refetchProjectMember();
+    }
+  }, [id]);
+
+  const newKeys = {id: "value", fullName: "label"};
+  const listUserConvert: {value: number; label: string}[] = [];
+  dataUser?.data?.map((item) => {
+    const renamedObj = renameKeys(item || {}, newKeys);
+    listUserConvert.push(renamedObj);
+    return listUserConvert;
+  });
+
+  const listPosition = [
+    {
+      value: ERolePosition.BACKEND_DEV,
+      label: "Backend Dev",
+    },
+    {
+      value: ERolePosition.FRONTEND_DEV,
+      label: "Frontend Dev",
+    },
+    {
+      value: ERolePosition.TESTER,
+      label: "Tester",
+    },
+    {
+      value: ERolePosition.BA,
+      label: "BA",
+    },
+    {
+      value: ERolePosition.DESIGNER,
+      label: "Designer",
+    },
+  ];
 
   const showModalCreateProjectMember = (): void => {
     setIsModalVisible("modalCreateProjectMember");
@@ -46,15 +115,6 @@ export function ProjectDetail(): JSX.Element {
   const toggleModal = (): void => {
     setIsModalVisible("");
   };
-
-  const getProjectMember = (): Promise<IProjectMember[]> => {
-    return ApiProject.getProjectMember(Number(id));
-  };
-
-  const {data: dataProjectMember, refetch} = useQuery(
-    queryKeys.GET_LIST_PROJECT_MEMBER,
-    getProjectMember
-  );
 
   const deleteProjectMemberMutation = useMutation(
     ApiProject.deleteProjectMember
@@ -76,7 +136,7 @@ export function ProjectDetail(): JSX.Element {
                   duration: 1,
                   message: "Xóa thành viên thành công!",
                 });
-                refetch();
+                refetchProjectMember();
               },
               onError: () => {
                 notification.error({
@@ -109,25 +169,29 @@ export function ProjectDetail(): JSX.Element {
               dataIndex: "name",
               key: "name",
               align: "center",
+              width: 200,
             },
             {
               title: "Khách hàng",
               dataIndex: "customer",
               key: "customer",
               align: "center",
+              width: 200,
             },
             {
               title: "Ngày bắt đầu",
               dataIndex: "startDate",
               key: "startDate",
               align: "center",
+              width: 200,
               render: (date) => moment(new Date(date)).format("DD-MM-YYYY"),
             },
             {
-              title: "Ngày kết thúc",
+              title: "Ngày kết thúc dự kiến",
               dataIndex: "endDate",
               key: "endDate",
               align: "center",
+              width: 200,
               render: (date) => moment(new Date(date)).format("DD-MM-YYYY"),
             },
             {
@@ -135,32 +199,38 @@ export function ProjectDetail(): JSX.Element {
               dataIndex: "technicality",
               key: "technicality",
               align: "center",
+              width: 200,
             },
             {
               title: "Công cụ sử dụng",
               dataIndex: "use",
               key: "use",
               align: "center",
+              width: 200,
             },
             {
               title: "Mô tả",
               dataIndex: "description",
               key: "description",
               align: "center",
+              width: 300,
             },
             {
               title: "Trạng thái",
               dataIndex: "state",
               key: "state",
               align: "center",
+              width: 200,
               render: (state) =>
-                state === 0
+                state === EProjectState.MOI_KHOI_TAO
                   ? "Mới khởi tạo"
-                  : state === 1
-                  ? "Đang phát triển"
-                  : state === 2
+                  : state === EProjectState.DANG_THUC_HIEN
+                  ? "Đang thực hiện"
+                  : state === EProjectState.DA_KET_THUC
                   ? "Đã kết thúc"
-                  : "Đã hủy",
+                  : state === EProjectState.DA_HUY
+                  ? "Đã hủy"
+                  : "",
             },
           ]}
           dataSource={dataProjectById ? [dataProjectById] : []}
@@ -229,6 +299,7 @@ export function ProjectDetail(): JSX.Element {
                   align: "center",
                   dataIndex: "reality",
                   key: "reality",
+                  render: (reality) => (reality === null ? 0 : reality),
                 },
                 {
                   title: "OT",
@@ -266,7 +337,7 @@ export function ProjectDetail(): JSX.Element {
                   <button
                     type="button"
                     className="mr-4"
-                    onClick={() => {
+                    onClick={(): void => {
                       setMember(record);
                       showModalEditProjectMember();
                     }}
@@ -275,7 +346,7 @@ export function ProjectDetail(): JSX.Element {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={(): void => {
                       handleDeleteProjectMember(record);
                     }}
                   >
@@ -289,24 +360,34 @@ export function ProjectDetail(): JSX.Element {
           bordered
           pagination={false}
         />
-        <ModalCreateProjectMember
-          isModalVisible={isModalVisible === "modalCreateProjectMember"}
-          toggleModal={toggleModal}
-          projectId={Number(id)}
-        />
-        {member && (
+        {dataProjectById && (
+          <ModalCreateProjectMember
+            isModalVisible={isModalVisible === "modalCreateProjectMember"}
+            toggleModal={toggleModal}
+            projectId={Number(id)}
+            dataProjectById={dataProjectById}
+            listUserConvert={listUserConvert}
+            listPosition={listPosition}
+          />
+        )}
+        {member && dataProjectById && (
           <ModalEditProjectMember
             isModalVisible={isModalVisible === "modalEditProjectMember"}
             toggleModal={toggleModal}
             projectId={Number(id)}
+            dataProjectById={dataProjectById}
             member={member}
+            listPosition={listPosition}
           />
         )}
-        <ModalEditProject
-          isModalVisible={isModalVisible === "modalEditProject"}
-          toggleModal={toggleModal}
-          projectId={Number(id)}
-        />
+        {dataProjectById && (
+          <ModalEditProject
+            isModalVisible={isModalVisible === "modalEditProject"}
+            toggleModal={toggleModal}
+            listUserConvert={listUserConvert}
+            dataProjectById={dataProjectById}
+          />
+        )}
       </div>
     </div>
   );

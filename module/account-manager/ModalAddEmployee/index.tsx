@@ -40,8 +40,8 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
       address: fieldsValue.address,
       phoneNumber: fieldsValue.phoneNumber,
       phoneNumberRelative: fieldsValue.phoneNumberRelative,
-      baseSalary: fieldsValue.baseSalary,
-      manageSalary: 0,
+      baseSalary: Number(fieldsValue.baseSalary),
+      manageSalary: Number(fieldsValue.manageSalary) || 0,
       email: fieldsValue.email,
       employeeCode: fieldsValue.employeeCode,
       fullName: fieldsValue.fullName,
@@ -74,7 +74,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
                   /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
                 message: "Họ và tên không đúng định dạng!",
               },
-              {min: 1},
+              {min: 5},
               {max: 30},
             ]}
           >
@@ -115,10 +115,9 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
           <Form.Item name="dateOfBirth" label="Ngày sinh">
             <DatePicker
               format="DD/MM/YYYY"
-              disabledDate={(current) => {
-                const customDate = moment().format("DD/MM/YYYY");
-                return current && current > moment(customDate, "DD/MM/YYYY");
-              }}
+              disabledDate={(current) =>
+                current.isAfter(moment().subtract(18, "years"))
+              }
             />
           </Form.Item>
           <Form.Item
@@ -126,24 +125,26 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             label="Số điện thoại"
             rules={[
               {
-                pattern: /^(?:\d*)$/,
+                pattern:
+                  /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              ({getFieldValue}) => ({
-                validator(_, value) {
-                  if (
-                    getFieldValue("phoneNumber").length > 11 ||
-                    getFieldValue("phoneNumber").length < 10
-                  ) {
-                    return Promise.reject(
-                      new Error(
-                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
-                      )
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
+              // ({getFieldValue}) => ({
+              //   validator(_, value) {
+              //     if (
+              //       (getFieldValue("phoneNumber").length > 0 &&
+              //         getFieldValue("phoneNumber").length > 12) ||
+              //       getFieldValue("phoneNumber").length < 10
+              //     ) {
+              //       return Promise.reject(
+              //         new Error(
+              //           "Số điện thoại phải có độ dài từ 10 đến 12 kí tự!"
+              //         )
+              //       );
+              //     }
+              //     return Promise.resolve();
+              //   },
+              // }),
             ]}
           >
             <Input />
@@ -153,24 +154,10 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             label="Số điện thoại người thân"
             rules={[
               {
-                pattern: /^(?:\d*)$/,
+                pattern:
+                  /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              ({getFieldValue}) => ({
-                validator(_, value) {
-                  if (
-                    getFieldValue("phoneNumberRelative").length > 11 ||
-                    getFieldValue("phoneNumberRelative").length < 10
-                  ) {
-                    return Promise.reject(
-                      new Error(
-                        "Số điện thoại phải có độ dài từ 10 đến 11 kí tự!"
-                      )
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
             ]}
           >
             <Input />
@@ -183,13 +170,26 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
                 pattern: /^(?:\d*)$/,
                 message: "CMND/CCCD không đúng định dạng!",
               },
-              {min: 12},
-              {max: 13},
+              {min: 9},
+              {max: 12},
             ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="address" label="Địa chỉ">
+          <Form.Item
+            name="address"
+            label="Địa chỉ"
+            rules={[
+              {type: "string"},
+              {whitespace: true},
+              {
+                pattern:
+                  /^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                message: "Địa chỉ không hợp lệ!",
+              },
+              {max: 255},
+            ]}
+          >
             <Input />
           </Form.Item>
           <Form.Item name="position" label="Chức vụ" rules={[{required: true}]}>
@@ -220,7 +220,24 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
                 message: "Vui lòng nhập vào số nguyên!",
               },
               {
-                max: 11,
+                pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
+                message: "Lương cơ bản phải chia hết cho 1000!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="manageSalary"
+            label="Lương quản lý"
+            rules={[
+              {
+                pattern: /^[1-9]\d*$/,
+                message: "Vui lòng nhập vào số nguyên!",
+              },
+              {
+                pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
+                message: "Lương phải chia hết cho 1000!",
               },
             ]}
           >
@@ -261,7 +278,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
       }}
       title="Tạo tài khoản"
       content={renderContent()}
-      footer={false}
+      footer={null}
     />
   );
 }

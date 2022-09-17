@@ -9,14 +9,47 @@ import {ModalCreateProject} from "./components/ModalCreateProject";
 import {useRouter} from "next/router";
 import {queryKeys} from "@app/utils/constants/react-query";
 import baseURL from "@app/config/baseURL";
+import {renameKeys} from "@app/utils/convert/ConvertHelper";
+import {EProjectState, IUserLogin} from "@app/types";
+import {IMetadata} from "@app/api/Fetcher";
+import ApiUser from "@app/api/ApiUser";
 
 export function Project(): JSX.Element {
   const router = useRouter();
   const [isModalVisible, setIsModalVisible] = useState("");
-  const [pageSize, setPageSize] = useState<number>(50);
+  const [pageSize, setPageSize] = useState<number>(100);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [searchString, setSearchString] = useState("");
-  const [onSearch, setOnSerch] = useState(false);
+  const [onSearch, setOnSearch] = useState(false);
+  const [filterState, setFilterState] = useState<number[]>([0, 1, 2, 3]);
+
+  const getProject = (): Promise<IProjectWithMeta> => {
+    return ApiProject.getProject({
+      pageSize: pageSize,
+      pageNumber: pageNumber,
+      searchProjectFields: ["name", "customer"],
+      searchProjectManagerFields: ["fullName"],
+      search: searchString,
+      filter: {
+        state_IN: filterState,
+      },
+      sort: ["startDate"],
+    });
+  };
+
+  const getUser = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
+    return ApiUser.getUserAccount();
+  };
+
+  const {data: dataProject, refetch} = useQuery(
+    queryKeys.GET_LIST_PROJECT,
+    getProject
+  );
+
+  const {data: dataUser} = useQuery(
+    queryKeys.GET_LIST_USER_FOR_PROJECT,
+    getUser
+  );
 
   const showModalCreateProject = (): void => {
     setIsModalVisible("modalCreateProject");
@@ -26,22 +59,41 @@ export function Project(): JSX.Element {
     setIsModalVisible("");
   };
 
-  const getProject = (): Promise<IProjectWithMeta> => {
-    return ApiProject.getProject({
-      pageSize: pageSize,
-      pageNumber: pageNumber,
-      searchFields: ["name"],
-      search: searchString,
-    });
-  };
-  const {data: dataProject, refetch} = useQuery(
-    queryKeys.GET_LIST_PROJECT,
-    getProject
-  );
-
   useEffect(() => {
     refetch();
-  }, [pageSize, pageNumber, onSearch]);
+  }, [pageSize, pageNumber, onSearch, filterState]);
+
+  const newKeys = {id: "value", fullName: "label"};
+  const listUserConvert: {value: number; label: string}[] = [];
+  dataUser?.data?.map((item) => {
+    const renamedObj = renameKeys(item || {}, newKeys);
+    listUserConvert.push(renamedObj);
+    return listUserConvert;
+  });
+
+  const listState = [
+    {
+      value: -1,
+      title: "Tất cả",
+      default: true,
+    },
+    {
+      value: EProjectState.MOI_KHOI_TAO,
+      title: "Mới khởi tạo",
+    },
+    {
+      value: EProjectState.DANG_THUC_HIEN,
+      title: "Đang thực hiện",
+    },
+    {
+      value: EProjectState.DA_KET_THUC,
+      title: "Đã kết thúc",
+    },
+    {
+      value: EProjectState.DA_HUY,
+      title: "Đã hủy",
+    },
+  ];
 
   return (
     <div className="container-project">
@@ -57,7 +109,19 @@ export function Project(): JSX.Element {
               },
               handleOnSearch: (value): void => {
                 setSearchString(value);
-                setOnSerch(!onSearch);
+                setOnSearch(!onSearch);
+              },
+            },
+            {
+              visible: true,
+              isSelect: true,
+              data: listState,
+              handleOnChange: (value: number): void => {
+                if (value === -1) {
+                  setFilterState([0, 1, 2, 3]);
+                } else {
+                  setFilterState([value]);
+                }
               },
             },
           ]}
@@ -103,7 +167,7 @@ export function Project(): JSX.Element {
             render: (date) => moment(new Date(date)).format("DD-MM-YYYY"),
           },
           {
-            title: "Ngày kết thúc",
+            title: "Ngày kết thúc dự kiến",
             dataIndex: "endDate",
             key: "endDate",
             align: "center",
@@ -115,22 +179,35 @@ export function Project(): JSX.Element {
             key: "state",
             align: "center",
             render: (state) =>
-              state === 0
+              state === EProjectState.MOI_KHOI_TAO
                 ? "Mới khởi tạo"
-                : state === 1
-                ? "Đang phát triển"
-                : state === 2
+                : state === EProjectState.DANG_THUC_HIEN
+                ? "Đang thực hiện"
+                : state === EProjectState.DA_KET_THUC
                 ? "Đã kết thúc"
-                : "Đã hủy",
+                : state === EProjectState.DA_HUY
+                ? "Đã hủy"
+                : "",
           },
         ]}
         dataSource={dataProject?.data}
         bordered
         pagination={{
           total: dataProject?.meta.totalItems,
-          defaultPageSize: 50,
+          defaultPageSize: 100,
           showSizeChanger: true,
-          pageSizeOptions: ["50", "100", "150", "200"],
+          pageSizeOptions: [
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900",
+            "1000",
+          ],
           onChange: (page, numberPerPage): void => {
             setPageNumber(page);
             setPageSize(numberPerPage);
@@ -152,6 +229,7 @@ export function Project(): JSX.Element {
       <ModalCreateProject
         isModalVisible={isModalVisible === "modalCreateProject"}
         toggleModal={toggleModal}
+        listUserConvert={listUserConvert}
       />
     </div>
   );

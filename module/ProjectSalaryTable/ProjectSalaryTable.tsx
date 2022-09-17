@@ -5,8 +5,10 @@ import {ColumnsType} from "antd/es/table";
 import {IDataProject, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
+import {CloseCircleOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import ModalProjectSalary from "@app/module/ProjectSalaryTable/ModalProjectSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function ProjectSalaryTable({
   month,
@@ -64,7 +66,10 @@ export default function ProjectSalaryTable({
           title: "",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_PROJECT
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteProjectSalary(_record?.id || 0).then((r) =>
@@ -73,6 +78,8 @@ export default function ProjectSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },
@@ -129,12 +136,15 @@ export default function ProjectSalaryTable({
             ?.toLocaleString("en-US")}{" "}
           VND
         </span>
-        {isAdmin && (
-          <EditFilled
-            onClick={showModal}
-            className="text-[20px] text-[#0092ff] mr-3"
-          />
-        )}
+        {isAdmin &&
+          CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_PROJECT
+          ) && (
+            <PlusCircleOutlined
+              onClick={showModal}
+              className="text-[20px] text-[#0092ff] mr-3"
+            />
+          )}
       </div>
       <Table
         loading={isRefetching}

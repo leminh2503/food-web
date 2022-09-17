@@ -1,3 +1,5 @@
+import NameEventConstant from "@app/check_event/NameEventConstant";
+
 export interface IRoute {
   path: string;
   name: string;
@@ -29,7 +31,7 @@ const routes: IRoute[] = [
   {
     path: "/",
     name: "Quản lý tài khoản",
-    role: "1",
+    role: NameEventConstant.PERMISSION_USER_KEY.LIST_ALL_USER,
     isPrivate: true,
     icon: "Users",
     isSidebar: true,
@@ -37,23 +39,23 @@ const routes: IRoute[] = [
   {
     path: "/manager-salary",
     name: "Quản lý bảng lương",
-    role: "1",
+    role: NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.LIST_ALL_SALARY,
     isPrivate: true,
     icon: "Payroll",
     isSidebar: true,
   },
   {
-    path: "/",
+    path: "/salary",
     name: "Bảng lương",
     icon: "Payroll",
-    role: "0",
     isPrivate: true,
     isSidebar: true,
   },
   {
     path: "/salary-user",
     name: "Duyệt lương nhân viên",
-    role: "1",
+    role: NameEventConstant.PERMISSION_SALARY_APPROVAL_KEY
+      .LIST_ALL_SALARY_APPROVAL,
     isPrivate: true,
     icon: "Users",
     isSidebar: true,
@@ -61,15 +63,14 @@ const routes: IRoute[] = [
   {
     path: "/leave-work",
     name: "Quản lý nghỉ phép",
-    role: "1",
+    role: NameEventConstant.PERMISSION_ON_LEAVE_KEY.LIST_ALL_ON_LEAVE,
     isPrivate: true,
     icon: "MangeLeave",
     isSidebar: true,
   },
   {
-    path: "/leave-work",
+    path: "/leave-work-user",
     name: "Đơn xin nghỉ phép",
-    role: "0",
     isPrivate: true,
     icon: "MangeLeave",
     isSidebar: true,
@@ -106,22 +107,23 @@ const routes: IRoute[] = [
     path: "/work-schedule",
     name: "Lịch làm việc",
     isPrivate: true,
+    role: "0",
     icon: "CalenderWork",
     isSidebar: true,
   },
   {
     path: "/project",
     name: "Dự án",
+    role: "0",
     icon: "Project",
     isPrivate: true,
     isSidebar: true,
-    role: "1",
   },
   {
     path: "",
     name: "Cài đặt",
     icon: "Setting",
-    role: "1",
+    role: "0",
     isSidebar: true,
     isPrivate: true,
     children: [
@@ -129,7 +131,7 @@ const routes: IRoute[] = [
         path: "/position",
         name: "Chức vụ",
         icon: "",
-        role: "1",
+        role: "0",
         isSidebar: true,
       },
       {
@@ -137,7 +139,7 @@ const routes: IRoute[] = [
         name: "Loại hình làm việc",
         icon: "",
         isPrivate: true,
-        role: "1",
+        role: "0",
         isSidebar: true,
       },
     ],

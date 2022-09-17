@@ -1,8 +1,10 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
-  IFamilyCircumstance,
   IPermission,
+  EnglishCertificate,
+  IAccountInfo,
+  IFamilyCircumstance,
   IUserLogin,
   IWorkType,
 } from "../types";
@@ -17,7 +19,7 @@ type UserGender = "Other" | "Male" | "Female";
 export interface IRegisterAccountBody {
   password?: string;
   gender?: UserGender;
-  englishCertificate?: string;
+  englishCertificate?: EnglishCertificate;
   englishScore?: number;
   workRoom?: string;
   personId?: string;
@@ -181,7 +183,7 @@ function updateAvatar(formData: any): Promise<IUserLogin> {
   return fetcher({url: path.uploadAvatar, method: "patch", data: formData});
 }
 
-function login(body: ILoginBody): Promise<ILoginResponse> {
+function login(body: ILoginBody): Promise<IAccountInfo> {
   return fetcher(
     {url: path.login, method: "post", data: body},
     {displayError: true}

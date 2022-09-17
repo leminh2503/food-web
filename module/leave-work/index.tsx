@@ -279,11 +279,13 @@ export function LeaveWork(): JSX.Element {
       key: "state",
       align: "center",
       render: (state) =>
-        state === 0
+        state === ELeaveWork.DANG_CHO_DUYET
           ? "Đang chờ duyệt"
-          : state === 1
+          : state === ELeaveWork.DA_CHAP_NHAN
           ? "Đã chấp nhận"
-          : "Bị từ chối",
+          : state === ELeaveWork.BI_TU_CHOI
+          ? "Bị từ chối"
+          : "",
     },
     {
       title: "Hành động",

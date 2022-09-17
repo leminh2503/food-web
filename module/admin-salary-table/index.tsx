@@ -9,6 +9,8 @@ import ApiSalary from "@app/api/ApiSalary";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import baseURL from "@app/config/baseURL";
 import {useRouter} from "next/router";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function AdminSalaryTable(): JSX.Element {
   const router = useRouter();
@@ -40,13 +42,19 @@ export function AdminSalaryTable(): JSX.Element {
   const onRow = (record: any): {onDoubleClick: () => void} => {
     return {
       onDoubleClick: (): void => {
-        router.push({
-          pathname: baseURL.SALARY.LIST_EMPLOYEE,
-          query: {
-            month: record.month,
-            year: year,
-          },
-        });
+        if (
+          CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.LIST_ALL_SALARY
+          )
+        ) {
+          router.push({
+            pathname: baseURL.SALARY.LIST_EMPLOYEE,
+            query: {
+              month: record.month,
+              year: year,
+            },
+          });
+        }
       },
     };
   };

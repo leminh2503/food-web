@@ -107,8 +107,10 @@ export interface IDataProjectList {
 export interface IDataOnsite {
   id: number;
   dayOnWeek?: string;
+  projectId?: number;
   day?: number | string;
   onsitePlace?: string;
+  project?: number;
   salary?: number;
   date?: string;
   state?: number;
@@ -254,7 +256,7 @@ export interface IDataSalary {
 }
 
 export interface IProfile {
-  id?: string;
+  id: string;
   avatar?: string;
   fullName?: string;
   email?: string;
@@ -304,6 +306,11 @@ export interface IUserLogin {
   role?: {
     id?: IAccountRole;
     roleName?: string;
+    permissions: {
+      id: number;
+      permissionsName: string;
+      permissionsKey: string;
+    }[];
   };
   phoneNumberRelative?: string;
   baseSalary?: number;
@@ -318,7 +325,7 @@ export interface IUserLogin {
   employeeCode?: string;
   workRoom?: string;
   englishCertificate?: EnglishCertificate;
-  englishScore?: string;
+  englishScore?: number;
 }
 
 export interface IDataProjectSalary {
@@ -429,8 +436,8 @@ export interface IProjectMember {
   overtime?: number;
   startDate?: string;
   endDate?: string;
-  project?: IProject;
-  user?: IProfile;
+  project: IProject;
+  user: IProfile;
 }
 
 export interface ISetStateModal {
@@ -456,4 +463,11 @@ export enum ELeaveWork {
   DANG_CHO_DUYET = 0,
   DA_CHAP_NHAN = 1,
   BI_TU_CHOI = 2,
+}
+
+export enum EProjectState {
+  MOI_KHOI_TAO = 0,
+  DANG_THUC_HIEN = 1,
+  DA_KET_THUC = 2,
+  DA_HUY = 3,
 }
