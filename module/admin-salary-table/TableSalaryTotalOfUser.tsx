@@ -291,8 +291,8 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         dataSource={data}
         className="hover-pointer"
         bordered
-        scroll={{y: "calc(100vw - 300px)"}}
-        pagination={{pageSize: 100}}
+        scroll={{y: "calc(100vh - 300)"}}
+        pagination={{showSizeChanger: true, defaultPageSize: 100}}
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {

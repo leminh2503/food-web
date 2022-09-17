@@ -14,6 +14,7 @@ import {formatNumber} from "@app/utils/fomat/FormatNumber";
 export default function OverTimeSalaryTable({
   month,
   year,
+  isAdmin,
   isManager,
   idUser,
   listProject,
@@ -28,6 +29,7 @@ export default function OverTimeSalaryTable({
   listProject?: IDataProjectList[];
   idUser: number | string;
   isManager?: boolean;
+  isAdmin?: boolean;
   month: number;
   year: number;
   projectName?: string;
@@ -217,6 +219,7 @@ export default function OverTimeSalaryTable({
         isManager={isManager}
         projectName={projectName}
         idProject={idProject}
+        isAdmin
       />
       <div className="mb-4 font-bold">
         Lương Overtime :{" "}
@@ -231,7 +234,7 @@ export default function OverTimeSalaryTable({
         dataSource={data}
         bordered
         pagination={false}
-        scroll={{x: 1500}}
+        scroll={{x: "100vw"}}
       />
     </Card>
   );

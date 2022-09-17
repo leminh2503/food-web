@@ -21,6 +21,7 @@ interface IModalCreateOnsite {
   handleCancel: () => void;
   listProject?: IDataProjectList[];
   isManager?: boolean;
+  isAdmin?: boolean;
   idProject?: number;
   projectName?: string;
 }
@@ -111,7 +112,7 @@ export default function ModalCreateOverTime(
       key: "ProjectName",
       align: "center",
       render: (index, _record): JSX.Element => {
-        return props.isManager || _record.state === 1 ? (
+        return (props.isManager && !props.isAdmin) || _record.state === 1 ? (
           <span>{props?.projectName || _record.projectName}</span>
         ) : (
           <Select
@@ -122,8 +123,11 @@ export default function ModalCreateOverTime(
             }
           >
             {props?.listProject?.map((el, index) => (
-              <Select.Option key={index} value={el?.project?.id}>
-                {el?.project?.name}
+              <Select.Option
+                key={index}
+                value={props?.isAdmin ? el.id : el?.project?.id}
+              >
+                {props?.isAdmin ? el.name : el?.project?.name}
               </Select.Option>
             ))}
           </Select>

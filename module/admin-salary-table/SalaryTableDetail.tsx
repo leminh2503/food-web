@@ -179,6 +179,7 @@ export function SalaryTableDetail(): JSX.Element {
             month={Number(month)}
             year={Number(year)}
             isManager
+            isAdmin
           />
         </div>
       )}
@@ -199,7 +200,6 @@ export function SalaryTableDetail(): JSX.Element {
           Thuế thu nhập cá nhân : {Number(tax || 0)?.toLocaleString("en-US")}{" "}
           VND
         </p>
-
         <p className="mt-2 font-bold">
           Tổng lương : {Number(totalSalary || 0)?.toLocaleString("en-US")} VND
         </p>
