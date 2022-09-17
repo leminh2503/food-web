@@ -229,12 +229,13 @@ export function AccountManager(): JSX.Element {
       address: values.address,
       phoneNumber: values.phoneNumber,
       phoneNumberRelative: values.phoneNumberRelative,
-      baseSalary: values.baseSalary,
+      baseSalary: Number(values.baseSalary),
       email: values.email,
       fullName: values.fullName,
       deductionOwn: values.deductionOwn,
       englishCertificate: values.englishCertificate,
       englishScore: values.englishScore,
+      manageSalary: Number(values.manageSalary),
     };
     updateProfile.mutate(body);
   };
@@ -338,13 +339,14 @@ export function AccountManager(): JSX.Element {
       dataIndex: "index",
       key: "index",
       align: "center",
+      width: "5%",
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
       title: "Ảnh",
       key: "avatar",
       align: "center",
-      width: 80,
+      width: "5%",
       render: (_, record): JSX.Element => {
         return (
           <div>
@@ -365,24 +367,28 @@ export function AccountManager(): JSX.Element {
       dataIndex: "email",
       key: "email",
       align: "center",
+      width: "10%",
     },
     {
       title: "Họ & Tên",
       dataIndex: "fullName",
       key: "fullName",
       align: "center",
+      width: "10%",
     },
     {
       title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
       align: "center",
+      width: "10%",
     },
     {
       title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
       align: "center",
+      width: "20%",
     },
     // {
     //   title: "Quản lý",
@@ -402,6 +408,7 @@ export function AccountManager(): JSX.Element {
       dataIndex: "workType",
       key: "workType",
       align: "center",
+      width: "10%",
       render: (_, record): JSX.Element => {
         return (
           <div>
@@ -415,6 +422,7 @@ export function AccountManager(): JSX.Element {
       dataIndex: "position",
       key: "position",
       align: "center",
+      width: "10%",
       render: (_, record): JSX.Element => {
         return (
           <div>
@@ -427,6 +435,7 @@ export function AccountManager(): JSX.Element {
       title: "Trạng thái",
       align: "center",
       key: "state",
+      width: "5%",
       render: (_, record): JSX.Element => {
         return (
           <div
@@ -443,6 +452,7 @@ export function AccountManager(): JSX.Element {
       title: "Hành động",
       key: "action",
       align: "center",
+      width: "5%",
       render: (_, record) => (
         <div>
           {Number(record.id) === 1 ? (
@@ -473,7 +483,7 @@ export function AccountManager(): JSX.Element {
       <Card className="mb-4">
         <div>
           <Row>
-            <Col lg={9} xs={24} sm={24}>
+            <Col lg={12} xs={24} sm={24}>
               <FilterAccount
                 setFilterState={setFilterState}
                 setFilterText={setFilterText}
@@ -482,7 +492,7 @@ export function AccountManager(): JSX.Element {
                 listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
-            <Col lg={15} xs={24} sm={24}>
+            <Col lg={12} xs={24} sm={24}>
               <div className="" style={{float: "right"}}>
                 <Button
                   className="mr-4 bg-blue-500 text-neutral-50"

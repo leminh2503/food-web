@@ -43,11 +43,11 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     position,
     workType,
     dateOfBirth,
-    deductionOwn,
     familyCircumstances,
     englishCertificate,
     englishScore,
     workRoom,
+    manageSalary,
   } = dataDetail;
 
   const [form] = Form.useForm();
@@ -71,11 +71,11 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       workTypeId: workType?.id || 0,
       workType,
       dateOfBirth,
-      deductionOwn,
       familyCircumstances,
       englishCertificate,
       englishScore,
       workRoom,
+      manageSalary,
     });
   }, [dataDetail]);
 
@@ -94,11 +94,11 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       position: position?.id || 0,
       workType: workType?.id || 0,
       dateOfBirth: moment(date, "DD/MM/YYYY") || null,
-      deductionOwn,
       familyCircumstances,
       englishCertificate,
       englishScore,
       workRoom,
+      manageSalary,
     });
   }, [dataDetail, typeCertificateEnglish, isModalVisible]);
 
@@ -113,13 +113,13 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       address: fieldsValue.address,
       phoneNumber: fieldsValue.phoneNumber,
       phoneNumberRelative: fieldsValue.phoneNumberRelative,
-      baseSalary: fieldsValue.baseSalary,
+      baseSalary: Number(fieldsValue.baseSalary),
       email: fieldsValue.email,
       employeeCode: fieldsValue.employeeCode,
       fullName: fieldsValue.fullName,
-      deductionOwn: fieldsValue.deductionOwn,
       englishCertificate: fieldsValue?.englishCertificate,
       englishScore: fieldsValue?.englishScore,
+      manageSalary: fieldsValue?.manageSalary || 0,
     };
     handleOk(data);
   };
@@ -166,7 +166,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                       /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
                     message: "Họ và tên không đúng định dạng!",
                   },
-                  {min: 1},
+                  {min: 5},
                   {max: 30},
                 ]}
               >
@@ -192,12 +192,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
               <Form.Item name="dateOfBirth" label="Ngày sinh">
                 <DatePicker
                   format="DD/MM/YYYY"
-                  disabledDate={(current) => {
-                    const customDate = moment().format("DD/MM/YYYY");
-                    return (
-                      current && current > moment(customDate, "DD/MM/YYYY")
-                    );
-                  }}
+                  disabledDate={(current) =>
+                    current.isAfter(moment().subtract(18, "years"))
+                  }
                 />
               </Form.Item>
               <Form.Item
@@ -205,9 +202,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 label="Số điện thoại"
                 rules={[
                   {
-                    pattern: /^[0-9+]{10,12}$/,
-                    message:
-                      "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                    pattern:
+                      /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                    message: "Số điện thoại không đúng định dạng!",
                   },
                 ]}
               >
@@ -218,9 +215,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 label="Số điện thoại người thân"
                 rules={[
                   {
-                    pattern: /^[0-9+]{10,12}$/,
-                    message:
-                      "Số điện thoại không đúng định dạng và phải có độ dài từ 10 đến 12 kí tự!",
+                    pattern:
+                      /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                    message: "Số điện thoại không đúng định dạng!",
                   },
                 ]}
               >
@@ -245,7 +242,27 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   </Select.Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="englishScore" label="Điểm chứng chỉ">
+              <Form.Item
+                name="englishScore"
+                label="Điểm chứng chỉ"
+                rules={[
+                  {
+                    pattern:
+                      /^(0*[1-9][0-9]*(\.[0-9]*)?|0*\.[0-9]*[1-9][0-9]*)$/gm,
+                    message: "Điểm không đúng định dạng!",
+                  },
+                  {
+                    // eslint-disable-next-line consistent-return
+                    validator: async (rule, value) => {
+                      if (value > 990) {
+                        return Promise.reject(
+                          new Error("Điểm không được vượt quá 990!")
+                        );
+                      }
+                    },
+                  },
+                ]}
+              >
                 <Input
                   disabled={
                     !form.getFieldValue("englishCertificate") ||
@@ -263,8 +280,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                     pattern: /^(?:\d*)$/,
                     message: "CMND/CCCD không đúng định dạng!",
                   },
-                  {min: 12},
-                  {max: 13},
+                  {min: 9},
+                  {max: 12},
                 ]}
               >
                 <Input />
@@ -272,11 +289,24 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
               <Form.Item
                 name="address"
                 label="Địa chỉ"
-                rules={[{type: "string"}, {max: 255}]}
+                rules={[
+                  {type: "string"},
+                  {whitespace: true},
+                  {
+                    pattern:
+                      /^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                    message: "Địa chỉ không được hợp lệ!",
+                  },
+                  {max: 255},
+                ]}
               >
                 <Input />
               </Form.Item>
-              <Form.Item name="workRoom" label="Phòng làm việc">
+              <Form.Item
+                name="workRoom"
+                label="Phòng làm việc"
+                rules={[{type: "string"}, {whitespace: true}, {max: 255}]}
+              >
                 <Input />
               </Form.Item>
               <Form.Item
@@ -323,8 +353,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="deductionOwn"
-                label="Giảm trừ gia cảnh"
+                name="manageSalary"
+                label="Lương quản lý"
                 rules={[
                   {required: true},
                   {
@@ -333,7 +363,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   },
                   {
                     pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
-                    message: "Giảm trừ gia cảnh phải chia hết cho 1000!",
+                    message: "Lương phải chia hết cho 1000!",
                   },
                 ]}
               >
