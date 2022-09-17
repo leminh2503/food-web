@@ -11,12 +11,14 @@ import {Dropdown, Image, Menu, Modal} from "antd";
 import Link from "next/link";
 import Icon from "@app/components/Icon/Icon";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {useRouter} from "next/router";
 
 /**
  *
  */
 export default function Navbar(): JSX.Element {
   const user = useSelector((state: IRootState) => state.user);
+  const router = useRouter();
 
   const dispatch = useDispatch();
 
@@ -48,7 +50,7 @@ export default function Navbar(): JSX.Element {
               "Trình duyệt bị lỗi. Xóa Cookie trình duyệt và thử lại"
             );
           });
-        window.location.reload();
+        router.push("/");
       },
     });
   };

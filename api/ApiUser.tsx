@@ -2,6 +2,7 @@ import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
   EnglishCertificate,
+  IAccountInfo,
   IFamilyCircumstance,
   IUserLogin,
   IWorkType,
@@ -180,7 +181,7 @@ function updateAvatar(formData: any): Promise<IUserLogin> {
   return fetcher({url: path.uploadAvatar, method: "patch", data: formData});
 }
 
-function login(body: ILoginBody): Promise<ILoginResponse> {
+function login(body: ILoginBody): Promise<IAccountInfo> {
   return fetcher(
     {url: path.login, method: "post", data: body},
     {displayError: true}

@@ -101,8 +101,10 @@ export interface IDataProjectList {
 export interface IDataOnsite {
   id: number;
   dayOnWeek?: string;
+  projectId?: number;
   day?: number | string;
   onsitePlace?: string;
+  project?: number;
   salary?: number;
   date?: string;
   state?: number;
@@ -298,6 +300,11 @@ export interface IUserLogin {
   role?: {
     id?: IAccountRole;
     roleName?: string;
+    permissions: {
+      id: number;
+      permissionsName: string;
+      permissionsKey: string;
+    }[];
   };
   phoneNumberRelative?: string;
   baseSalary?: number;
@@ -327,8 +334,13 @@ export interface IAccountInfo {
   isConfirmed?: boolean;
   dataProfile?: IProfile;
   role?: {
-    id?: number;
+    id?: IAccountRole;
     roleName?: string;
+    permissions: {
+      id: number;
+      permissionName: string;
+      permissionKey: string;
+    }[];
   };
 }
 

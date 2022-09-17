@@ -116,6 +116,7 @@ export function MySalaryDetail(): JSX.Element {
             idUser={ApiUser.getInfoMe()?.id || ""}
             month={Number(month)}
             year={Number(year)}
+            listProject={listProject}
           />
         </div>
       )}
@@ -136,6 +137,7 @@ export function MySalaryDetail(): JSX.Element {
             baseSalary={Number(baseSalary || 0)}
             month={Number(month)}
             year={Number(year)}
+            userId={Number(ApiUser.getInfoMe()?.id) || 0}
           />
         </div>
       )}

@@ -5,8 +5,10 @@ import {ColumnsType} from "antd/es/table";
 import {IDataBonus} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
+import {CloseCircleOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import ModalOtherSalary from "@app/module/OtherSalaryTable/ModalOtherSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function OtherSalaryTable({
   month,
@@ -65,7 +67,10 @@ export default function OtherSalaryTable({
           title: "",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_OTHER
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteBonusSalary(_record?.id || 0).then((r) =>
@@ -74,6 +79,8 @@ export default function OtherSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },
@@ -134,12 +141,15 @@ export default function OtherSalaryTable({
             ?.toLocaleString("en-US")}{" "}
           VND
         </div>
-        {isAdmin && (
-          <EditFilled
-            onClick={showModal}
-            className="text-[20px] text-[#0092ff] mr-3"
-          />
-        )}
+        {isAdmin &&
+          CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_OTHER
+          ) && (
+            <PlusCircleOutlined
+              onClick={showModal}
+              className="text-[20px] text-[#0092ff] mr-3"
+            />
+          )}
       </div>
       <Table
         loading={isRefetching}

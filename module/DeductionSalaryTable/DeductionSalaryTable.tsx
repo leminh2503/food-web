@@ -8,6 +8,8 @@ import {useQuery} from "react-query";
 import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
 import ModalDeductionSalary from "@app/module/DeductionSalaryTable/ModalDeductionSalary";
 import ModalDeductionHourSalary from "@app/module/DeductionSalaryTable/ModalDeductionHourSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function DeductionSalaryTable({
   month,
@@ -92,16 +94,23 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: (
+          title: CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_DEDUCTION
+          ) ? (
             <EditFilled
               onClick={showModalDay}
               className="text-[20px] text-[#0092ff] mr-3"
             />
+          ) : (
+            <> </>
           ),
           align: "center",
           width: "100px",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_DEDUCTION
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteDeductionDaySalary(_record?.id || 0).then(
@@ -110,6 +119,8 @@ export default function DeductionSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },
@@ -155,16 +166,23 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: (
+          title: CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_DEDUCTION
+          ) ? (
             <EditFilled
               onClick={showModalHour}
               className="text-[20px] text-[#0092ff] mr-3"
             />
+          ) : (
+            <> </>
           ),
           width: "100px",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_DEDUCTION
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteDeductionHourSalary(_record?.id || 0).then(
@@ -173,6 +191,8 @@ export default function DeductionSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },

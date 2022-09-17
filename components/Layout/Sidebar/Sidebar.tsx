@@ -11,6 +11,7 @@ import {logoutUser} from "@app/redux/slices/UserSlice";
 import Icon from "@app/components/Icon/Icon";
 import {IRootState, persistor} from "@app/redux/store";
 import {closeMenu, openMenu} from "@app/redux/slices/MenuSlice";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
 
 const RenderMenu = React.memo(() => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const RenderMenu = React.memo(() => {
         // if (role?.includes(userRole ?? IAccountRole.ANONYMOUS)) {
         //   return null;
         // }
-        if (role) {
+        if (CheckPermissionEvent(role)) {
           if (children) {
             return (
               <Menu.SubMenu
@@ -65,7 +66,6 @@ const RenderMenu = React.memo(() => {
             <Menu.Item
               key={path}
               className="sidebar-item"
-              hidden={role !== userRole}
               onClick={(): void => {
                 router.push(path);
               }}
@@ -75,18 +75,7 @@ const RenderMenu = React.memo(() => {
             </Menu.Item>
           );
         }
-        return (
-          <Menu.Item
-            key={path}
-            className="sidebar-item"
-            onClick={(): void => {
-              router.push(path);
-            }}
-          >
-            <Icon icon={icon as string} size={40} color="#fff" />
-            {name}
-          </Menu.Item>
-        );
+        return <> </>;
       })}
     </Menu>
   );

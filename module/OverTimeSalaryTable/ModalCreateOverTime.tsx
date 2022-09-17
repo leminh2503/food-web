@@ -9,6 +9,8 @@ import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import {CloseCircleOutlined} from "@ant-design/icons";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import ApiSalary from "@app/api/ApiSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface IModalCreateOnsite {
   dataOverTime: IDataOverTime[];
@@ -122,14 +124,17 @@ export default function ModalCreateOverTime(
               handleChangeOT("project", e.toString(), _record.day)
             }
           >
-            {props?.listProject?.map((el, index) => (
-              <Select.Option
-                key={index}
-                value={props?.isAdmin ? el.id : el?.project?.id}
-              >
-                {props?.isAdmin ? el.name : el?.project?.name}
-              </Select.Option>
-            ))}
+            {props?.listProject?.map((el, index) =>
+              props.isAdmin ? (
+                <Select.Option key={index} value={el?.id}>
+                  {el?.name}
+                </Select.Option>
+              ) : (
+                <Select.Option key={index} value={el?.project?.id}>
+                  {el?.project?.name}
+                </Select.Option>
+              )
+            )}
           </Select>
         );
       },
@@ -141,8 +146,11 @@ export default function ModalCreateOverTime(
       align: "center",
       width: "20px",
       render: (index, _record): JSX.Element => {
-        return (_record.action && _record.state !== 1) ||
-          (_record.action && props.isManager) ? (
+        return CheckPermissionEvent(
+          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.DELETE_OT_SALARY
+        ) &&
+          ((_record.action && _record.state !== 1) ||
+            (_record.action && props.isManager)) ? (
           <CloseCircleOutlined
             onClick={() => deleteOnsite(_record.id)}
             className="text-[red] text-[20px]"
