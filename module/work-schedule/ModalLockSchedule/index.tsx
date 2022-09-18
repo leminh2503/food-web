@@ -1,4 +1,5 @@
 import ApiWorkSchedule from "@app/api/ApiWorkSchedule";
+import {IMetadata} from "@app/api/Fetcher";
 import {ModalCustom} from "@app/components/ModalCustom";
 import {IWorkSchedule} from "@app/types";
 import {Checkbox, Table} from "antd";
@@ -8,7 +9,10 @@ import {useMutation, UseQueryResult} from "react-query";
 interface IModalLockScheduleProps {
   isModalVisible: boolean;
   toggleModal: () => void;
-  dataWorkingSchedule?: UseQueryResult<IWorkSchedule[], unknown>;
+  dataWorkingSchedule?: UseQueryResult<
+    {data: IWorkSchedule[]; meta: IMetadata},
+    unknown
+  >;
 }
 
 export function ModalLockSchedule({
@@ -72,8 +76,8 @@ export function ModalLockSchedule({
             ),
           },
         ]}
-        dataSource={dataWorkingSchedule?.data?.filter(
-          (item) => item.state === 2
+        dataSource={dataWorkingSchedule?.data?.data?.filter(
+          (item) => item.state === 2 || item.state === 0
         )}
       />
     );
@@ -82,7 +86,7 @@ export function ModalLockSchedule({
     <ModalCustom
       isModalVisible={isModalVisible}
       handleCancel={toggleModal}
-      title="Khóa lịch với nhân viên"
+      title="Khóa lịch với nhân viên 🙃"
       content={renderContent()}
       handleOk={okBtn}
     />

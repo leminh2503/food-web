@@ -9,9 +9,14 @@ import ApiWorkSchedule from "@app/api/ApiWorkSchedule";
 import {useMutation, useQuery} from "react-query";
 import moment from "moment";
 import Table, {ColumnType} from "antd/lib/table";
-import {Filter} from "@app/components/Filter";
-import {Button, Input, notification} from "antd";
+import {Button, Input, Modal, notification, Select} from "antd";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {FilterWorkSchedule} from "../FilterWorkSchedule";
+import {FileExcelFilled} from "@ant-design/icons";
+import {Tooltip} from "@mui/material";
+import {useSelector} from "react-redux";
+import {IRootState} from "@app/redux/store";
+import {IMetadata} from "@app/api/Fetcher";
 
 export interface session {
   title: string;
@@ -37,39 +42,46 @@ export function getAllDaysInMonth(year: number, month: number): Date[] {
   return dates;
 }
 
+function getHourInDay() {
+  const days: string[] = [];
+  for (let i = 1; i <= 24; i++) {
+    if (i < 10) {
+      const day = "0" + i.toString();
+      days.push(day);
+    } else days.push(i.toString());
+  }
+  return days;
+}
+
+const {Option} = Select;
+
 export function UserWorkSchedule(): JSX.Element {
+  const id = useSelector((state: IRootState) => state.user.user?.id);
   const [workingDay, setWorkingDay] = useState<IWorkScheduleCustom[]>([]);
   const [invalid, setInvalid] = useState<invalid[]>([]);
+  const [filterYear, setFilterYear] = useState<number>(moment().year());
+  const [filterMonth, setFilterMonth] = useState<number>(moment().month() + 1);
+  const [filterState, setFilterState] = useState<number>(0);
 
-  const dataSession = [
-    {
-      title: "Cả ngày",
-      value: 0,
-      default: true,
-    },
-    {
-      title: "Sáng",
-      value: 1,
-      default: false,
-    },
-    {
-      title: "Chiều",
-      value: 2,
-      default: false,
-    },
-    {
-      title: "Nghỉ",
-      value: 3,
-      default: false,
-    },
-  ];
+  const dataSession = ["Cả ngày", "Sáng", "Chiều", "Nghỉ"];
+  const dataMinutes = ["00", "30"];
+  const dataHours = getHourInDay();
 
-  const getWorkSchedule = (): Promise<IWorkSchedule> => {
-    return ApiWorkSchedule.getWorkSchedule();
+  const getAllWorkSchedule = (): Promise<{
+    data: IWorkSchedule[];
+    meta: IMetadata;
+  }> => {
+    return ApiWorkSchedule.getAllWorkSchedule({
+      filter: {
+        createdAt_MONTH: filterMonth,
+        createdAt_YEAR: filterYear,
+        user: id,
+      },
+    });
   };
   const dataWorkSchedule = useQuery(
-    queryKeys.GET_WORK_SCHEDULE,
-    getWorkSchedule
+    queryKeys.GET_ALL_WORK_SCHEDULE,
+    getAllWorkSchedule
   );
 
   const dataRefetch = (): void => {
@@ -77,13 +89,15 @@ export function UserWorkSchedule(): JSX.Element {
   };
 
   const data =
-    dataWorkSchedule?.status !== "error"
-      ? dataWorkSchedule?.data?.workingDay
+    dataWorkSchedule?.status === "success"
+      ? dataWorkSchedule?.data.data.length !== 0
+        ? dataWorkSchedule.data.data[0]
+        : null
       : null;
 
   useEffect(() => {
     dataRefetch();
-  }, []);
+  }, [filterMonth, filterYear, filterState]);
 
   useEffect(() => {
     const date = new Date();
@@ -109,7 +123,7 @@ export function UserWorkSchedule(): JSX.Element {
       });
     } else {
       const dayInMonth = getAllDaysInMonth(date.getFullYear(), date.getMonth());
-      data?.forEach((item, index) => {
+      data?.workingDay.forEach((item, index) => {
         const dayItem = {
           day: dayInMonth[index].toISOString(),
           note: item.note,
@@ -131,13 +145,19 @@ export function UserWorkSchedule(): JSX.Element {
     setInvalid(invaliArray);
   }, [data]);
 
-  const handlerOnChangeStartTime = (e: any, index: number): void => {
-    const {value, name} = e.target;
+  const handlerOnChangeTime = (
+    value: string,
+    index: number,
+    props: string,
+    name: string
+  ): void => {
     if (value.length <= 2) {
       const workingDayArray = workingDay?.map((item, i) => {
         const newData =
           i === index
-            ? {...item, startTime: {...item.startTime, [name]: value}}
+            ? props === "startTime"
+              ? {...item, [props]: {...item.startTime, [name]: value}}
+              : {...item, [props]: {...item.endTime, [name]: value}}
             : item;
         return newData;
       });
@@ -147,7 +167,7 @@ export function UserWorkSchedule(): JSX.Element {
       const checkInvalid = (param: boolean): void => {
         const newInvalid = invalid.map((item, i) => {
           const newData: invalid =
-            i === index ? {...item, startTime: param} : item;
+            i === index ? {...item, [props]: param} : item;
           return newData;
         });
         setInvalid(newInvalid);
@@ -165,44 +185,9 @@ export function UserWorkSchedule(): JSX.Element {
     }
   };
 
-  const handlerOnChangeEndTime = (e: any, index: number): void => {
-    const {value, name} = e.target;
-    if (value.length <= 2) {
-      const workingDayArray = workingDay?.map((item, i) => {
-        const newData =
-          i === index
-            ? {...item, endTime: {...item.endTime, [name]: value}}
-            : item;
-        return newData;
-      });
-      setWorkingDay(workingDayArray);
-      const endTime = `${workingDayArray[index]?.endTime?.hour}:${workingDayArray[index]?.endTime?.minute}`;
-      const startTime = `${workingDayArray[index]?.startTime?.hour}:${workingDayArray[index]?.startTime?.minute}`;
-      const checkInvalid = (param: boolean): void => {
-        const newInvalid = invalid.map((item, i) => {
-          const newData: invalid =
-            i === index ? {...item, endTime: param} : item;
-          return newData;
-        });
-        setInvalid(newInvalid);
-      };
-      if (
-        moment(endTime, "hh:mm").diff(
-          moment(startTime, "hh:mm"),
-          "milliseconds"
-        ) <= 0
-      ) {
-        checkInvalid(true);
-      } else {
-        checkInvalid(false);
-      }
-    }
-  };
-
-  const onChangeSession = (value: number, index: number): void => {
-    const workingDayItem = workingDay?.map((item, i) => {
-      const newData =
-        i === index ? {...item, session: dataSession[value].title} : item;
+  const handleOnchangeSession = (value: string, index: number) => {
+    const workingDayItem = workingDay.map((item, i) => {
+      const newData = i === index ? {...item, session: value} : item;
       return newData;
     });
     setWorkingDay(workingDayItem);
@@ -240,7 +225,7 @@ export function UserWorkSchedule(): JSX.Element {
           onSuccess: () => {
             notification.success({
               duration: 5,
-              message: "Đăng kí lịch làm việc thành công ^^",
+              message: "Đăng kí lịch làm việc thành công 😙",
             });
             dataRefetch();
           },
@@ -248,14 +233,14 @@ export function UserWorkSchedule(): JSX.Element {
       } else {
         updateWorkMutation.mutate(
           {
-            id: dataWorkSchedule?.data?.id,
+            id: data?.id,
             workingDay: dayArray,
           },
           {
             onSuccess: () => {
               notification.success({
                 duration: 5,
-                message: "Cập nhật lịch làm việc thành công ^^",
+                message: "Cập nhật lịch làm việc thành công 😎",
               });
               dataRefetch();
             },
@@ -265,20 +250,9 @@ export function UserWorkSchedule(): JSX.Element {
     } else {
       notification.error({
         duration: 5,
-        message: "Invalid date input",
+        message: "Invalid date input 😭",
       });
     }
-  };
-
-  const onChangeDataSession = (record: IWorkScheduleCustom): session[] => {
-    const sessionArray = dataSession.map((item) => {
-      const newData =
-        item.title === record.session
-          ? {...item, default: true}
-          : {...item, default: false};
-      return newData;
-    });
-    return sessionArray;
   };
 
   const columnUser: ColumnType<IWorkScheduleCustom>[] = [
@@ -304,17 +278,19 @@ export function UserWorkSchedule(): JSX.Element {
       align: "center",
       render: (_, record, index): JSX.Element => (
         <div className="flex justify-center">
-          <Filter
-            listSearch={[
-              {
-                visible: true,
-                isSelect: true,
-                data: onChangeDataSession(record),
-                handleOnChange: (value: number): void =>
-                  onChangeSession(value, index),
-              },
-            ]}
-          />
+          <Select
+            className="session_select"
+            onChange={(value) => handleOnchangeSession(value, index)}
+            value={workingDay[index].session}
+          >
+            {dataSession.map((item, index) => {
+              return (
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
         </div>
       ),
     },
@@ -325,35 +301,77 @@ export function UserWorkSchedule(): JSX.Element {
       align: "center",
       render: (_: any, record: any, index: number) => (
         <div className="flex items-center justify-center">
-          <Input
-            status={`${invalid[index].startTime ? "error" : ""}`}
-            required
-            name="hour"
-            onChange={(e): void => handlerOnChangeStartTime(e, index)}
-            value={workingDay[index]?.startTime?.hour}
-          />
-          <Input
-            status={`${invalid[index].startTime ? "error" : ""}`}
-            required
-            name="minute"
-            onChange={(e): void => handlerOnChangeStartTime(e, index)}
-            value={workingDay[index]?.startTime?.minute}
-          />
-          <span className="mr-2"> - </span>
-          <Input
-            status={`${invalid[index].endTime ? "error" : ""}`}
-            required
-            name="hour"
-            onChange={(e): void => handlerOnChangeEndTime(e, index)}
-            value={workingDay[index]?.endTime?.hour}
-          />
-          <Input
-            status={`${invalid[index].endTime ? "error" : ""}`}
-            required
-            name="minute"
-            onChange={(e): void => handlerOnChangeEndTime(e, index)}
-            value={workingDay[index]?.endTime?.minute}
-          />
+          <Select
+            className="margin_right"
+            value={workingDay[index].startTime?.hour}
+            onChange={(value) => {
+              handlerOnChangeTime(value, index, "startTime", "hour");
+            }}
+            status={`${
+              invalid.length !== 0 && invalid[index].startTime ? "error" : ""
+            }`}
+          >
+            {dataHours.map((item, index) => {
+              return (
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+          <Select
+            value={workingDay[index].startTime?.minute}
+            onChange={(value) => {
+              handlerOnChangeTime(value, index, "startTime", "minute");
+            }}
+            status={`${
+              invalid.length !== 0 && invalid[index].startTime ? "error" : ""
+            }`}
+          >
+            {dataMinutes.map((item, index) => {
+              return (
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+          <p>-</p>
+          <Select
+            className="margin_right"
+            value={workingDay[index].endTime?.hour}
+            onChange={(value) => {
+              handlerOnChangeTime(value, index, "endTime", "hour");
+            }}
+            status={`${
+              invalid.length !== 0 && invalid[index].endTime ? "error" : ""
+            }`}
+          >
+            {dataHours.map((item, index) => {
+              return (
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+          <Select
+            value={workingDay[index].endTime?.minute}
+            onChange={(value) => {
+              handlerOnChangeTime(value, index, "endTime", "minute");
+            }}
+            status={`${
+              invalid.length !== 0 && invalid[index].endTime ? "error" : ""
+            }`}
+          >
+            {dataMinutes.map((item, index) => {
+              return (
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
         </div>
       ),
     },
@@ -375,18 +393,39 @@ export function UserWorkSchedule(): JSX.Element {
     },
   ];
 
+  const exportExcelFile = (): void => {
+    Modal.confirm({
+      title: "Chưa có API export file 😭",
+      content: "Khi nào có thì làm tiếp! 🙂",
+      okType: "primary",
+      cancelText: "Huỷ",
+      okText: "Oki",
+    });
+  };
+
   return (
     <div className="container">
       <h6>
         ĐĂNG KÝ LỊCH LÀM VIỆC{" "}
-        {data === null ? (
-          <span className="not_yet_register">(Chưa đăng ký)</span>
-        ) : dataWorkSchedule?.data?.state === 0 ? (
-          <span className="pending_approval">(Đang chờ duyệt)</span>
+        {data === null || data.state === 1 ? (
+          <span className="not_yet_register">(Chưa đăng ký 🤔)</span>
+        ) : data.state === 0 || data.state === 2 ? (
+          <span className="done_register">(Đã đăng ký 🤗)</span>
         ) : (
-          <span className="done_register">(Đã đăng ký)</span>
+          <span className="pending_approval">(Đang khóa 😟)</span>
         )}
       </h6>
+      <div className="flex justify-between mt-5">
+        <FilterWorkSchedule
+          visible={false}
+          setFilterState={setFilterState}
+          setFilterMonth={setFilterMonth}
+          setFilterYear={setFilterYear}
+        />
+        <Tooltip title="Xuất excel" placement="left">
+          <FileExcelFilled onClick={exportExcelFile} className="excel_icon" />
+        </Tooltip>
+      </div>
       <Table
         pagination={false}
         className="mt-5"

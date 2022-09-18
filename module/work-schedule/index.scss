@@ -43,6 +43,22 @@
   .approval:hover {
     text-decoration: underline;
   }
+  .excel_icon {
+    color: green;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .session_select {
+    width: 150px;
+  }
+  p {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .margin_right {
+    margin-right: 10px;
+  }
 }
 .table_modal_work {
   height: 89vh;
