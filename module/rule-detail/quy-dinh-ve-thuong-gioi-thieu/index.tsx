@@ -7,7 +7,7 @@ export function QuyDinhVeThuongGioiThieu(): JSX.Element {
   const router = useRouter();
 
   return (
-    <div className="container">
+    <div className="container-rule">
       <div className="mb-5">
         <button type="button" className="btn-back-page" onClick={router.back}>
           <LeftOutlined />

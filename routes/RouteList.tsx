@@ -1,9 +1,9 @@
-import {IAccountRole} from "../types";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export interface IRoute {
   path: string;
   name: string;
-  role?: Array<IAccountRole>;
+  role?: string;
   icon?: string;
   isSidebar?: boolean;
   isPrivate?: boolean;
@@ -31,14 +31,16 @@ const routes: IRoute[] = [
   {
     path: "/",
     name: "Quản lý tài khoản",
-    role: [IAccountRole.ADMIN],
+    role: NameEventConstant.PERMISSION_USER_KEY.LIST_ALL_USER,
+    isPrivate: true,
     icon: "Users",
     isSidebar: true,
   },
   {
     path: "/manager-salary",
     name: "Quản lý bảng lương",
-    role: [IAccountRole.ADMIN],
+    role: NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.LIST_ALL_SALARY,
+    isPrivate: true,
     icon: "Payroll",
     isSidebar: true,
   },
@@ -46,78 +48,98 @@ const routes: IRoute[] = [
     path: "/salary",
     name: "Bảng lương",
     icon: "Payroll",
+    isPrivate: true,
     isSidebar: true,
   },
   {
     path: "/salary-user",
     name: "Duyệt lương nhân viên",
-    role: [3],
+    role: NameEventConstant.PERMISSION_SALARY_APPROVAL_KEY
+      .LIST_ALL_SALARY_APPROVAL,
+    isPrivate: true,
     icon: "Users",
     isSidebar: true,
   },
   {
     path: "/leave-work",
-    name: IAccountRole.ADMIN ? "Quản lý nghỉ phép" : "Đơn xin nghỉ phép",
-    role: [IAccountRole.USER, IAccountRole.ADMIN],
+    name: "Quản lý nghỉ phép",
+    role: NameEventConstant.PERMISSION_ON_LEAVE_KEY.LIST_ALL_ON_LEAVE,
+    isPrivate: true,
+    icon: "MangeLeave",
+    isSidebar: true,
+  },
+  {
+    path: "/leave-work-user",
+    name: "Đơn xin nghỉ phép",
+    isPrivate: true,
     icon: "MangeLeave",
     isSidebar: true,
   },
   {
     path: "/event",
     name: "Sự kiện công ty",
+    isPrivate: true,
     icon: "Event",
     isSidebar: true,
   },
   {
     path: "/birthday",
     name: "Sinh nhật",
+    isPrivate: true,
     icon: "Birthday",
     isSidebar: true,
   },
   {
     path: "/profile-account",
     name: "Thông tin tài khoản",
+    isPrivate: true,
     icon: "User",
     isSidebar: true,
   },
   {
     path: "/rule",
     name: "Nội quy - Quy định",
+    isPrivate: true,
     icon: "Rules",
     isSidebar: true,
   },
   {
     path: "/work-schedule",
     name: "Lịch làm việc",
+    isPrivate: true,
+    role: "0",
     icon: "CalenderWork",
     isSidebar: true,
   },
   {
     path: "/project",
     name: "Dự án",
+    role: "0",
     icon: "Project",
+    isPrivate: true,
     isSidebar: true,
-    role: [IAccountRole.ADMIN],
   },
   {
     path: "",
     name: "Cài đặt",
     icon: "Setting",
-    role: [IAccountRole.ADMIN],
+    role: "0",
     isSidebar: true,
+    isPrivate: true,
     children: [
       {
         path: "/position",
         name: "Chức vụ",
         icon: "",
-        role: [IAccountRole.ADMIN],
+        role: "0",
         isSidebar: true,
       },
       {
         path: "/work-type",
         name: "Loại hình làm việc",
         icon: "",
-        role: [IAccountRole.ADMIN],
+        isPrivate: true,
+        role: "0",
         isSidebar: true,
       },
     ],

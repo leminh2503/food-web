@@ -14,7 +14,7 @@ export const validateMessages = {
 };
 
 // eslint-disable-next-line no-template-curly-in-string
-const typeTemplate = "${label} phải có giá trị là ${type}";
+const typeTemplate = "${label} không đúng định dạng!";
 
 export const defaultValidateMessages = {
   // eslint-disable-next-line no-template-curly-in-string

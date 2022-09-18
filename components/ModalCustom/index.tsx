@@ -9,8 +9,9 @@ interface ModalCustomProps {
   cancelText?: string;
   title: string;
   content: JSX.Element;
-  footer?: any;
+  footer?: null;
   destroyOnClose?: boolean;
+  width?: string;
 }
 
 export function ModalCustom({
@@ -22,10 +23,12 @@ export function ModalCustom({
   title,
   content,
   footer,
+  width,
   destroyOnClose,
 }: ModalCustomProps): JSX.Element {
   return (
     <Modal
+      width={width}
       destroyOnClose={destroyOnClose}
       centered
       title={title}

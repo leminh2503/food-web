@@ -7,8 +7,6 @@ import {useMutation} from "react-query";
 import ApiUser, {ILoginBody} from "@app/api/ApiUser";
 import {useDispatch} from "react-redux";
 import {loginUser} from "@app/redux/slices/UserSlice";
-import {useRouter} from "next/router";
-import Config from "@app/config";
 import {IAccountInfo} from "@app/types";
 
 interface SignInProps {
@@ -16,8 +14,6 @@ interface SignInProps {
 }
 export function SignIn({changeTab}: SignInProps): JSX.Element {
   const dispatch = useDispatch();
-
-  const router = useRouter();
 
   const loginMutation = useMutation(ApiUser.login);
 
@@ -30,8 +26,9 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
       {
         onSuccess: (res: IAccountInfo) => {
           dispatch(loginUser({...res}));
-          router.push(Config.PATHNAME.HOME);
+          localStorage.setItem("role", res.role?.id?.toString() || "0");
           setSubmitting(false);
+          window.location.reload();
         },
         onError: (error) => {
           setSubmitting(false);

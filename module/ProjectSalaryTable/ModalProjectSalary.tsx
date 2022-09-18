@@ -15,6 +15,7 @@ interface IModalCreateProject {
   userId: number;
   month: number;
   year: number;
+  handleRefetch?: () => void;
 }
 
 export default function ModalProjectSalary(
@@ -29,10 +30,10 @@ export default function ModalProjectSalary(
         <Form labelCol={{span: 3}} wrapperCol={{span: 22}}>
           <Form.Item label="Dự án" name="nameProject">
             <Select
-              style={{width: 120}}
               onChange={(e) => {
                 setProject(Number(e));
               }}
+              className="w-full"
             >
               {props?.listProject?.map((el, index) => (
                 <Select.Option key={index} value={el?.id}>
@@ -72,6 +73,9 @@ export default function ModalProjectSalary(
     };
     createProjectSalary.mutate(data, {
       onSuccess: () => {
+        if (props.handleRefetch) {
+          props.handleRefetch();
+        }
         notification.success({message: "create success"});
       },
     });

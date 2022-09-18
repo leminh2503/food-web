@@ -1,19 +1,23 @@
 import "../my-salary-detail/index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataBonus} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
+import {CloseCircleOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import ModalOtherSalary from "@app/module/OtherSalaryTable/ModalOtherSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function OtherSalaryTable({
   month,
   year,
   userId,
   isAdmin,
+  setBonusSalary,
 }: {
+  setBonusSalary?: (val: number) => void;
   isAdmin?: boolean;
   userId: number;
   month: number;
@@ -63,7 +67,10 @@ export default function OtherSalaryTable({
           title: "",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_OTHER
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteBonusSalary(_record?.id || 0).then((r) =>
@@ -72,6 +79,8 @@ export default function OtherSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },
@@ -99,6 +108,16 @@ export default function OtherSalaryTable({
       return {salary: el?.salary, reason: el?.reason, id: el.id};
     }) || [];
 
+  useEffect(() => {
+    const totalSalary2 =
+      datBonus?.reduce(function (accumulator, element) {
+        return accumulator + (element?.salary || 0);
+      }, 0) || 0;
+    if (setBonusSalary) {
+      setBonusSalary(totalSalary2);
+    }
+  }, [isRefetching]);
+
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -119,15 +138,18 @@ export default function OtherSalaryTable({
             ?.reduce(function (accumulator, element) {
               return accumulator + (element?.salary || 0);
             }, 0)
-            .toLocaleString("en-US")}{" "}
+            ?.toLocaleString("en-US")}{" "}
           VND
         </div>
-        {isAdmin && (
-          <EditFilled
-            onClick={showModal}
-            className="text-[20px] text-[#0092ff] mr-3"
-          />
-        )}
+        {isAdmin &&
+          CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_OTHER
+          ) && (
+            <PlusCircleOutlined
+              onClick={showModal}
+              className="text-[20px] text-[#0092ff] mr-3"
+            />
+          )}
       </div>
       <Table
         loading={isRefetching}

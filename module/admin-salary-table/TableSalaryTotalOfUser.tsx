@@ -1,5 +1,5 @@
 import "./index.scss";
-import {Image, Input, Select, Table} from "antd";
+import {Button, Image, Input, Modal, notification, Select, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
@@ -7,7 +7,9 @@ import {IDataSalaryToTalOfUser} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import baseURL from "@app/config/baseURL";
-import {LeftOutlined} from "@ant-design/icons";
+import {LeftOutlined, PlusCircleFilled} from "@ant-design/icons";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function TableSalaryTotalOfUser(): JSX.Element {
   const router = useRouter();
@@ -66,7 +68,10 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             return (
               <div>
                 <Image
-                  src={"../" + record.user.avatar || "../img/avatar/avatar.jpg"}
+                  src={
+                    "http://13.215.91.199:8000/uploads/" +
+                      (record?.user?.avatar || "") || "../img/avatar/avatar.jpg"
+                  }
                   fallback="../img/avatar/avatar.jpg"
                   preview={false}
                 />
@@ -169,7 +174,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           ),
         },
         {
-          title: "Thuế",
+          title: "Thuế thu nhập cá nhân",
           align: "center",
           key: "taxSalary",
           dataIndex: "taxSalary",
@@ -217,7 +222,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
 
   useEffect(() => {
     refetch();
-  }, [state, searchValue]);
+  }, [state]);
 
   return (
     <div className="account-manager-page">
@@ -226,15 +231,15 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           <LeftOutlined />
         </button>
       </div>
-      <div className="flex items-center bg-white mb-4 p-4">
-        <Input.Search
-          className="w-[300px]"
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={() => {
-            refetch();
-          }}
-        />
-        <div className="flex items-center ml-4">
+      <div className="flex items-center justify-between bg-white mb-4 p-4">
+        <div className="flex items-center">
+          <Input.Search
+            className="w-[300px] mr-4"
+            onChange={(e) => setSearchValue(e.target.value)}
+            onSearch={() => {
+              refetch();
+            }}
+          />
           <span>Trạng thái : </span>
           <Select
             placeholder="trạng thái"
@@ -261,26 +266,60 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             </Select.Option>
           </Select>
         </div>
+        {CheckPermissionEvent(
+          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.CREATE_ALL_SALARY
+        ) && (
+          <Button
+            type="primary"
+            onClick={(): void => {
+              Modal.confirm({
+                title: "Bạn chắc chắn muốn taọ lương cho toàn bộ nhân viên ?",
+                onOk: () => {
+                  ApiSalary.createSalaryAllEmployee(
+                    Number(year),
+                    Number(month)
+                  ).then((r) => {
+                    notification.success({message: "create success"});
+                    refetch();
+                  });
+                },
+              });
+            }}
+            className="bg-blue-500 items-center flex"
+            icon={<PlusCircleFilled />}
+          >
+            Tạo lương tất cả nhân viên
+          </Button>
+        )}
       </div>
       <Table
         columns={columns}
         dataSource={data}
         className="hover-pointer"
         bordered
-        scroll={{y: "calc(100vw - 300px)"}}
-        pagination={{pageSize: 100}}
+        scroll={{y: "calc(100vh - 300)"}}
+        pagination={{showSizeChanger: true, defaultPageSize: 100}}
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {
-              router.push({
-                pathname: baseURL.SALARY.CREATE_SALARY,
-                query: {
-                  month: month,
-                  year: year,
-                  userId: record.user.id,
-                  id: record.id,
-                },
-              });
+              if (
+                CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                    .GET_DETAIL_SALARY
+                )
+              ) {
+                router.push({
+                  pathname: baseURL.SALARY.CREATE_SALARY,
+                  query: {
+                    month: month,
+                    year: year,
+                    userId: record.user.id,
+                    id: record.id,
+                    total: record.totalSalary,
+                    tax: record.taxSalary,
+                  },
+                });
+              }
             },
           };
         }}

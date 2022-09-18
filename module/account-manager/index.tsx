@@ -124,7 +124,7 @@ export function AccountManager(): JSX.Element {
     const params = {
       pageSize: pagingCurrent.pageSize,
       pageNumber: pagingCurrent.currentPage,
-      searchFields: ["fullName"],
+      searchFields: ["fullName", "email"],
       search: filterText,
       filter: {
         position: filterPosition !== -1 ? filterPosition : "",
@@ -229,10 +229,13 @@ export function AccountManager(): JSX.Element {
       address: values.address,
       phoneNumber: values.phoneNumber,
       phoneNumberRelative: values.phoneNumberRelative,
-      baseSalary: values.baseSalary,
+      baseSalary: Number(values.baseSalary),
       email: values.email,
       fullName: values.fullName,
       deductionOwn: values.deductionOwn,
+      englishCertificate: values.englishCertificate,
+      englishScore: values.englishScore,
+      manageSalary: Number(values.manageSalary),
     };
     updateProfile.mutate(body);
   };
@@ -313,9 +316,19 @@ export function AccountManager(): JSX.Element {
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
     pageSize
-  ) => {
+  ): void => {
     setPagingCurrent({
       currentPage: current,
+      pageSize: pageSize,
+    });
+  };
+
+  const handleChangePagination: PaginationProps["onChange"] = (
+    pageNumber,
+    pageSize
+  ) => {
+    setPagingCurrent({
+      currentPage: pageNumber,
       pageSize: pageSize,
     });
   };
@@ -326,20 +339,24 @@ export function AccountManager(): JSX.Element {
       dataIndex: "index",
       key: "index",
       align: "center",
+      width: "5%",
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
       title: "Ảnh",
       key: "avatar",
       align: "center",
-      width: 80,
+      width: "5%",
       render: (_, record): JSX.Element => {
         return (
           <div>
             <Image
+              width="40px"
+              height="40px"
+              style={{objectFit: "cover"}}
               src={record.avatar || "img/avatar/avatar.jpg"}
               fallback="img/avatar/avatar.jpg"
-              preview={false}
+              // preview={false}
             />
           </div>
         );
@@ -350,43 +367,48 @@ export function AccountManager(): JSX.Element {
       dataIndex: "email",
       key: "email",
       align: "center",
+      width: "10%",
     },
     {
       title: "Họ & Tên",
       dataIndex: "fullName",
       key: "fullName",
       align: "center",
+      width: "10%",
     },
     {
       title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
       align: "center",
+      width: "10%",
     },
     {
       title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
       align: "center",
+      width: "20%",
     },
-    {
-      title: "Quản lý",
-      dataIndex: "manager",
-      key: "manager",
-      align: "center",
-      render: (_, record): JSX.Element => {
-        return (
-          <div>
-            <span>{record?.manager?.fullName}</span>
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: "Quản lý",
+    //   dataIndex: "manager",
+    //   key: "manager",
+    //   align: "center",
+    //   render: (_, record): JSX.Element => {
+    //     return (
+    //       <div>
+    //         <span>{record?.manager?.fullName}</span>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       title: "Vị trí",
       dataIndex: "workType",
       key: "workType",
       align: "center",
+      width: "10%",
       render: (_, record): JSX.Element => {
         return (
           <div>
@@ -400,6 +422,7 @@ export function AccountManager(): JSX.Element {
       dataIndex: "position",
       key: "position",
       align: "center",
+      width: "10%",
       render: (_, record): JSX.Element => {
         return (
           <div>
@@ -412,6 +435,7 @@ export function AccountManager(): JSX.Element {
       title: "Trạng thái",
       align: "center",
       key: "state",
+      width: "5%",
       render: (_, record): JSX.Element => {
         return (
           <div
@@ -428,6 +452,7 @@ export function AccountManager(): JSX.Element {
       title: "Hành động",
       key: "action",
       align: "center",
+      width: "5%",
       render: (_, record) => (
         <div>
           {Number(record.id) === 1 ? (
@@ -458,7 +483,7 @@ export function AccountManager(): JSX.Element {
       <Card className="mb-4">
         <div>
           <Row>
-            <Col lg={9}>
+            <Col lg={12} xs={24} sm={24}>
               <FilterAccount
                 setFilterState={setFilterState}
                 setFilterText={setFilterText}
@@ -467,14 +492,17 @@ export function AccountManager(): JSX.Element {
                 listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
-            <Col lg={15}>
+            <Col lg={12} xs={24} sm={24}>
               <div className="" style={{float: "right"}}>
-                <Button className="mr-4" onClick={handleExportExcel}>
+                <Button
+                  className="mr-4 bg-blue-500 text-neutral-50"
+                  onClick={handleExportExcel}
+                >
                   Xuất Excel
                 </Button>
                 <Button
                   onClick={(): void => setIsModalAddEmployeeVisible(true)}
-                  className=""
+                  className="bg-blue-500 text-neutral-50"
                 >
                   Tạo tài khoản mới
                 </Button>
@@ -483,28 +511,32 @@ export function AccountManager(): JSX.Element {
           </Row>
         </div>
       </Card>
-      <Table
-        loading={isFetching}
-        columns={columns}
-        dataSource={dataUserAccount?.data}
-        bordered
-        pagination={false}
-        onRow={(record, rowIndex) => {
-          return {
-            onDoubleClick: (): void => {
-              setDataDetail(record);
-              setIsModalVisible(true);
-            },
-          };
-        }}
-      />
-      <Pagination
-        className="mt-3 float-right"
-        showSizeChanger
-        onShowSizeChange={onShowSizeChange}
-        defaultCurrent={pagingCurrent.currentPage}
-        total={dataUserAccount?.meta.totalItems || 1}
-      />
+      <Card>
+        <Table
+          loading={isFetching}
+          columns={columns}
+          dataSource={dataUserAccount?.data}
+          bordered
+          scroll={{x: "100vw"}}
+          pagination={false}
+          onRow={(record, rowIndex) => {
+            return {
+              onDoubleClick: (): void => {
+                setDataDetail(record);
+                setIsModalVisible(true);
+              },
+            };
+          }}
+        />
+        <Pagination
+          className="mt-3 float-right"
+          showSizeChanger
+          onShowSizeChange={onShowSizeChange}
+          onChange={handleChangePagination}
+          defaultCurrent={pagingCurrent.currentPage}
+          total={dataUserAccount?.meta.totalItems || 1}
+        />
+      </Card>
       <ModalInfo
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}

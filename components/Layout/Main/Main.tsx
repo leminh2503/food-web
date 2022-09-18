@@ -19,7 +19,7 @@ export default function Main({children}: MainProps): JSX.Element {
         "main",
         {"has-navbar": useNavbar},
         {"has-sidebar": useSidebar},
-        {"sidebar-open": isOpen}
+        {open: isOpen}
       )}
     >
       {children}

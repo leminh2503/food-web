@@ -1,14 +1,16 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
 import {ModalCustom} from "@app/components/ModalCustom";
-import {Input, notification, Table} from "antd";
+import {notification, Select, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {IDataOnsite} from "@app/types";
+import {IDataOnsite, IDataProjectList} from "@app/types";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import {CloseCircleOutlined} from "@ant-design/icons";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import ApiSalary from "@app/api/ApiSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface IModalCreateOnsite {
   dataOnsite: IDataOnsite[];
@@ -20,6 +22,7 @@ interface IModalCreateOnsite {
   handleOk: () => void;
   handleCancel: () => void;
   isManager?: boolean;
+  listProject?: IDataProjectList[];
 }
 
 export default function ModalCreateOnsite(
@@ -42,6 +45,7 @@ export default function ModalCreateOnsite(
             day: formatNumber(i) + "/" + formatNumber(props.month),
             dayOnWeek: findDayOnWeek(props.year, props.month, i),
             onsitePlace: el.onsitePlace,
+            projectId: (el as any)?.project?.id,
             action: true,
             id: el.id,
             state: el.state,
@@ -55,6 +59,7 @@ export default function ModalCreateOnsite(
           day: formatNumber(i) + "/" + formatNumber(props.month),
           dayOnWeek: findDayOnWeek(props.year, props.month, i),
           onsitePlace: "",
+          projectId: -1,
           action: false,
           state: 0,
           id: 0,
@@ -84,13 +89,24 @@ export default function ModalCreateOnsite(
       key: "onsitePlace",
       align: "center",
       render: (index, _record): JSX.Element => {
+        const idPJ =
+          props?.listProject?.filter(
+            (ele) => ele.name === _record?.onsitePlace
+          ) || [];
         return _record.state !== 1 ? (
-          <Input
-            value={_record.onsitePlace}
-            onChange={(e) => {
-              handleChangeOnsite(e, _record.day);
+          <Select
+            value={idPJ[0]?.id}
+            onChange={(e, value) => {
+              handleChangeOnsite(Number(e), _record.day, (value as any)?.key);
             }}
-          />
+            className="w-full"
+          >
+            {props?.listProject?.map((el, index) => (
+              <Select.Option key={el.name} value={el?.id}>
+                {el?.name}
+              </Select.Option>
+            ))}
+          </Select>
         ) : (
           <span>{_record.onsitePlace}</span>
         );
@@ -103,8 +119,11 @@ export default function ModalCreateOnsite(
       align: "center",
       width: "20px",
       render: (index, _record): JSX.Element => {
-        return (_record.action && _record.state !== 1) ||
-          (_record.action && props.isManager) ? (
+        return CheckPermissionEvent(
+          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.DELETE_ONSITE_SALARY
+        ) &&
+          ((_record.action && _record.state !== 1) ||
+            (_record.action && props.isManager)) ? (
           <CloseCircleOutlined
             onClick={() => deleteOnsite(_record.id)}
             className="text-[red] text-[20px]"
@@ -125,12 +144,14 @@ export default function ModalCreateOnsite(
   };
 
   const handleChangeOnsite = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    day: string | number | undefined
+    e: number,
+    day: string | number | undefined,
+    name: string
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
-        el.onsitePlace = e.target.value;
+        el.project = e;
+        el.onsitePlace = name;
       }
       return el;
     });
@@ -138,10 +159,14 @@ export default function ModalCreateOnsite(
   };
 
   const deleteOnsite = (id: number): void => {
-    ApiSalary.deleteOnsiteSalary(id).then((r) => {
-      props.refetchDataOnsite();
-      notification.success({message: "delete success"});
-    });
+    setLoading(true);
+    ApiSalary.deleteOnsiteSalary(id)
+      .then((r) => {
+        props.refetchDataOnsite();
+        notification.success({message: "delete success"});
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   };
 
   const handleOk = (): void => {
@@ -149,7 +174,8 @@ export default function ModalCreateOnsite(
       data?.map((el, index) => {
         return {
           user: props.idUser,
-          onsitePlace: el?.onsitePlace || "",
+          onsitePlace: el?.onsitePlace ?? "",
+          project: el?.project ?? -1,
           date:
             props.year +
             "-" +
@@ -158,9 +184,12 @@ export default function ModalCreateOnsite(
             formatNumber(index + 1),
         };
       }) || [];
-    if (body.filter((el) => el.onsitePlace !== "")?.length > 0) {
+    if (
+      body.filter((el) => el.onsitePlace !== "" && el.project !== -1)?.length >
+      0
+    ) {
       ApiSalary.createOnsiteSalary(
-        body.filter((el) => el.onsitePlace !== "")
+        body.filter((el) => el.onsitePlace !== "" && el.project !== -1)
       ).then((r) => {
         props.refetchDataOnsite();
         notification.success({message: "Tạo thành công"});
@@ -171,6 +200,7 @@ export default function ModalCreateOnsite(
 
   return (
     <ModalCustom
+      destroyOnClose
       isModalVisible={props.isModalVisible}
       handleOk={handleOk}
       handleCancel={props.handleCancel}

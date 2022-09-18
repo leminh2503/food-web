@@ -1,5 +1,13 @@
 import React from "react";
 
+export interface IDetailTax {
+  deductionFamilyCircumstances?: number;
+  deductionOwn?: number;
+  taxableSalary?: number;
+  taxSalary?: number;
+  tax?: number;
+}
+
 export interface CommonReduxAction {
   type: string;
 }
@@ -28,6 +36,12 @@ export enum IState {
   INACTIVE,
   ACTIVE,
   DELETED,
+}
+
+export enum EUserGender {
+  Other = "Khác",
+  Male = "Nam",
+  Female = "Nữ",
 }
 
 export enum TypeOfAction {
@@ -87,8 +101,10 @@ export interface IDataProjectList {
 export interface IDataOnsite {
   id: number;
   dayOnWeek?: string;
+  projectId?: number;
   day?: number | string;
   onsitePlace?: string;
+  project?: number;
   salary?: number;
   date?: string;
   state?: number;
@@ -230,10 +246,11 @@ export interface IDataSalary {
   taxSalary: number;
   totalSalary: number;
   updatedAt: string;
+  detailTaxSalary: IDetailTax;
 }
 
 export interface IProfile {
-  id?: string;
+  id: string;
   avatar?: string;
   fullName?: string;
   email?: string;
@@ -263,6 +280,9 @@ export interface IFamilyCircumstance {
   phoneNumber: string;
 }
 
+export type UserGender = "Other" | "Male" | "Female";
+export type EnglishCertificate = "Other" | "Toeic" | "Toefl" | "Ielts" | "";
+
 export interface IUserLogin {
   date?: string;
   createdAt?: string;
@@ -280,17 +300,26 @@ export interface IUserLogin {
   role?: {
     id?: IAccountRole;
     roleName?: string;
+    permissions: {
+      id: number;
+      permissionsName: string;
+      permissionsKey: string;
+    }[];
   };
   phoneNumberRelative?: string;
   baseSalary?: number;
   manageSalary?: number;
-  gender?: string;
+  gender?: UserGender;
   manager?: IProfile;
   workType?: IWorkType | null;
   positionId?: number;
   workTypeId?: number;
   deductionOwn?: number;
   familyCircumstances?: IFamilyCircumstance[] | null;
+  employeeCode?: string;
+  workRoom?: string;
+  englishCertificate?: EnglishCertificate;
+  englishScore?: number;
 }
 
 export interface IDataProjectSalary {
@@ -305,8 +334,13 @@ export interface IAccountInfo {
   isConfirmed?: boolean;
   dataProfile?: IProfile;
   role?: {
-    id?: number;
+    id?: IAccountRole;
     roleName?: string;
+    permissions: {
+      id: number;
+      permissionName: string;
+      permissionKey: string;
+    }[];
   };
 }
 
@@ -404,8 +438,8 @@ export interface IProjectMember {
   overtime?: number;
   startDate?: string;
   endDate?: string;
-  project?: IProject;
-  user?: IProfile;
+  project: IProject;
+  user: IProfile;
 }
 
 export interface ISetStateModal {
@@ -420,15 +454,16 @@ export interface ISetStateModal {
   description?: string;
 }
 
-export enum EUserGender {
-  OTHER = "Other",
-  MALE = "Male",
-  FEMALE = "Female",
-}
-
 export enum EEnglishCertificate {
   TOEIC = "Toeic",
   TOEFL = "Toefl",
   IELTS = "Ielts",
   OTHER = "Other",
+}
+
+export enum EProjectState {
+  MOI_KHOI_TAO = 0,
+  DANG_THUC_HIEN = 1,
+  DA_KET_THUC = 2,
+  DA_HUY = 3,
 }

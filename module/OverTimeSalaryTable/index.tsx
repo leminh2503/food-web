@@ -10,22 +10,28 @@ import {IDataOverTime, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useMutation, useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function OverTimeSalaryTable({
   month,
   year,
+  isAdmin,
   isManager,
   idUser,
   listProject,
   projectName,
   idProject,
   baseSalary,
+  setOvertimeSalary,
 }: {
+  setOvertimeSalary?: (val: number) => void;
   baseSalary?: number;
   idProject?: number;
   listProject?: IDataProjectList[];
   idUser: number | string;
   isManager?: boolean;
+  isAdmin?: boolean;
   month: number;
   year: number;
   projectName?: string;
@@ -70,41 +76,49 @@ export default function OverTimeSalaryTable({
   };
 
   useEffect(() => {
-    // dataOT?.map((el) => {
-    //   if (el.state === 0) {
-    //     setDisableCheck(false);
-    //   }
-    //   return el;
-    // });
+    const totalSalary2 =
+      dataOT?.reduce(function (accumulator, element) {
+        return accumulator + (Number(element?.hour) || 0);
+      }, 0) || 0;
+    if (setOvertimeSalary) {
+      setOvertimeSalary(((totalSalary2 * (baseSalary || 0)) / 24 / 8) * 1.5);
+    }
   }, [isRefetching]);
 
   const columns: ColumnsType<IDataOverTime[]> = [
     {
       title: (
         <>
-          <EditFilled
-            onClick={showModal}
-            className="text-[20px] text-[#0092ff] mr-3"
-          />
-          {isManager && (
-            <CheckCircleFilled
-              className={
-                disableCheck
-                  ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
-                  : "text-[20px] text-[green]"
-              }
-              onClick={(): void => {
-                if (!disableCheck) {
-                  Modal.confirm({
-                    title: "Bạn muốn duyệt tất cả lương OT ?",
-                    centered: true,
-                    onOk: handleUpdate,
-                  });
-                }
-              }}
-              disabled={disableCheck}
+          {CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_OT_SALARY
+          ) && (
+            <EditFilled
+              onClick={showModal}
+              className="text-[20px] text-[#0092ff] mr-3"
             />
           )}
+          {isManager &&
+            CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ACCEPT_SALARY_OT
+            ) && (
+              <CheckCircleFilled
+                className={
+                  disableCheck
+                    ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
+                    : "text-[20px] text-[green]"
+                }
+                onClick={(): void => {
+                  if (!disableCheck) {
+                    Modal.confirm({
+                      title: "Bạn muốn duyệt tất cả lương OT ?",
+                      centered: true,
+                      onOk: handleUpdate,
+                    });
+                  }
+                }}
+                disabled={disableCheck}
+              />
+            )}
         </>
       ),
       dataIndex: "col1",
@@ -214,6 +228,7 @@ export default function OverTimeSalaryTable({
         isManager={isManager}
         projectName={projectName}
         idProject={idProject}
+        isAdmin={isAdmin}
       />
       <div className="mb-4 font-bold">
         Lương Overtime :{" "}
@@ -228,7 +243,7 @@ export default function OverTimeSalaryTable({
         dataSource={data}
         bordered
         pagination={false}
-        scroll={{x: 1500}}
+        scroll={{x: "100vw"}}
       />
     </Card>
   );

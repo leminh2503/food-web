@@ -1,7 +1,8 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
-  IAccountRole,
+  EnglishCertificate,
+  IAccountInfo,
   IFamilyCircumstance,
   IUserLogin,
   IWorkType,
@@ -12,11 +13,12 @@ export interface ILoginBody {
   email: string;
   password: string;
 }
+type UserGender = "Other" | "Male" | "Female";
 
 export interface IRegisterAccountBody {
   password?: string;
-  gender?: string;
-  englishCertificate?: string;
+  gender?: UserGender;
+  englishCertificate?: EnglishCertificate;
   englishScore?: number;
   workRoom?: string;
   personId?: string;
@@ -179,7 +181,7 @@ function updateAvatar(formData: any): Promise<IUserLogin> {
   return fetcher({url: path.uploadAvatar, method: "patch", data: formData});
 }
 
-function login(body: ILoginBody): Promise<ILoginResponse> {
+function login(body: ILoginBody): Promise<IAccountInfo> {
   return fetcher(
     {url: path.login, method: "post", data: body},
     {displayError: true}
@@ -242,9 +244,9 @@ function isLogin(): boolean {
   return !!getAuthToken();
 }
 
-function getUserRole(): IAccountRole | undefined {
-  const {user} = store.getState();
-  return user?.user?.role?.id;
+function getUserRole(): string | null {
+  const role = localStorage.getItem("role");
+  return role;
 }
 
 function getInfoMe(): IUserLogin | undefined {

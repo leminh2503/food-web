@@ -1,6 +1,122 @@
 .profile-page {
+  position: relative;
   h4 {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 24px;
+  }
+  .position-user-text {
+    font-size: 16px;
+  }
+  .card-right,
+  .card-left {
+    height: 450px;
+    .ant-card-body {
+      height: 100%;
+      ::after {
+        display: none;
+      }
+    }
+  }
+  .ant-card-body::after {
+    display: none;
+  }
+  .ant-tabs-tab {
+    font-weight: 600;
+    .ant-tabs-tab-btn {
+      text-shadow: unset;
+    }
+  }
+  .ant-tabs {
+    height: 100%;
+    .ant-tabs-content {
+      height: 100%;
+    }
+  }
+  .wrapper {
+    width: 90%;
+    position: absolute;
+    top: 50%;
+    background: unset;
+    left: 5%;
+
+    .profile {
+      height: 100%;
+    }
+
+    .information-detail {
+      p {
+        font-size: 16px;
+        margin-top: 10px;
+      }
+      span:last-child {
+        font-weight: 600;
+      }
+    }
+
+    .profile-salary-account {
+      width: 70%;
+      margin: 10px auto 0;
+      p {
+        margin-top: 5px;
+        font-size: 16px;
+        display: flex;
+        justify-content: space-between;
+      }
+      span:last-child {
+        font-weight: 600;
+      }
+    }
+
+    .profile-avatar-user {
+      position: relative;
+      .button-update-avatar {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        bottom: 0;
+        right: 35%;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .icon-update-avatar {
+          font-size: 20px;
+          padding: 10px;
+        }
+      }
+    }
+
+    .profile-detail-information {
+      .information-detail {
+        //display: flex;
+      }
+    }
+
+    .tab-update-profile {
+      height: 100%;
+      form {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .button-cancel {
+        background-color: white !important;
+        color: #1c242c;
+        border: 1px solid #494b4f;
+      }
+      label {
+        float: left;
+      }
+      .ant-picker {
+        width: 100%;
+      }
+      button {
+        background: #1da1f2;
+      }
+    }
   }
 }

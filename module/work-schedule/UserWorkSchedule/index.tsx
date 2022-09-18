@@ -404,7 +404,7 @@ export function UserWorkSchedule(): JSX.Element {
   };
 
   return (
-    <div className="container">
+    <div className="container-work-schedule">
       <h6>
         ĐĂNG KÝ LỊCH LÀM VIỆC{" "}
         {data === null || data.state === 1 ? (

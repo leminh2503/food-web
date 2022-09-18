@@ -1,5 +1,5 @@
 import "../my-salary-detail/index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataDeductionDay} from "@app/types";
@@ -8,6 +8,8 @@ import {useQuery} from "react-query";
 import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
 import ModalDeductionSalary from "@app/module/DeductionSalaryTable/ModalDeductionSalary";
 import ModalDeductionHourSalary from "@app/module/DeductionSalaryTable/ModalDeductionHourSalary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function DeductionSalaryTable({
   month,
@@ -15,7 +17,9 @@ export default function DeductionSalaryTable({
   isAdmin,
   userId,
   baseSalary,
+  setDeductionSalary,
 }: {
+  setDeductionSalary?: (val: number) => void;
   baseSalary: number;
   userId?: number;
   isAdmin?: boolean;
@@ -50,18 +54,24 @@ export default function DeductionSalaryTable({
   };
 
   const getDeductionSalary = (): Promise<IDataDeductionDay[]> => {
-    return ApiSalary.getMyDeductionDaySalary(year, month);
+    return ApiSalary.getMyDeductionDaySalary(year, month, userId);
   };
 
-  const {data: dataDeduction, refetch: dayRefetch} =
-    useQuery("deductionDaySalary", getDeductionSalary) || [];
+  const {
+    data: dataDeduction,
+    refetch: dayRefetch,
+    isRefetching: isRefetchingD,
+  } = useQuery("deductionDaySalary" + userId, getDeductionSalary) || [];
 
   const getDeductionHourSalary = (): Promise<IDataDeductionDay[]> => {
-    return ApiSalary.getMyDeductionHourSalary(year, month);
+    return ApiSalary.getMyDeductionHourSalary(year, month, userId);
   };
 
-  const {data: dataDeductionHour, refetch: hourRefetch} =
-    useQuery("deductionHourSalary", getDeductionHourSalary) || [];
+  const {
+    data: dataDeductionHour,
+    refetch: hourRefetch,
+    isRefetching: isRefetchingH,
+  } = useQuery("deductionHourSalary" + userId, getDeductionHourSalary) || [];
 
   const columns: ColumnsType<IDataDeductionDay> = isAdmin
     ? [
@@ -84,16 +94,23 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: (
+          title: CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_DEDUCTION
+          ) ? (
             <EditFilled
               onClick={showModalDay}
               className="text-[20px] text-[#0092ff] mr-3"
             />
+          ) : (
+            <> </>
           ),
           align: "center",
           width: "100px",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_DEDUCTION
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteDeductionDaySalary(_record?.id || 0).then(
@@ -102,6 +119,8 @@ export default function DeductionSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },
@@ -147,16 +166,23 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: (
+          title: CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_DEDUCTION
+          ) ? (
             <EditFilled
               onClick={showModalHour}
               className="text-[20px] text-[#0092ff] mr-3"
             />
+          ) : (
+            <> </>
           ),
           width: "100px",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return (
+            return CheckPermissionEvent(
+              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
+                .DELETE_SALARY_DEDUCTION
+            ) ? (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteDeductionHourSalary(_record?.id || 0).then(
@@ -165,6 +191,8 @@ export default function DeductionSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
+            ) : (
+              <> </>
             );
           },
         },
@@ -218,7 +246,12 @@ export default function DeductionSalaryTable({
     data2?.reduce(function (accumulator, element) {
       return accumulator + (Number(element?.deductionSalaryHour) || 0);
     }, 0) || 0;
-
+  useEffect(() => {
+    const totalSalary2 = totalSalaryDay + totalSalaryHour;
+    if (setDeductionSalary) {
+      setDeductionSalary(totalSalary2);
+    }
+  }, [isRefetchingD, isRefetchingH]);
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -239,7 +272,7 @@ export default function DeductionSalaryTable({
       />
       <div className="mb-4 font-bold">
         Lương khấu trừ :{" "}
-        {(totalSalaryHour + totalSalaryDay).toLocaleString("en-US")} VND
+        {(totalSalaryHour + totalSalaryDay)?.toLocaleString("en-US")} VND
       </div>
       <div className="flex">
         <Table
