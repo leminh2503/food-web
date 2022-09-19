@@ -1,6 +1,7 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
+  IPermission,
   EnglishCertificate,
   IAccountInfo,
   IFamilyCircumstance,
@@ -85,8 +86,9 @@ export interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
   role?: {
-    id?: number;
-    roleName?: string;
+    id: number;
+    roleName: string;
+    permissions: IPermission[];
   };
 }
 

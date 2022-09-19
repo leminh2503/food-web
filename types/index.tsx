@@ -49,6 +49,12 @@ export enum TypeOfAction {
   ADD = "ADD",
 }
 
+export interface IPermission {
+  id: number;
+  permissionKey: string;
+  permissionName: string;
+}
+
 export interface IWorkType {
   id?: number;
   name?: string;
@@ -334,23 +340,15 @@ export interface IAccountInfo {
   isConfirmed?: boolean;
   dataProfile?: IProfile;
   role?: {
-    id?: IAccountRole;
-    roleName?: string;
-    permissions: {
-      id: number;
-      permissionName: string;
-      permissionKey: string;
-    }[];
+    id: number;
+    roleName: string;
+    permissions: IPermission[];
   };
 }
 
 export interface ILeaveWork {
-  id?: number;
-  user?: {
-    id: number;
-    email: string;
-    fullName: string;
-  };
+  id: number;
+  user?: IProfile;
   startDate?: Date;
   reason?: string;
   reasonRefuse?: string;
@@ -459,6 +457,12 @@ export enum EEnglishCertificate {
   TOEFL = "Toefl",
   IELTS = "Ielts",
   OTHER = "Other",
+}
+
+export enum ELeaveWork {
+  DANG_CHO_DUYET = 0,
+  DA_CHAP_NHAN = 1,
+  BI_TU_CHOI = 2,
 }
 
 export enum EProjectState {
