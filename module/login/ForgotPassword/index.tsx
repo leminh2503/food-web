@@ -92,7 +92,7 @@ export function ForgotPassword({changeTab,setData}: SignInProps,): JSX.Element {
       }): JSX.Element => (
         
         <div className="container-sign-in">
-          <button type="button" className="btn-back-page" onClick={router.back}>
+          <button type="button" className="btn-back-page" onClick={(): void => changeTab("signIn")}>
             <LeftOutlined />
           </button>
           <Form onFinish={handleSubmit} className="container-sign-in">

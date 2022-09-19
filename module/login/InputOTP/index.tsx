@@ -55,6 +55,11 @@ export function InputOTP({changeTab,data}: SignInProps): JSX.Element {
           onSuccess: () => {
             changeTab("signIn")
             setSubmitting(false);
+            notification.success({
+              message:"Cập nhật thành công"
+              
+            })
+
           },
           onError: (error) => {
             setSubmitting(false);
@@ -114,7 +119,7 @@ export function InputOTP({changeTab,data}: SignInProps): JSX.Element {
         
         
         <div className="container-sign-in">
-          <button type="button" className="btn-back-page" onClick={(): void => changeTab("signIn")}>
+          <button type="button" className="btn-back-page" onClick={(): void => changeTab("forgotPassword")}>
             <LeftOutlined />
           </button>
           <Form onFinish={handleSubmit} className="container-sign-in">
