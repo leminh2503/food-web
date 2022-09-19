@@ -140,8 +140,8 @@ export function ModalCreateProjectMember({
             rules={[
               {required: true},
               {
-                pattern: /^([1-9][0-9]*)$/,
-                message: "Hợp đồng phải là số nguyên dương!",
+                pattern: /^(?!0$)\d+(?:[.][05])?$/,
+                message: "Hợp đồng phải không hợp lệ!",
               },
             ]}
           >

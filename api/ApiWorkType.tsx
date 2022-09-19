@@ -6,21 +6,25 @@ export interface IWorkTypeBody {
   description?: string;
 }
 
+export interface IEditWorkTypeBody {
+  id: number;
+  name?: string;
+  description?: string;
+}
+
 export interface IParamsGetWorkType {
   pageSize?: number;
   pageNumber?: number;
-}
-
-export interface IWorkTypeWithMeta {
-  data: IWorkType[];
-  meta: IMetadata;
+  sort?: string[];
 }
 
 const path = {
   getWorkType: "work-type",
 };
 
-function getWorkType(params?: IParamsGetWorkType): Promise<IWorkTypeWithMeta> {
+function getWorkType(
+  params?: IParamsGetWorkType
+): Promise<{data: IWorkType[]; meta: IMetadata}> {
   return fetcherWithMetadata({
     url: path.getWorkType,
     method: "get",
@@ -28,11 +32,11 @@ function getWorkType(params?: IParamsGetWorkType): Promise<IWorkTypeWithMeta> {
   });
 }
 
-function createWorkType(body?: IWorkTypeBody): Promise<IWorkType[]> {
+function createWorkType(body?: IWorkTypeBody): Promise<IWorkType> {
   return fetcher({url: path.getWorkType, method: "post", data: body});
 }
 
-function editWorkType(body: IWorkType): Promise<IWorkType[]> {
+function editWorkType(body: IEditWorkTypeBody): Promise<IWorkType> {
   return fetcher({
     url: path.getWorkType + "/" + body.id,
     method: "put",
@@ -40,7 +44,7 @@ function editWorkType(body: IWorkType): Promise<IWorkType[]> {
   });
 }
 
-function deleteWorkType(id: number): Promise<IWorkType[]> {
+function deleteWorkType(id: number): Promise<IWorkType> {
   return fetcher({url: path.getWorkType + "/" + id, method: "delete"});
 }
 

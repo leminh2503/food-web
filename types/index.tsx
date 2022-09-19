@@ -56,7 +56,7 @@ export interface IPermission {
 }
 
 export interface IWorkType {
-  id?: number;
+  id: number;
   name?: string;
   description?: string;
 }
@@ -401,7 +401,7 @@ export interface IEvent {
 }
 
 export interface IPosition {
-  id?: number;
+  id: number;
   name?: string;
   description?: string;
 }
