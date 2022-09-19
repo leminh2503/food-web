@@ -41,6 +41,7 @@ const path = {
   lockToTalSalary: "/total-salary/lock",
   createSalaryAllEmployee: "/total-salary/create-all-user",
   updateTotalSalary: "/total-salary/",
+  updateOSSalary: "/total-salary/",
 };
 
 interface IBodyOTSalary {
@@ -54,6 +55,17 @@ interface IBodyOnsiteSalary {
   user: number | string;
   onsitePlace: string;
   date: string;
+}
+
+function updateOSSalary(
+  id: number,
+  dailyOnsiteRate: number
+): Promise<IDataOnsite[]> {
+  return fetcher({
+    url: path.updateOSSalary + `${id}/daily-onsite-rate`,
+    method: "patch",
+    data: {dailyOnsiteRate},
+  });
 }
 
 function createSalaryAllEmployee(
@@ -337,6 +349,7 @@ function createSalaryProject(data: {
   user: number;
   project: number;
   salary: number;
+  totalSalaryId: number;
   date: string;
 }): Promise<any> {
   return fetcher({
@@ -406,4 +419,5 @@ export default {
   lockToTalSalary,
   createSalaryAllEmployee,
   updateTotalSalary,
+  updateOSSalary,
 };

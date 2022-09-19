@@ -15,6 +15,7 @@ interface IModalCreateProject {
   userId: number;
   month: number;
   year: number;
+  idTotal?: number;
   handleRefetch?: () => void;
 }
 
@@ -42,7 +43,11 @@ export default function ModalProjectSalary(
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Thưởng" name="salary">
+          <Form.Item
+            label="Thưởng"
+            name="salary"
+            rules={[{min: 1000, message: "Giá trị phải lớn hơn 1000"}]}
+          >
             <InputNumber
               className="w-full"
               formatter={(value) =>
@@ -64,6 +69,7 @@ export default function ModalProjectSalary(
       user: props?.userId || 0,
       project: project || 0,
       salary: salary || 0,
+      totalSalaryId: props?.idTotal || 0,
       date:
         props.year +
         "/" +

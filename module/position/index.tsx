@@ -9,6 +9,8 @@ import {ModalCreatePosition} from "@app/module/position/components/ModalCreatePo
 import {ModalEditPosition} from "@app/module/position/components/ModalEditPosition";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function Position(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
@@ -77,9 +79,16 @@ export function Position(): JSX.Element {
   return (
     <div className="container-position">
       <div className="mb-5 flex justify-end">
-        <Button className="btn-primary w-48" onClick={showModalCreatePosition}>
-          Thêm chức vụ
-        </Button>
+        {CheckPermissionEvent(
+          NameEventConstant.PERMISSION_POSITION_KEY.ADD
+        ) && (
+          <Button
+            className="btn-primary w-48"
+            onClick={showModalCreatePosition}
+          >
+            Thêm chức vụ
+          </Button>
+        )}
       </div>
       <Table
         columns={[
@@ -113,13 +122,27 @@ export function Position(): JSX.Element {
                   className="mr-2"
                   icon={<Icon icon="Edit" size={20} color="#0092ff" />}
                   onClick={(): void => {
-                    setPosition(record);
-                    showModalEditPosition();
+                    if (
+                      CheckPermissionEvent(
+                        NameEventConstant.PERMISSION_POSITION_KEY.UPDATE
+                      )
+                    ) {
+                      setPosition(record);
+                      showModalEditPosition();
+                    }
                   }}
                 />
                 <Button
                   icon={<Icon icon="Delete" size={20} color="#cb2131" />}
-                  onClick={(): void => handleDeletePosition(record)}
+                  onClick={(): void => {
+                    if (
+                      CheckPermissionEvent(
+                        NameEventConstant.PERMISSION_POSITION_KEY.DELETE
+                      )
+                    ) {
+                      handleDeletePosition(record);
+                    }
+                  }}
                 />
               </>
             ),

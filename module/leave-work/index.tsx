@@ -14,6 +14,8 @@ import {ModalRefuseLeaveWork} from "@app/module/leave-work/components/ModalRefus
 import {FilterLeaveWork} from "@app/module/leave-work/components/FilterLeaveWork";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function LeaveWork(): JSX.Element {
   const role = useSelector((state: IRootState) => state.user.role);
@@ -227,15 +229,27 @@ export function LeaveWork(): JSX.Element {
             <Button
               className="mr-1"
               onClick={(): void => {
-                handleApprovalLeaveWork(record);
+                if (
+                  CheckPermissionEvent(
+                    NameEventConstant.PERMISSION_ON_LEAVE_KEY.ACCEPT_ON_LEAVE
+                  )
+                ) {
+                  handleApprovalLeaveWork(record);
+                }
               }}
               icon={<Icon icon="Accept" size={20} />}
             />
             <Button
               className="mr-1"
               onClick={(): void => {
-                showModalRefuseLeaveWork();
-                setRefuseWorkLeaveId(record.id);
+                if (
+                  CheckPermissionEvent(
+                    NameEventConstant.PERMISSION_ON_LEAVE_KEY.UPDATE_ON_LEAVE
+                  )
+                ) {
+                  showModalRefuseLeaveWork();
+                  setRefuseWorkLeaveId(record.id);
+                }
               }}
               icon={<Icon icon="CloseRed" size={20} />}
             />

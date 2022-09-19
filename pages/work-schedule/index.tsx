@@ -1,8 +1,14 @@
 import {WorkSchedule} from "@app/module/work-schedule";
-import ApiUser from "@app/api/ApiUser";
 import {Salary} from "@app/module/salary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function index() {
-  const role = ApiUser.getUserRole();
-  return role?.toString() === "1" ? <WorkSchedule /> : <Salary />;
+  return CheckPermissionEvent(
+    NameEventConstant.PERMISSION_WORK_CALENDAR_KEY.LIST_ALL
+  ) ? (
+    <WorkSchedule />
+  ) : (
+    <Salary />
+  );
 }

@@ -52,7 +52,7 @@ export function Birthday(): JSX.Element {
         </Button>
       </div>
       {isList ? (
-        <div className="w-[100%] h-[70%] pt-24 slider">
+        <div className="w-[85vw] h-[70%] pt-24 slider">
           <Carousel
             autoplay
             slidesToShow={3}

@@ -62,6 +62,7 @@ export function ModalEditProject({
       use: fieldsValue.use,
       technicality: fieldsValue.technicality,
       description: fieldsValue.description,
+      projectProgress: fieldsValue?.projectProgress,
     };
     handleEditProject(data);
   };
@@ -207,6 +208,18 @@ export function ModalEditProject({
             ]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="projectProgress"
+            label="Tiến độ hoàn thành"
+            rules={[
+              {
+                pattern: /^([1-9][0-9]*)$/,
+                message: "Quy mô phải là số nguyên dương!",
+              },
+            ]}
+          >
+            <Input min={0} maxLength={3} max={100} />
           </Form.Item>
           <Form.Item
             name="description"
