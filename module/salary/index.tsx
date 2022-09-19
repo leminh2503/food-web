@@ -24,7 +24,7 @@ export function Salary(): JSX.Element {
     useQuery(queryKeys.GET_LIST_TOTAL_SALARY_OF_USER, getListTotalSalary) || [];
 
   const dataYear = (): JSX.Element => {
-    const year = [];
+    const year: any = [];
     for (let i = Config.NOW.YEAR; i <= date.getFullYear(); i++) {
       year.push(i);
     }

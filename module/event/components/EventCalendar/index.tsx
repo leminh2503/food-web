@@ -76,8 +76,8 @@ export function EventCalendar({
   ): JSX.Element => {
     const start = 0;
     const end = 12;
-    const monthOptions = [];
-    const yearOptions = [];
+    const monthOptions: any = [];
+    const yearOptions: any = [];
     const year = value.year();
     const month = value.month();
 

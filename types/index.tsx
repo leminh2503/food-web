@@ -452,6 +452,18 @@ export interface ISetStateModal {
   description?: string;
 }
 
+export interface IRules {
+  tittle?: string;
+  link?: string;
+  startTime?: string;
+}
+
+// export enum EUserGender {
+//   OTHER = "Other",
+//   MALE = "Male",
+//   FEMALE = "Female",
+// }
+
 export enum EEnglishCertificate {
   TOEIC = "Toeic",
   TOEFL = "Toefl",

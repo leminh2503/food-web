@@ -35,7 +35,7 @@ export function AcceptSalaryEmployee(): JSX.Element {
     useQuery("listUser", getListTotalSalary, {enabled: false}) || [];
 
   const dataYear = (): JSX.Element => {
-    const year = [];
+    const year: any = [];
     for (let i = Config.NOW.YEAR; i <= date.getFullYear(); i++) {
       year.push(i);
     }
@@ -51,7 +51,7 @@ export function AcceptSalaryEmployee(): JSX.Element {
   };
 
   const dataMonth = (): JSX.Element => {
-    const month = [];
+    const month: any = [];
     for (
       let i = Config.NOW.YEAR === date.getFullYear() ? Config.NOW.Month : 1;
       i <= date.getMonth() + 1;

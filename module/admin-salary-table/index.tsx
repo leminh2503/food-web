@@ -24,7 +24,7 @@ export function AdminSalaryTable(): JSX.Element {
   const {data} = useQuery("listTotalSalaryAdmin", getListTotalSalary) || [];
 
   const dataYear = (): JSX.Element => {
-    const year = [];
+    const year: any = [];
     for (let i = Config.NOW.YEAR; i <= date.getFullYear(); i++) {
       year.push(i);
     }
