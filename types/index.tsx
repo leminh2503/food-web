@@ -232,8 +232,9 @@ export interface IDataSalaryToTalOfUser {
     email: string;
   };
   totalSalary: number;
-  detailTaxSalary: object;
+  detailTaxSalary: IDetailTax;
   afterTaxSalary: number;
+  dailyOnsiteRate: number;
 }
 
 export interface IDataSalary {
@@ -418,6 +419,7 @@ export interface IProject {
   description?: string;
   state?: number;
   projectManager?: IProfile;
+  projectProgress?: number;
 }
 
 export enum ERolePosition {
@@ -451,6 +453,18 @@ export interface ISetStateModal {
   name?: string;
   description?: string;
 }
+
+export interface IRules {
+  tittle?: string;
+  link?: string;
+  startTime?: string;
+}
+
+// export enum EUserGender {
+//   OTHER = "Other",
+//   MALE = "Male",
+//   FEMALE = "Female",
+// }
 
 export enum EEnglishCertificate {
   TOEIC = "Toeic",

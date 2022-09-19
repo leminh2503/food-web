@@ -18,7 +18,7 @@ export function FilterBirthday({
   setFilterMonth,
 }: FilterBirthdayProps): JSX.Element {
   const dataFilterYear = (): DataFilter[] => {
-    const years = [];
+    const years: any = [];
     const currentYear = moment().year();
     for (let i = 0; i <= 10; i++) {
       years[i] = {

@@ -12,19 +12,32 @@ import DeductionSalaryTable from "@app/module/DeductionSalaryTable/DeductionSala
 import {IDataProjectList, IUserLogin} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {Button, Image, Modal, notification, Table} from "antd";
+import {Button, Image, Modal, notification, Table, Dropdown} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
 import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
-  const {month, year, userId, id, total, tax} = router.query;
+  const {
+    month,
+    year,
+    userId,
+    id,
+    total,
+    tax,
+    taxSalary,
+    deductionTaxMe,
+    deductionFamilyTaxMe,
+    taxableSalary,
+    dailyOnsiteRate,
+  } = router.query;
   const [onsiteSalary, setOnsiteSalary] = useState<number>(0);
   const [bonusSalary, setBonusSalary] = useState<number>(0);
   const [overtimeSalary, setOvertimeSalary] = useState<number>(0);
   const [projectSalary, setProjectSalary] = useState<number>(0);
   const [deductionSalary, setDeductionSalary] = useState<number>(0);
+  const [dailyOnsiteRate2, setDailyOnsiteRate2] = useState<number>();
 
   const getUserInfo = (): Promise<IUserLogin> => {
     return ApiUser.getUserInfo({id: Number(userId)});
@@ -122,7 +135,32 @@ export function SalaryTableDetail(): JSX.Element {
     projectSalary -
     deductionSalary +
     Number(total || 0) -
-    Number(tax || 0);
+    Number(taxSalary || 0);
+
+  const menu = (
+    <div className="p-4 bg-white shadow-2xl">
+      <p className=" font-bold">
+        Tổng lương : {totalSalary?.toLocaleString("en-US")} VND
+      </p>
+      <p className="mt-2 font-bold">
+        Giảm trừ gia cảnh cá nhân:{" "}
+        {Number(deductionTaxMe || 0).toLocaleString("en-US")} VND
+      </p>
+      <p className="mt-2 font-bold">
+        Giảm trừ gia cảnh người phụ thuộc :{" "}
+        {Number(deductionFamilyTaxMe || 0).toLocaleString("en-US")} VND
+      </p>
+      <p className="mt-2 font-bold">
+        Thu nhập chịu thuế :{" "}
+        {Number(taxableSalary || 0).toLocaleString("en-US")} VND
+      </p>
+      <p className="mt-2 font-bold">Thuế suất : {tax}</p>
+      <p className="mt-2 font-bold">
+        Thuế thu nhập cá nhân : {Number(taxSalary || 0).toLocaleString("en-US")}{" "}
+        VND
+      </p>
+    </div>
+  );
 
   return (
     <div>
@@ -163,6 +201,9 @@ export function SalaryTableDetail(): JSX.Element {
       {month && year && (
         <div className="mt-4">
           <OnsiteSalaryTable
+            setDailyOnsiteRate2={setDailyOnsiteRate2}
+            idTotal={Number(id)}
+            dailyOnsiteRate={dailyOnsiteRate2 ?? Number(dailyOnsiteRate)}
             setOnsiteSalary={setOnsiteSalary}
             idUser={Number(userId)}
             month={Number(month)}
@@ -198,12 +239,19 @@ export function SalaryTableDetail(): JSX.Element {
           />
         </div>
       )}
-      <div className="mt-6 h-[150px] w-[300px] bg-white p-4">
-        <p className="font-bold hover-pointer">
-          Thuế thu nhập cá nhân : {Number(tax || 0)?.toLocaleString("en-US")}{" "}
-          VND
-        </p>
-        <p className="mt-2 font-bold">
+      <div className="mt-6 h-[150px] w-[400px] bg-white p-4">
+        <Dropdown
+          overlay={menu}
+          placement="top"
+          trigger={["click"]}
+          arrow={{pointAtCenter: true}}
+        >
+          <p className="font-bold hover-pointer ">
+            Thuế thu nhập cá nhân :{" "}
+            {Number(taxSalary || 0)?.toLocaleString("en-US")} VND
+          </p>
+        </Dropdown>
+        <p className="mt-6 font-bold text-[26px]">
           Tổng lương : {Number(totalSalary || 0)?.toLocaleString("en-US")} VND
         </p>
       </div>

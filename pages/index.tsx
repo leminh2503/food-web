@@ -1,8 +1,14 @@
 import {AccountManager} from "@app/module/account-manager";
-import ApiUser from "@app/api/ApiUser";
 import {Salary} from "@app/module/salary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function index() {
-  const role = ApiUser.getUserRole();
-  return role?.toString() === "1" ? <AccountManager /> : <Salary />;
+  return CheckPermissionEvent(
+    NameEventConstant.PERMISSION_USER_KEY.LIST_ALL_USER
+  ) ? (
+    <AccountManager />
+  ) : (
+    <Salary />
+  );
 }
