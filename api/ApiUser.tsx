@@ -107,20 +107,8 @@ export interface IParamsGetUser {
   };
 }
 
-  export interface IForgotPassword{
-    email:string;
-  }
-
-  export interface ISetPassword{
-    email: string;
-    otp: string;
-    newPassword: string;
-  }
-
 const path = {
   login: "/auth/login",
-  forgotpassword:"/auth/forgot-password",
-  setpassword:"/auth/set-password",
   getMe: "/users/me",
   getUserAccount: "/users",
   uploadAvatar: "/users/set-avatar",
@@ -202,17 +190,6 @@ function login(body: ILoginBody): Promise<IAccountInfo> {
   );
 }
 
-function forgotPassword(body: IForgotPassword) : Promise<IUserLogin> {
-  return fetcher(
-    {url: path.forgotpassword, method: "post", data: body},
-  )
-}
-
-function setPassword(body: ISetPassword) : Promise<IUserLogin> {
-  return fetcher(
-    {url: path.setpassword, method: "post", data: body},
-  )
-}
 function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
   return fetcher({url: path.addNewEmployee, method: "post", data: body});
 }
@@ -286,8 +263,6 @@ function getAuthToken(): string | undefined {
 
 export default {
   login,
-  forgotPassword,
-  setPassword,
   isLogin,
   getAuthToken,
   getInfoMe,
