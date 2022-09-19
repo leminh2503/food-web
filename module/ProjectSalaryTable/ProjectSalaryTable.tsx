@@ -17,7 +17,9 @@ export default function ProjectSalaryTable({
   userId,
   isAdmin,
   setProjectSalary,
+  idTotal,
 }: {
+  idTotal?: number;
   setProjectSalary?: (val: number) => void;
   isAdmin?: boolean;
   userId: number;
@@ -61,6 +63,9 @@ export default function ProjectSalaryTable({
           dataIndex: "salary",
           key: "salary",
           align: "center",
+          render: (_, record, index) => (
+            <div>{record?.salary?.toLocaleString("en-US")} VND</div>
+          ),
         },
         {
           title: "",
@@ -124,6 +129,7 @@ export default function ProjectSalaryTable({
           handleOk={handleOk}
           handleCancel={handleCancel}
           userId={Number(userId)}
+          idTotal={idTotal}
         />
       )}
       <div className="flex items-center mb-4 justify-between">

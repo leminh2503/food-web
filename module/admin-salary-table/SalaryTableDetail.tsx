@@ -187,6 +187,7 @@ export function SalaryTableDetail(): JSX.Element {
             listProject={listProject}
             month={Number(month)}
             year={Number(year)}
+            idTotal={Number(id)}
             isAdmin
           />
           <OtherSalaryTable

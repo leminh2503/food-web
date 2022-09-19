@@ -349,6 +349,7 @@ function createSalaryProject(data: {
   user: number;
   project: number;
   salary: number;
+  totalSalaryId: number;
   date: string;
 }): Promise<any> {
   return fetcher({
