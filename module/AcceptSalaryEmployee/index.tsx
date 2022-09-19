@@ -10,6 +10,8 @@ import ApiSalary from "@app/api/ApiSalary";
 import {IDataProjectList} from "@app/types";
 import ApiUser from "@app/api/ApiUser";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function AcceptSalaryEmployee(): JSX.Element {
   const router = useRouter();
@@ -35,7 +37,7 @@ export function AcceptSalaryEmployee(): JSX.Element {
     useQuery("listUser", getListTotalSalary, {enabled: false}) || [];
 
   const dataYear = (): JSX.Element => {
-    const year: any = [];
+    const year = [];
     for (let i = Config.NOW.YEAR; i <= date.getFullYear(); i++) {
       year.push(i);
     }
@@ -51,7 +53,7 @@ export function AcceptSalaryEmployee(): JSX.Element {
   };
 
   const dataMonth = (): JSX.Element => {
-    const month: any = [];
+    const month = [];
     for (
       let i = Config.NOW.YEAR === date.getFullYear() ? Config.NOW.Month : 1;
       i <= date.getMonth() + 1;
@@ -73,17 +75,23 @@ export function AcceptSalaryEmployee(): JSX.Element {
   const onRow = (record: any): {onDoubleClick: () => void} => {
     return {
       onDoubleClick: (): void => {
-        router.push({
-          pathname: baseURL.SALARY.ACCEPT_SALARY_DETAIL,
-          query: {
-            month: month,
-            year: year,
-            idUser: record?.userId,
-            idProject: idProject,
-            projectName: nameProject,
-            userName: record?.username,
-          },
-        });
+        if (
+          CheckPermissionEvent(
+            NameEventConstant.PERMISSION_SALARY_APPROVAL_KEY.SALARY_APPROVAL
+          )
+        ) {
+          router.push({
+            pathname: baseURL.SALARY.ACCEPT_SALARY_DETAIL,
+            query: {
+              month: month,
+              year: year,
+              idUser: record?.userId,
+              idProject: idProject,
+              projectName: nameProject,
+              userName: record?.username,
+            },
+          });
+        }
       },
     };
   };

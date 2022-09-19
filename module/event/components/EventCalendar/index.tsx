@@ -2,11 +2,11 @@ import "./index.scss";
 import {Badge, Calendar, Select, Button} from "antd";
 import React, {useState} from "react";
 import moment, {Moment} from "moment";
-import {useSelector} from "react-redux";
-import {IRootState} from "@app/redux/store";
 import {IEvent} from "@app/types";
 import {ModalCreateEvent} from "@app/module/event/components/ModalCreateEvent";
 import {ModalDeleteEvent} from "@app/module/event/components/ModalDeleteEvent";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface EventCalendarProps {
   dataEvent?: IEvent[];
@@ -22,7 +22,6 @@ export function EventCalendar({
   dataEvent,
   dataRefetch,
 }: EventCalendarProps): JSX.Element {
-  const role = useSelector((state: IRootState) => state.user.role);
   const [isModalVisible, setIsModalVisible] = useState("");
 
   const showModalCreateEvent = (): void => {
@@ -121,19 +120,25 @@ export function EventCalendar({
             {monthOptions}
           </Select>
         </div>
-        {role && (
-          <div className="p-2 mb-4">
+        <div className="p-2 mb-4">
+          {CheckPermissionEvent(
+            NameEventConstant.PERMISSION_EVENT_KEY.DELETE_EVENT
+          ) && (
             <Button
               className="mr-4 w-40 btn-red"
               onClick={showModalDeleteEvent}
             >
               Xóa sự kiện
             </Button>
+          )}
+          {CheckPermissionEvent(
+            NameEventConstant.PERMISSION_EVENT_KEY.ADD_EVENT
+          ) && (
             <Button className="w-40 btn-blue" onClick={showModalCreateEvent}>
               Thêm sự kiện
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   };

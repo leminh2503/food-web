@@ -32,3 +32,34 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
 }
+
+.modal-countdown {
+  .ant-modal {
+    top: 0;
+    position: fixed;
+    .ant-modal-content {
+      background-color: #1c242c;
+      padding: 40px;
+      width: 100vw;
+      height: 100vw;
+      .ant-modal-close-x {
+        font-size: 50px;
+        margin-right: 30px;
+      }
+    }
+  }
+  .ant-progress {
+    display: flex;
+    .ant-progress-inner {
+      height: 3vw !important;
+      .ant-progress-bg {
+        height: 3vw !important;
+        background-color: #50e150;
+      }
+    }
+    .ant-progress-text {
+      font-size: 3vw;
+      color: white;
+    }
+  }
+}

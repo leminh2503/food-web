@@ -23,6 +23,7 @@ export interface IEditProjectBody {
   technicality?: string;
   use?: string;
   description?: string;
+  projectProgress?: string | number;
 }
 
 export interface IProjectMemberBody {
@@ -101,6 +102,7 @@ function editProject(body: IEditProjectBody): Promise<IProject> {
       technicality: body.technicality,
       use: body.use,
       description: body.description,
+      projectProgress: Number(body?.projectProgress || 0) ?? undefined,
     },
   });
 }

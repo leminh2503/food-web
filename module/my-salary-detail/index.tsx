@@ -19,6 +19,7 @@ export function MySalaryDetail(): JSX.Element {
   const router = useRouter();
   const {month} = router.query;
   const {year} = router.query;
+  const {onsiteSalary} = router.query;
   const baseSalary = ApiUser.getInfoMe()?.baseSalary?.toLocaleString("en-US");
   const manageSalary =
     ApiUser.getInfoMe()?.manageSalary?.toLocaleString("en-US");
@@ -54,10 +55,7 @@ export function MySalaryDetail(): JSX.Element {
           </p>
           <p className="mt-2 font-bold" key={index}>
             Giảm trừ gia cảnh cá nhân:{" "}
-            {el?.detailTaxSalary?.deductionFamilyCircumstances?.toLocaleString(
-              "en-US"
-            )}{" "}
-            VND
+            {el?.detailTaxSalary?.deductionOwn?.toLocaleString("en-US")} VND
           </p>
           <p className="mt-2 font-bold" key={index}>
             Giảm trừ gia cảnh người phụ thuộc :{" "}
@@ -117,6 +115,7 @@ export function MySalaryDetail(): JSX.Element {
             month={Number(month)}
             year={Number(year)}
             listProject={listProject}
+            totalSalaryOS={Number(onsiteSalary || 0)}
           />
         </div>
       )}

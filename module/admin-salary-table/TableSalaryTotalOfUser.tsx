@@ -47,11 +47,13 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           dataIndex: "index",
           key: "index",
           align: "center",
+          fixed: "left",
           render: (_, record, index) => <div>{index + 1}</div>,
         },
         {
           title: "Họ tên",
           dataIndex: "fullName",
+          fixed: "left",
           key: "fullName",
           align: "center",
           render: (_, record) => {
@@ -61,6 +63,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         {
           title: "Ảnh",
           dataIndex: "avatar",
+          fixed: "left",
           key: "avatar",
           align: "center",
           width: 80,
@@ -81,6 +84,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         },
         {
           title: "Email",
+          fixed: "left",
           dataIndex: "email",
           key: "email",
           align: "center",
@@ -179,7 +183,9 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           key: "taxSalary",
           dataIndex: "taxSalary",
           render: (_, record, index) => (
-            <div>{record?.taxSalary.toLocaleString("en-US")}</div>
+            <div>
+              {record?.detailTaxSalary?.taxSalary?.toLocaleString("en-US")}
+            </div>
           ),
         },
         {
@@ -195,6 +201,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           title: "Trạng thái",
           dataIndex: "state",
           key: "state",
+          fixed: "right",
           align: "center",
           render: (index, _item) => {
             return (
@@ -297,7 +304,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         dataSource={data}
         className="hover-pointer"
         bordered
-        scroll={{y: "calc(100vh - 300)"}}
+        scroll={{x: "calc(100vw + 300px)", y: "calc(100vh - 300px)"}}
         pagination={{showSizeChanger: true, defaultPageSize: 100}}
         onRow={(record, rowIndex) => {
           return {
@@ -316,7 +323,13 @@ export function TableSalaryTotalOfUser(): JSX.Element {
                     userId: record.user.id,
                     id: record.id,
                     total: record.totalSalary,
-                    tax: record.taxSalary,
+                    taxSalary: record.taxSalary,
+                    deductionTaxMe: record?.detailTaxSalary?.deductionOwn,
+                    deductionFamilyTaxMe:
+                      record?.detailTaxSalary?.deductionFamilyCircumstances,
+                    taxableSalary: record.detailTaxSalary?.taxableSalary,
+                    tax: record?.detailTaxSalary?.tax,
+                    dailyOnsiteRate: record?.dailyOnsiteRate,
                   },
                 });
               }

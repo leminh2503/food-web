@@ -5,17 +5,14 @@ import {ArrowLeftOutlined} from "@ant-design/icons";
 import classNames from "classnames";
 import {useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/router";
-import ApiUser from "../../../api/ApiUser";
 import RouteList from "../../../routes/RouteList";
 import {logoutUser} from "@app/redux/slices/UserSlice";
 import Icon from "@app/components/Icon/Icon";
 import {IRootState, persistor} from "@app/redux/store";
-import {closeMenu, openMenu} from "@app/redux/slices/MenuSlice";
 import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
 
 const RenderMenu = React.memo(() => {
   const router = useRouter();
-  const userRole = ApiUser?.getUserRole();
 
   // React.useEffect(() => {
   //   setTimeout(() => {
@@ -46,18 +43,22 @@ const RenderMenu = React.memo(() => {
                 title={name}
                 icon={<Icon icon={icon as string} size={15} color="#fff" />}
               >
-                {children.map((child) => (
-                  <Menu.Item
-                    key={path + child.path}
-                    onClick={(): void => {
-                      router.push(path + child.path);
-                    }}
-                    className="sidebar-item"
-                    hidden={child.role !== userRole}
-                  >
-                    {child.name}
-                  </Menu.Item>
-                ))}
+                {children.map((child) => {
+                  if (CheckPermissionEvent(child.role)) {
+                    return (
+                      <Menu.Item
+                        key={path + child.path}
+                        onClick={(): void => {
+                          router.push(path + child.path);
+                        }}
+                        className="sidebar-item"
+                      >
+                        {child.name}
+                      </Menu.Item>
+                    );
+                  }
+                  return <> </>;
+                })}
               </Menu.SubMenu>
             );
           }
@@ -129,15 +130,7 @@ export default function Sidebar(): JSX.Element {
       {/* Sidebar */}
 
       {/* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */}
-      <div
-        className={classNames("sidebar", {open: isOpen})}
-        onMouseOver={(): void => {
-          dispatch(closeMenu());
-        }}
-        onMouseLeave={(): void => {
-          dispatch(openMenu());
-        }}
-      >
+      <div className={classNames("sidebar", {open: isOpen})}>
         <div className="logo-container">
           <Image
             src="/img/logo_detail.png"

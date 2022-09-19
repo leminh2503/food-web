@@ -80,7 +80,7 @@ export function WorkType(): JSX.Element {
     <div className="container-work-type">
       <div className="mb-5 flex justify-end">
         <Button className="btn-primary w-48" onClick={showModalCreateWorkType}>
-          Thêm chức vụ
+          Thêm loại hình làm việc
         </Button>
       </div>
       <Table
@@ -94,7 +94,7 @@ export function WorkType(): JSX.Element {
             render: (_, __, index) => <div>{index + 1}</div>,
           },
           {
-            title: "Chức vụ",
+            title: "Loại hình làm việc",
             dataIndex: "name",
             key: "name",
             align: "center",

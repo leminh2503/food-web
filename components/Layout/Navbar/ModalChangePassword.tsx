@@ -47,7 +47,7 @@ ModalChangePassword): JSX.Element {
 
   const changePasswordMutation = useMutation(ApiUser.changePassword);
 
-  const handleOk = (values) => {
+  const handleOk = (values: any) => {
     // const {email, newPass, oldPass } = data;
 
     if (!data.oldPassword) {
@@ -123,7 +123,7 @@ ModalChangePassword): JSX.Element {
         isSubmitting,
         handleSubmit,
       }): JSX.Element => {
-        const handleChangePass = (e) => {
+        const handleChangePass = (e: any) => {
           setData({...data, [e.target.name]: e.target.value});
         };
         data.newPassword = values.newPassword;

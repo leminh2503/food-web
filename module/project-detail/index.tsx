@@ -1,10 +1,11 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   LeftOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import {Modal, notification, Table} from "antd";
+import {Button, Modal, notification, Progress, Table} from "antd";
 import moment from "moment";
 import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
@@ -24,6 +25,9 @@ import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
 import ApiUser from "@app/api/ApiUser";
 import {renameKeys} from "@app/utils/convert/ConvertHelper";
+import {countDownTime} from "@app/utils/date/countDownTime";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function ProjectDetail(): JSX.Element {
   const router = useRouter();
@@ -151,15 +155,60 @@ export function ProjectDetail(): JSX.Element {
     });
   };
 
+  const [visibleCountDown, setVisibleCountDown] = useState(false);
+  const [countDownTimer, setCountDownTimer] = useState<string | number>();
+  useEffect(() => {
+    if (dataProjectById?.endDate) {
+      setInterval(() => {
+        setCountDownTimer(countDownTime(dataProjectById?.endDate || ""));
+      }, 1000);
+    }
+  }, [dataProjectById?.endDate]);
+
   return (
     <div className="container-project">
+      <Modal
+        title={null}
+        footer={null}
+        wrapClassName="modal-countdown"
+        visible={visibleCountDown}
+        onCancel={(): void => setVisibleCountDown(false)}
+      >
+        <div className="text-[6vw] text-[white] flex justify-center">
+          {dataProjectById && dataProjectById?.name}
+        </div>
+        <div className="text-[8vw] mt-[30px] text-[white] flex justify-center">
+          {countDownTimer}
+        </div>
+        <Progress
+          percent={dataProjectById?.projectProgress}
+          status="active"
+          className="mt-8"
+        />
+      </Modal>
       <div className="flex justify-between items-center mb-5">
         <button type="button" className="btn-back-page" onClick={router.back}>
           <LeftOutlined />
         </button>
-        <button type="button" onClick={showModalEditProject}>
-          <EditOutlined style={{color: "#0092ff", fontSize: 25}} />
-        </button>
+        <div className="flex">
+          <Button
+            type="primary"
+            className="btn-primary flex items-center mr-6"
+            onClick={(): void => {
+              setVisibleCountDown(true);
+            }}
+          >
+            <EyeOutlined />
+            <span className="ml-2"> Tiến độ dự án </span>
+          </Button>
+          {CheckPermissionEvent(
+            NameEventConstant.PERMISSION_PROJECT_KEY.UPDATE
+          ) && (
+            <button type="button" onClick={showModalEditProject}>
+              <EditOutlined style={{color: "#0092ff", fontSize: 25}} />
+            </button>
+          )}
+        </div>
       </div>
       <div>
         <Table
@@ -244,122 +293,138 @@ export function ProjectDetail(): JSX.Element {
             DANH SÁCH THÀNH VIÊN TRONG DỰ ÁN
           </h3>
           <div className="flex items-center">
-            <button
-              type="button"
-              className="mr-2"
-              onClick={showModalCreateProjectMember}
-            >
-              <PlusCircleOutlined style={{color: "#0092ff", fontSize: 20}} />
-            </button>
+            {CheckPermissionEvent(
+              NameEventConstant.PERMISSION_PROJECT_KEY.ADD_MEMBER
+            ) && (
+              <button
+                type="button"
+                className="mr-2"
+                onClick={showModalCreateProjectMember}
+              >
+                <PlusCircleOutlined style={{color: "#0092ff", fontSize: 20}} />
+              </button>
+            )}
           </div>
         </div>
-        <Table
-          columns={[
-            {
-              title: "STT",
-              align: "center",
-              width: 100,
-              render: (_, record, index) => <div>{index + 1}</div>,
-            },
-            {
-              title: "Tên",
-              align: "center",
-              render: (_, record) => record.user?.fullName,
-            },
-            {
-              title: "Vai trò",
-              align: "center",
-              dataIndex: "role",
-              key: "role",
-              render: (role) =>
-                role === ERolePosition.BACKEND_DEV
-                  ? "Backend Dev"
-                  : role === ERolePosition.FRONTEND_DEV
-                  ? "Frontend Dev"
-                  : role === ERolePosition.TESTER
-                  ? "Tester"
-                  : role === ERolePosition.BA
-                  ? "BA"
-                  : role === ERolePosition.DESIGNER
-                  ? "Designer"
-                  : "",
-            },
-            {
-              title: "Công số",
-              align: "center",
-              children: [
-                {
-                  title: "Hợp đồng",
-                  align: "center",
-                  dataIndex: "contract",
-                  key: "contract",
-                },
-                {
-                  title: "Thực tế",
-                  align: "center",
-                  dataIndex: "reality",
-                  key: "reality",
-                  render: (reality) => (reality === null ? 0 : reality),
-                },
-                {
-                  title: "OT",
-                  align: "center",
-                  dataIndex: "overtime",
-                  key: "overtime",
-                },
-              ],
-            },
-            {
-              title: "Thời gian",
-              align: "center",
-              children: [
-                {
-                  title: "Bắt đầu",
-                  align: "center",
-                  dataIndex: "startDate",
-                  key: "startDate",
-                  render: (date) => moment(new Date(date)).format("DD-MM-YYYY"),
-                },
-                {
-                  title: "Kết thúc",
-                  align: "center",
-                  dataIndex: "endDate",
-                  key: "endDate",
-                  render: (date) => moment(new Date(date)).format("DD-MM-YYYY"),
-                },
-              ],
-            },
-            {
-              title: "Hành động",
-              align: "center",
-              render: (_, record) => (
-                <div>
-                  <button
-                    type="button"
-                    className="mr-4"
-                    onClick={(): void => {
-                      setMember(record);
-                      showModalEditProjectMember();
-                    }}
-                  >
-                    <EditOutlined style={{color: "#0092ff", fontSize: 20}} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(): void => {
-                      handleDeleteProjectMember(record);
-                    }}
-                  >
-                    <DeleteOutlined style={{color: "#cb2131", fontSize: 20}} />
-                  </button>
-                </div>
-              ),
-            },
-          ]}
-          dataSource={dataProjectMember}
-          bordered
-          pagination={false}
-        />
+        {CheckPermissionEvent(
+          NameEventConstant.PERMISSION_PROJECT_KEY.EDIT_MEMBER
+        ) && (
+          <Table
+            columns={[
+              {
+                title: "STT",
+                align: "center",
+                width: 100,
+                render: (_, record, index) => <div>{index + 1}</div>,
+              },
+              {
+                title: "Tên",
+                align: "center",
+                render: (_, record) => record.user?.fullName,
+              },
+              {
+                title: "Vai trò",
+                align: "center",
+                dataIndex: "role",
+                key: "role",
+                render: (role) =>
+                  role === ERolePosition.BACKEND_DEV
+                    ? "Backend Dev"
+                    : role === ERolePosition.FRONTEND_DEV
+                    ? "Frontend Dev"
+                    : role === ERolePosition.TESTER
+                    ? "Tester"
+                    : role === ERolePosition.BA
+                    ? "BA"
+                    : role === ERolePosition.DESIGNER
+                    ? "Designer"
+                    : "",
+              },
+              {
+                title: "Công số",
+                align: "center",
+                children: [
+                  {
+                    title: "Hợp đồng",
+                    align: "center",
+                    dataIndex: "contract",
+                    key: "contract",
+                  },
+                  {
+                    title: "Thực tế",
+                    align: "center",
+                    dataIndex: "reality",
+                    key: "reality",
+                    render: (reality) => (reality === null ? 0 : reality),
+                  },
+                  {
+                    title: "OT",
+                    align: "center",
+                    dataIndex: "overtime",
+                    key: "overtime",
+                  },
+                ],
+              },
+              {
+                title: "Thời gian",
+                align: "center",
+                children: [
+                  {
+                    title: "Bắt đầu",
+                    align: "center",
+                    dataIndex: "startDate",
+                    key: "startDate",
+                    render: (date) =>
+                      moment(new Date(date)).format("DD-MM-YYYY"),
+                  },
+                  {
+                    title: "Kết thúc",
+                    align: "center",
+                    dataIndex: "endDate",
+                    key: "endDate",
+                    render: (date) =>
+                      moment(new Date(date)).format("DD-MM-YYYY"),
+                  },
+                ],
+              },
+              {
+                title: "Hành động",
+                align: "center",
+                render: (_, record) => (
+                  <div>
+                    <button
+                      type="button"
+                      className="mr-4"
+                      onClick={(): void => {
+                        setMember(record);
+                        showModalEditProjectMember();
+                      }}
+                    >
+                      <EditOutlined style={{color: "#0092ff", fontSize: 20}} />
+                    </button>
+                    {CheckPermissionEvent(
+                      NameEventConstant.PERMISSION_PROJECT_KEY.DELETE_MEMBER
+                    ) && (
+                      <button
+                        type="button"
+                        onClick={(): void => {
+                          handleDeleteProjectMember(record);
+                        }}
+                      >
+                        <DeleteOutlined
+                          style={{color: "#cb2131", fontSize: 20}}
+                        />
+                      </button>
+                    )}
+                  </div>
+                ),
+              },
+            ]}
+            dataSource={dataProjectMember}
+            bordered
+            pagination={false}
+          />
+        )}
         {dataProjectById && (
           <ModalCreateProjectMember
             isModalVisible={isModalVisible === "modalCreateProjectMember"}

@@ -30,6 +30,8 @@ import {LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {IMetadata} from "@app/api/Fetcher";
 import fileDownload from "js-file-download";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -66,16 +68,22 @@ export function AccountManager(): JSX.Element {
   const [dataDetail, setDataDetail] = useState<IUserLogin>(defaultValuesDetail);
 
   const handleOk = (data: IUserLogin): void => {
-    Modal.confirm({
-      title: "Xác nhận sửa thông tin nhân viên?",
-      okType: "primary",
-      okText: "Xác nhận",
-      cancelText: "Huỷ",
-      onOk: () => {
-        handleUpdateInformationAccount(data);
-        setIsModalVisible(false);
-      },
-    });
+    if (
+      CheckPermissionEvent(NameEventConstant.PERMISSION_USER_KEY.UPDATE_USER)
+    ) {
+      Modal.confirm({
+        title: "Xác nhận sửa thông tin nhân viên?",
+        okType: "primary",
+        okText: "Xác nhận",
+        cancelText: "Huỷ",
+        onOk: () => {
+          handleUpdateInformationAccount(data);
+          setIsModalVisible(false);
+        },
+      });
+    } else {
+      setIsModalVisible(false);
+    }
   };
 
   const handleCancel = (): void => {
@@ -453,28 +461,33 @@ export function AccountManager(): JSX.Element {
       key: "action",
       align: "center",
       width: "5%",
-      render: (_, record) => (
-        <div>
-          {Number(record.id) === 1 ? (
-            <div />
-          ) : (
-            <Button
-              className="mr-1"
-              onClick={(): void => {
-                const type = record.state === 1 ? "lock" : "unlock";
-                handleUserAction(record, type);
-              }}
-              icon={
-                record.state === 1 ? (
-                  <LockOutlined style={{color: "red"}} />
-                ) : (
-                  <UnlockOutlined style={{color: "green"}} />
-                )
-              }
-            />
-          )}
-        </div>
-      ),
+      render: (_, record) =>
+        CheckPermissionEvent(
+          NameEventConstant.PERMISSION_USER_KEY.DELETE_USER
+        ) ? (
+          <div>
+            {Number(record.id) === 1 ? (
+              <div />
+            ) : (
+              <Button
+                className="mr-1"
+                onClick={(): void => {
+                  const type = record.state === 1 ? "lock" : "unlock";
+                  handleUserAction(record, type);
+                }}
+                icon={
+                  record.state === 1 ? (
+                    <LockOutlined style={{color: "red"}} />
+                  ) : (
+                    <UnlockOutlined style={{color: "green"}} />
+                  )
+                }
+              />
+            )}
+          </div>
+        ) : (
+          <> </>
+        ),
     },
   ];
 
@@ -500,12 +513,16 @@ export function AccountManager(): JSX.Element {
                 >
                   Xuất Excel
                 </Button>
-                <Button
-                  onClick={(): void => setIsModalAddEmployeeVisible(true)}
-                  className="bg-blue-500 text-neutral-50"
-                >
-                  Tạo tài khoản mới
-                </Button>
+                {CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_USER_KEY.CREATE_USER
+                ) && (
+                  <Button
+                    onClick={(): void => setIsModalAddEmployeeVisible(true)}
+                    className="bg-blue-500 text-neutral-50"
+                  >
+                    Tạo tài khoản mới
+                  </Button>
+                )}
               </div>
             </Col>
           </Row>
@@ -522,8 +539,14 @@ export function AccountManager(): JSX.Element {
           onRow={(record, rowIndex) => {
             return {
               onDoubleClick: (): void => {
-                setDataDetail(record);
-                setIsModalVisible(true);
+                if (
+                  CheckPermissionEvent(
+                    NameEventConstant.PERMISSION_USER_KEY.GET_DETAIL_USER
+                  )
+                ) {
+                  setDataDetail(record);
+                  setIsModalVisible(true);
+                }
               },
             };
           }}
@@ -531,6 +554,7 @@ export function AccountManager(): JSX.Element {
         <Pagination
           className="mt-3 float-right"
           showSizeChanger
+          defaultPageSize={100}
           onShowSizeChange={onShowSizeChange}
           onChange={handleChangePagination}
           defaultCurrent={pagingCurrent.currentPage}

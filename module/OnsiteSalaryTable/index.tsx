@@ -1,6 +1,6 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
-import {Card, Modal, Table} from "antd";
+import {Card, InputNumber, Modal, notification, Table} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import {getDayOnMonth} from "@app/utils/date/getDayOnMonth";
 import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
@@ -15,13 +15,21 @@ import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function OnsiteSalaryTable({
   idUser,
+  idTotal,
   month,
   year,
   isManager,
   projectName,
+  setDailyOnsiteRate2,
+  dailyOnsiteRate,
   setOnsiteSalary,
   listProject,
+  totalSalaryOS,
 }: {
+  setDailyOnsiteRate2?: (val: number) => void;
+  idTotal?: number;
+  totalSalaryOS?: number;
+  dailyOnsiteRate?: number;
   listProject?: IDataProjectList[];
   setOnsiteSalary?: (val: number) => void;
   projectName?: string;
@@ -32,6 +40,9 @@ export default function OnsiteSalaryTable({
 }): JSX.Element {
   const [disableCheck] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [salary, setSalary] = useState<number>(dailyOnsiteRate || 0);
+
   const updateDataOnsite = useMutation(ApiSalary.updateOnsiteSalary);
 
   const showModal = (): void => {
@@ -122,11 +133,11 @@ export default function OnsiteSalaryTable({
   ];
 
   useEffect(() => {
-    const totalSalary2 = (dataOnsite?.length || 0) * 50000;
+    const totalSalary2 = (dataOnsite?.length || 0) * (dailyOnsiteRate || 0);
     if (setOnsiteSalary) {
       setOnsiteSalary(totalSalary2);
     }
-  }, [isRefetching]);
+  }, [isRefetching, dailyOnsiteRate]);
 
   for (let i = 1; i <= getDayOnMonth(month, year); i++) {
     let check = 0;
@@ -208,10 +219,55 @@ export default function OnsiteSalaryTable({
         handleCancel={handleCancel}
         listProject={listProject}
       />
-      <div className="mb-4 font-bold">
-        Lương Onsite :{" "}
-        {((dataOnsite?.length || 0) * 50000).toLocaleString("en-US")} VND
+      <div className="flex mb-4 justify-between">
+        <div className=" font-bold">
+          Lương Onsite :{" "}
+          {dailyOnsiteRate
+            ? (
+                (dataOnsite?.length || 0) * (dailyOnsiteRate || 0)
+              ).toLocaleString("en-US")
+            : totalSalaryOS?.toLocaleString("en-US")}{" "}
+          VND
+        </div>
+        {dailyOnsiteRate &&
+          (!isUpdate ? (
+            <div className="mb-4 font-bold">
+              {" "}
+              {dailyOnsiteRate?.toLocaleString("en-US")} VND/ngày
+              <EditFilled
+                className="text-[20px] text-[#0092ff] ml-2"
+                onClick={(): void => setIsUpdate(true)}
+              />
+            </div>
+          ) : (
+            <div className="mb-4 font-bold flex items-center">
+              <InputNumber
+                defaultValue={dailyOnsiteRate.toString()}
+                className="w-full"
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+                onChange={(e) => {
+                  setSalary(Number(e));
+                }}
+              />
+              <CheckCircleFilled
+                className="text-[green] text-[20px] ml-2"
+                onClick={(): void => {
+                  if (idTotal && setDailyOnsiteRate2) {
+                    ApiSalary.updateOSSalary(idTotal, salary).then((r) => {
+                      setDailyOnsiteRate2(salary);
+                      setIsUpdate(false);
+                      notification.success({message: "update success"});
+                    });
+                  }
+                }}
+              />
+            </div>
+          ))}
       </div>
+
       <Table
         columns={columns}
         dataSource={data}

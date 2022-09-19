@@ -34,7 +34,14 @@ export default function ModalDeductionSalary(
               }}
             />
           </Form.Item>
-          <Form.Item label="số ngày nghỉ" name="b">
+          <Form.Item
+            label="số ngày nghỉ"
+            name="b"
+            rules={[
+              {min: 0, message: "Giá trị phải lớn hơn 0"},
+              {max: 31, message: "Giá trị phải nhỏ hơn hoặc bằng 31"},
+            ]}
+          >
             <InputNumber
               max={31}
               min={0}

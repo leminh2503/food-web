@@ -159,7 +159,6 @@ export function LeaveWorkUser(): JSX.Element {
           Tạo đơn xin nghỉ phép
         </Button>
       </div>
-
       <Table
         columns={columnsUser}
         bordered
@@ -175,7 +174,6 @@ export function LeaveWorkUser(): JSX.Element {
           },
         }}
       />
-
       <ModalCreateLeaveWork
         isModalVisible={isModalVisible === "modalCreateLeaveWork"}
         toggleModal={toggleModal}

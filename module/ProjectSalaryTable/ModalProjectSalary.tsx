@@ -42,7 +42,11 @@ export default function ModalProjectSalary(
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Thưởng" name="salary">
+          <Form.Item
+            label="Thưởng"
+            name="salary"
+            rules={[{min: 1000, message: "Giá trị phải lớn hơn 1000"}]}
+          >
             <InputNumber
               className="w-full"
               formatter={(value) =>

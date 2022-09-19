@@ -34,9 +34,16 @@ export default function ModalDeductionHourSalary(
               }}
             />
           </Form.Item>
-          <Form.Item label="số giờ nghỉ" name="b">
+          <Form.Item
+            label="số giờ nghỉ"
+            name="b"
+            rules={[
+              {min: 0, message: "Giá trị phải lớn hơn 0"},
+              {max: 24, message: "Giá trị phải nhỏ hơn hoặc bằng 31"},
+            ]}
+          >
             <InputNumber
-              max={31}
+              max={24}
               min={0}
               className="w-full"
               onChange={(e) => {

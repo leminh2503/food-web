@@ -232,8 +232,9 @@ export interface IDataSalaryToTalOfUser {
     email: string;
   };
   totalSalary: number;
-  detailTaxSalary: object;
+  detailTaxSalary: IDetailTax;
   afterTaxSalary: number;
+  dailyOnsiteRate: number;
 }
 
 export interface IDataSalary {
@@ -418,6 +419,7 @@ export interface IProject {
   description?: string;
   state?: number;
   projectManager?: IProfile;
+  projectProgress?: number;
 }
 
 export enum ERolePosition {
