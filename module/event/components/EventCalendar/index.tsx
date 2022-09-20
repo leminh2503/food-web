@@ -1,16 +1,15 @@
-import "./index.scss";
 import {Badge, Calendar, Select, Button} from "antd";
 import React, {useState} from "react";
 import moment, {Moment} from "moment";
 import {IEvent} from "@app/types";
 import {ModalCreateEvent} from "@app/module/event/components/ModalCreateEvent";
 import {ModalDeleteEvent} from "@app/module/event/components/ModalDeleteEvent";
+import {IMetadata} from "@app/api/Fetcher";
 import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
 import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface EventCalendarProps {
-  dataEvent?: IEvent[];
-  dataRefetch: () => void;
+  dataEvent: {data: IEvent[]; meta: IMetadata};
 }
 
 interface ListData {
@@ -18,10 +17,7 @@ interface ListData {
   content?: string;
 }
 
-export function EventCalendar({
-  dataEvent,
-  dataRefetch,
-}: EventCalendarProps): JSX.Element {
+export function EventCalendar({dataEvent}: EventCalendarProps): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
 
   const showModalCreateEvent = (): void => {
@@ -42,7 +38,7 @@ export function EventCalendar({
       value.month() + 1 < 10 ? "0" + (value.month() + 1) : value.month() + 1;
     const day = value.date() < 10 ? "0" + value.date() : value.date();
     const date = value.year() + "" + month + day;
-    dataEvent?.forEach((item) => {
+    dataEvent.data.forEach((item) => {
       if (
         moment(date).diff(moment(item.startDate, "YYYY-MM-DD"), "days") >= 0 &&
         moment(date).diff(moment(item.endDate, "YYYY-MM-DD"), "days") <= 0
@@ -144,7 +140,7 @@ export function EventCalendar({
   };
 
   return (
-    <div>
+    <>
       <Calendar
         headerRender={({value, onChange}): JSX.Element =>
           headerRender(value, onChange)
@@ -154,14 +150,11 @@ export function EventCalendar({
       <ModalCreateEvent
         isModalVisible={isModalVisible === "modalCreateEvent"}
         toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
       />
       <ModalDeleteEvent
         isModalVisible={isModalVisible === "modalDeleteEvent"}
         toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
-        dataEvent={dataEvent}
       />
-    </div>
+    </>
   );
 }

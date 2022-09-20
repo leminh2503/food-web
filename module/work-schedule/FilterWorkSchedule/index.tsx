@@ -3,7 +3,9 @@ import {Filter} from "@app/components/Filter";
 import moment from "moment";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {useQuery} from "react-query";
-import ApiWorkType, {IWorkTypeWithMeta} from "@app/api/ApiWorkType";
+import ApiWorkType from "@app/api/ApiWorkType";
+import {IWorkType} from "@app/types";
+import {IMetadata} from "@app/api/Fetcher";
 
 interface FilterWorkScheduleProps {
   setFilterState: React.Dispatch<React.SetStateAction<number>>;
@@ -46,19 +48,19 @@ export function FilterWorkSchedule({
     );
   };
 
-  const getWorkType = (): Promise<IWorkTypeWithMeta> => {
+  const getWorkType = (): Promise<{data: IWorkType[]; meta: IMetadata}> => {
     return ApiWorkType.getWorkType({
       pageSize: 30,
       pageNumber: 1,
     });
   };
-  const dataWorkType = useQuery(
+  const {data: dataWorkType, refetch} = useQuery(
     queryKeys.GET_LIST_WORK_TYPE_FOR_SETTING,
     getWorkType
   );
 
   useEffect(() => {
-    dataWorkType.refetch();
+    refetch();
   }, []);
 
   const dataFilterState = (): DataFilter[] => {
@@ -69,7 +71,7 @@ export function FilterWorkSchedule({
         default: true,
       },
     ];
-    dataWorkType.data?.data.forEach((item) => {
+    dataWorkType?.data.forEach((item) => {
       if (item.name && item.id) {
         const newWorkType = {
           title: `${item?.name.charAt(0).toUpperCase()}${item?.name.slice(1)}`,

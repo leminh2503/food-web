@@ -8,12 +8,15 @@ import Icon from "@app/components/Icon/Icon";
 import {ModalCreatePosition} from "@app/module/position/components/ModalCreatePosition";
 import {ModalEditPosition} from "@app/module/position/components/ModalEditPosition";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {IMetadata} from "@app/api/Fetcher";
 import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
 import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function Position(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
-  const [positionId, setPositionId] = useState<number | undefined>();
+  const [position, setPosition] = useState<IPosition>();
+  const [pageSize, setPageSize] = useState<number>(50);
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   const showModalCreatePosition = (): void => {
     setIsModalVisible("modalCreatePosition");
@@ -27,21 +30,21 @@ export function Position(): JSX.Element {
     setIsModalVisible("");
   };
 
-  const getPosition = (): Promise<IPosition[]> => {
-    return ApiPosition.getPosition();
+  const getPosition = (): Promise<{data: IPosition[]; meta: IMetadata}> => {
+    return ApiPosition.getPosition({
+      pageSize: pageSize,
+      pageNumber: pageNumber,
+      sort: ["name"],
+    });
   };
-  const dataPosition = useQuery(
+  const {data: dataPosition, refetch} = useQuery(
     queryKeys.GET_LIST_POSITION_FOR_SETTING,
     getPosition
   );
 
-  const dataRefetch = (): void => {
-    dataPosition.refetch();
-  };
-
   useEffect(() => {
-    dataRefetch();
-  }, []);
+    refetch();
+  }, [pageSize, pageNumber]);
 
   const deletePositionMutation = useMutation(ApiPosition.deletePosition);
   const handleDeletePosition = (record: IPosition): void => {
@@ -59,7 +62,7 @@ export function Position(): JSX.Element {
                 duration: 1,
                 message: "Xóa chức vụ thành công!",
               });
-              dataRefetch();
+              refetch();
             },
             onError: () => {
               notification.error({
@@ -94,6 +97,7 @@ export function Position(): JSX.Element {
             dataIndex: "index",
             key: "index",
             align: "center",
+            width: 100,
             render: (_, __, index) => <div>{index + 1}</div>,
           },
           {
@@ -111,6 +115,7 @@ export function Position(): JSX.Element {
           {
             title: "Hành động",
             align: "center",
+            width: 200,
             render: (_, record) => (
               <>
                 <Button
@@ -122,7 +127,7 @@ export function Position(): JSX.Element {
                         NameEventConstant.PERMISSION_POSITION_KEY.UPDATE
                       )
                     ) {
-                      setPositionId(record.id);
+                      setPosition(record);
                       showModalEditPosition();
                     }
                   }}
@@ -143,21 +148,30 @@ export function Position(): JSX.Element {
             ),
           },
         ]}
-        dataSource={dataPosition.data}
+        dataSource={dataPosition?.data}
         bordered
+        pagination={{
+          total: dataPosition?.meta.totalItems,
+          defaultPageSize: 50,
+          showSizeChanger: true,
+          pageSizeOptions: ["50", "100", "150", "200"],
+          onChange: (page, numberPerPage): void => {
+            setPageNumber(page);
+            setPageSize(numberPerPage);
+          },
+        }}
       />
       <ModalCreatePosition
         isModalVisible={isModalVisible === "modalCreatePosition"}
         toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
       />
-      <ModalEditPosition
-        isModalVisible={isModalVisible === "modalEditPosition"}
-        toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
-        positionId={positionId}
-        dataPosition={dataPosition.data}
-      />
+      {position && (
+        <ModalEditPosition
+          isModalVisible={isModalVisible === "modalEditPosition"}
+          toggleModal={toggleModal}
+          position={position}
+        />
+      )}
     </div>
   );
 }
