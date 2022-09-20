@@ -265,7 +265,7 @@ function isLogin(): boolean {
   return !!getAuthToken();
 }
 
-function getUserRole(): string | null {
+export function getUserRole(): string | null {
   const role = localStorage.getItem("role");
   return role;
 }

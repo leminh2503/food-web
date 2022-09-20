@@ -50,6 +50,7 @@ export function AccountManager(): JSX.Element {
   });
 
   const defaultValuesDetail: IUserLogin = {
+    role: undefined,
     fullName: "",
     email: "",
     avatar: "",
@@ -78,11 +79,8 @@ export function AccountManager(): JSX.Element {
         cancelText: "Huỷ",
         onOk: () => {
           handleUpdateInformationAccount(data);
-          setIsModalVisible(false);
         },
       });
-    } else {
-      setIsModalVisible(false);
     }
   };
 
@@ -102,7 +100,6 @@ export function AccountManager(): JSX.Element {
       cancelText: "Huỷ",
       onOk: () => {
         handleAddNewEmployee(data);
-        setIsModalAddEmployeeVisible(false);
       },
     });
   };
@@ -255,6 +252,7 @@ export function AccountManager(): JSX.Element {
         message: `Thành công`,
       });
       refetch();
+      setIsModalVisible(false);
     },
     onError: () => {
       notification.error({
@@ -303,6 +301,7 @@ export function AccountManager(): JSX.Element {
         message: `Thêm thành công`,
       });
       refetch();
+      setIsModalAddEmployeeVisible(false);
     },
     onError: () => {
       notification.error({
@@ -364,7 +363,6 @@ export function AccountManager(): JSX.Element {
               style={{objectFit: "cover"}}
               src={record.avatar || "img/avatar/avatar.jpg"}
               fallback="img/avatar/avatar.jpg"
-              // preview={false}
             />
           </div>
         );

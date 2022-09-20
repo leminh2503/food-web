@@ -40,7 +40,7 @@ export function ProfileAccount(): JSX.Element {
   } = useQuery(queryKeys.GET_DATA_USER_IN_USE, getMeData) || {};
 
   const [typeCertificateEnglish, setTypeCertificateEnglish] =
-    useState<EnglishCertificate>(dataUser?.englishCertificate || "");
+    useState<EnglishCertificate>();
 
   const dataRefetch = (): void => {
     refetch();
@@ -156,6 +156,7 @@ export function ProfileAccount(): JSX.Element {
 
   useEffect(() => {
     cancelUpdate();
+    setTypeCertificateEnglish(dataUser?.englishCertificate);
   }, [dataUser]);
 
   const handleChangeCertificate = (value: {
@@ -196,7 +197,11 @@ export function ProfileAccount(): JSX.Element {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="gender" label="Giới tính">
+            <Form.Item
+              name="gender"
+              label="Giới tính"
+              rules={[{required: true}]}
+            >
               <Select>
                 <Select.Option key="1" value="Male">
                   Nam
@@ -213,9 +218,10 @@ export function ProfileAccount(): JSX.Element {
               name="phoneNumber"
               label="Số điện thoại"
               rules={[
+                {required: true},
                 {
                   pattern:
-                    /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                    /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
                   message: "Số điện thoại không đúng định dạng!",
                 },
               ]}
@@ -226,9 +232,10 @@ export function ProfileAccount(): JSX.Element {
               name="phoneNumberRelative"
               label="Số điện thoại người thân"
               rules={[
+                {required: true},
                 {
                   pattern:
-                    /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                    /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
                   message: "Số điện thoại không đúng định dạng!",
                 },
               ]}
@@ -256,7 +263,11 @@ export function ProfileAccount(): JSX.Element {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="dateOfBirth" label="Ngày sinh">
+            <Form.Item
+              name="dateOfBirth"
+              label="Ngày sinh"
+              rules={[{required: true}]}
+            >
               <DatePicker
                 format="DD/MM/YYYY"
                 disabledDate={(current) =>
@@ -268,6 +279,7 @@ export function ProfileAccount(): JSX.Element {
               name="personId"
               label="CMND/CCCD"
               rules={[
+                {required: true},
                 {
                   pattern: /^(?:\d*)$/,
                   message: "CMND/CCCD không đúng định dạng!",
@@ -282,6 +294,7 @@ export function ProfileAccount(): JSX.Element {
               name="address"
               label="Địa chỉ"
               rules={[
+                {required: true},
                 {type: "string"},
                 {whitespace: true},
                 {
@@ -297,7 +310,12 @@ export function ProfileAccount(): JSX.Element {
             <Form.Item
               name="workRoom"
               label="Phòng làm việc"
-              rules={[{type: "string"}, {whitespace: true}, {max: 255}]}
+              rules={[
+                {required: true},
+                {type: "string"},
+                {whitespace: true},
+                {max: 255},
+              ]}
             >
               <Input />
             </Form.Item>
@@ -402,6 +420,7 @@ export function ProfileAccount(): JSX.Element {
                       className="input w-100x"
                       onChange={handleChooseFile}
                       placeholder="abc"
+                      accept="image/png, image/jpg, image/jpeg"
                       style={{
                         width: "100px",
                       }}
