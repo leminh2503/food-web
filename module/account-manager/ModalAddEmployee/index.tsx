@@ -126,25 +126,9 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             rules={[
               {
                 pattern:
-                  /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                  /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
                 message: "Số điện thoại không đúng định dạng!",
               },
-              // ({getFieldValue}) => ({
-              //   validator(_, value) {
-              //     if (
-              //       (getFieldValue("phoneNumber").length > 0 &&
-              //         getFieldValue("phoneNumber").length > 12) ||
-              //       getFieldValue("phoneNumber").length < 10
-              //     ) {
-              //       return Promise.reject(
-              //         new Error(
-              //           "Số điện thoại phải có độ dài từ 10 đến 12 kí tự!"
-              //         )
-              //       );
-              //     }
-              //     return Promise.resolve();
-              //   },
-              // }),
             ]}
           >
             <Input />
@@ -155,7 +139,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             rules={[
               {
                 pattern:
-                  /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                  /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
                 message: "Số điện thoại không đúng định dạng!",
               },
             ]}
@@ -216,12 +200,8 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             rules={[
               {required: true},
               {
-                pattern: /^[1-9]\d*$/,
-                message: "Vui lòng nhập vào số nguyên!",
-              },
-              {
-                pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
-                message: "Lương cơ bản phải chia hết cho 1000!",
+                pattern: /^([1-9]\d{2,}|[1-9][5-9])0$/,
+                message: "Lương cơ bản phải là số nguyên và chia hết cho 1000!",
               },
             ]}
           >
@@ -232,12 +212,8 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             label="Lương quản lý"
             rules={[
               {
-                pattern: /^[1-9]\d*$/,
-                message: "Vui lòng nhập vào số nguyên!",
-              },
-              {
-                pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
-                message: "Lương phải chia hết cho 1000!",
+                pattern: /^([1-9]\d{2,}|[1-9][5-9])0$/,
+                message: "Lương phải phải là số nguyên và chia hết cho 1000!",
               },
             ]}
           >

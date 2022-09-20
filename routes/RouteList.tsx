@@ -139,6 +139,14 @@ const routes: IRoute[] = [
         isPrivate: true,
         isSidebar: true,
       },
+      {
+        path: "/permission",
+        name: "Phân quyền",
+        icon: "",
+        isPrivate: true,
+        role: "1",
+        isSidebar: true,
+      },
     ],
   },
 ];

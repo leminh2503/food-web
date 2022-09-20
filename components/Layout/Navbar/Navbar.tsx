@@ -98,7 +98,7 @@ export default function Navbar(): JSX.Element {
         <Dropdown overlay={renderDropdown()} trigger={["click"]}>
           <div className="cursor-pointer flex items-center">
             <Image
-              src={dataUser?.data?.avatar}
+              src={dataUser?.data?.avatar || "/img/avatar/avatar.jpg"}
               preview={false}
               width={30}
               height={30}
