@@ -144,7 +144,6 @@ const routes: IRoute[] = [
         name: "Phân quyền",
         icon: "",
         isPrivate: true,
-        role: "1",
         isSidebar: true,
       },
     ],

@@ -14,13 +14,22 @@ import {FilterPermissionGroup} from "@app/module/permission/components/FilterPer
 import {IMetadata} from "@app/api/Fetcher";
 import {useMutation, useQuery} from "react-query";
 import {queryKeys} from "@app/utils/constants/react-query";
-import ApiPermisstion, {IPermission, IRole} from "@app/api/ApiPermisstion";
+import ApiPermisstion, {
+  IAddRoleGroupBody,
+  IPermission,
+  IPermissionModify,
+  IRole,
+} from "@app/api/ApiPermisstion";
 import {CheckOutlined, DeleteOutlined} from "@ant-design/icons";
 import {ModalAddRoleGroup} from "@app/module/permission/components/ModalAddRoleGroup";
 
 export function Permission(): JSX.Element {
   const [filterText, setFilterText] = useState<string>("");
   const [isModalAddPermission, setIsModalAddPermission] = useState(false);
+  const [dataDetail, setDataDetail] = useState<IAddRoleGroupBody>({
+    roleName: "",
+    permissions: [],
+  });
   const [pagingCurrent, setPagingCurrent] = useState({
     currentPage: 1,
     pageSize: 10,
@@ -54,6 +63,15 @@ export function Permission(): JSX.Element {
     refetch: refetchRoles,
     isFetching: isFetchingRoles,
   } = useQuery(queryKeys.GET_ROLES, getRoles);
+
+  const getPermissionModify = (): Promise<IPermissionModify[]> => {
+    return ApiPermisstion.getAllPermissionModify();
+  };
+
+  const {data: dataPermissionModify} = useQuery(
+    queryKeys.GET_PERMISSION_MODIFY,
+    getPermissionModify
+  );
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
@@ -104,6 +122,56 @@ export function Permission(): JSX.Element {
       cancelText: "Huỷ",
       onOk: () => {
         deleteRoleGroup.mutate(id);
+      },
+    });
+  };
+
+  const addRoleGroup = useMutation(ApiPermisstion.addNewRoleGroup, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Tạo thành công`,
+      });
+      refetchRoles();
+      setIsModalAddPermission(false);
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Tạo thất bại`,
+      });
+    },
+  });
+
+  const updateRoleGroup = useMutation(ApiPermisstion.updateRoleGroup, {
+    onSuccess: (data) => {
+      notification.success({
+        duration: 1,
+        message: `Cập nhật thành công`,
+      });
+      refetchRoles();
+      setIsModalAddPermission(false);
+    },
+    onError: () => {
+      notification.error({
+        duration: 1,
+        message: `Cập nhật thất bại`,
+      });
+    },
+  });
+
+  const handleAddRoleGroup = (data: IAddRoleGroupBody): void => {
+    Modal.confirm({
+      title: "Xác nhận tạo nhóm quyền?",
+      okType: "primary",
+      okText: "Xác nhận",
+      cancelText: "Huỷ",
+      onOk: () => {
+        if (data.id) {
+          updateRoleGroup.mutate(data);
+        } else {
+          addRoleGroup.mutate(data);
+        }
       },
     });
   };
@@ -176,7 +244,14 @@ export function Permission(): JSX.Element {
             handleOnSearchText={handleOnSearchText}
           />
           <Button
-            onClick={(): void => setIsModalAddPermission(true)}
+            onClick={(): void => {
+              setDataDetail({
+                id: undefined,
+                permissions: [],
+                roleName: "",
+              });
+              setIsModalAddPermission(true);
+            }}
             className="bg-blue-500 text-neutral-50"
           >
             Thêm nhóm quyền
@@ -189,6 +264,19 @@ export function Permission(): JSX.Element {
           columns={columns}
           dataSource={dataRoles?.data}
           pagination={false}
+          onRow={(record, rowIndex) => {
+            const data: IAddRoleGroupBody = {
+              id: record.id,
+              roleName: record.roleName,
+              permissions: record.permissions.map((el) => el.id),
+            };
+            return {
+              onDoubleClick: (): void => {
+                setIsModalAddPermission(true);
+                setDataDetail(data);
+              },
+            };
+          }}
         />
         <Pagination
           className="mt-3 float-right"
@@ -200,9 +288,11 @@ export function Permission(): JSX.Element {
         />
       </Card>
       <ModalAddRoleGroup
+        dataDetail={dataDetail}
+        handleAddRoleGroup={handleAddRoleGroup}
+        dataPermissionModify={dataPermissionModify || []}
         isModalVisible={isModalAddPermission}
         handleCloseModalFamily={handleCloseModalFamily}
-        dataPermissionGroup={dataPermissionGroup?.data || []}
       />
     </div>
   );
