@@ -33,7 +33,6 @@ export default function Navbar(): JSX.Element {
     dataUser.refetch().then((data) => {
       dispatch(loginUser({...user, user: data?.data}));
     });
-    console.log(toggleModal, "change");
   }, [toggleModal]);
 
   // const handleModal= ():void =>{

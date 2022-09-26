@@ -4,12 +4,18 @@ const path = {
   getAllPermission: "/permission",
   getAllRole: "/roles",
   role: "/roles",
+  getAllPermissionModify: "/permission/group",
 };
 
 export interface IPermission {
   id: number;
   permissionName: string;
   permissionKey: string;
+}
+
+export interface IPermissionModify {
+  permissionGroup: string;
+  permissions: IPermission[];
 }
 
 export interface IRole {
@@ -25,9 +31,22 @@ export interface IParamsGetAllRole {
   search: string;
 }
 
+export interface IAddRoleGroupBody {
+  id?: number;
+  roleName: string;
+  permissions: number[];
+}
+
 function getAllPermission(): Promise<{data: IPermission[]; meta: IMetadata}> {
   return fetcherWithMetadata({
     url: path.getAllPermission,
+    method: "get",
+  });
+}
+
+function getAllPermissionModify(): Promise<IPermissionModify[]> {
+  return fetcher({
+    url: path.getAllPermissionModify,
     method: "get",
   });
 }
@@ -49,8 +68,30 @@ function deleteRoleGroup(id: number) {
   });
 }
 
+function addNewRoleGroup(body: IAddRoleGroupBody): Promise<IRole> {
+  delete body.id;
+  return fetcher({
+    url: path.role,
+    method: "post",
+    data: body,
+  });
+}
+
+function updateRoleGroup(body: IAddRoleGroupBody): Promise<IRole> {
+  const {id} = body;
+  delete body.id;
+  return fetcher({
+    url: path.role + `/${id}`,
+    method: "put",
+    data: body,
+  });
+}
+
 export default {
   getAllPermission,
   getAllRole,
   deleteRoleGroup,
+  getAllPermissionModify,
+  addNewRoleGroup,
+  updateRoleGroup,
 };
