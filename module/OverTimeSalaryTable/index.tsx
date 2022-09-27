@@ -67,11 +67,10 @@ export default function OverTimeSalaryTable({
 
   const handleUpdate = (): void => {
     const body = dataOT?.map((el) => {
-      el.state = 1;
-      return el;
+      return el.id;
     });
     if (body) {
-      updateDataOT.mutate(body, {onSuccess: refetch});
+      updateDataOT.mutate({ids: body}, {onSuccess: refetch});
     }
   };
 
@@ -83,7 +82,7 @@ export default function OverTimeSalaryTable({
     if (setOvertimeSalary) {
       setOvertimeSalary(((totalSalary2 * (baseSalary || 0)) / 24 / 8) * 1.5);
     }
-  }, [isRefetching]);
+  }, [isRefetching, dataOT, baseSalary]);
 
   const columns: ColumnsType<IDataOverTime[]> = [
     {

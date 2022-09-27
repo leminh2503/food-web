@@ -5,7 +5,7 @@ import {
   LeftOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import {Button, Modal, notification, Progress, Table} from "antd";
+import {Button, Image, Modal, notification, Progress, Table} from "antd";
 import moment from "moment";
 import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
@@ -157,10 +157,12 @@ export function ProjectDetail(): JSX.Element {
 
   const [visibleCountDown, setVisibleCountDown] = useState(false);
   const [countDownTimer, setCountDownTimer] = useState<string | number>();
+  const [timeCheck, setTimeCheck] = useState<string | number>();
   useEffect(() => {
     if (dataProjectById?.endDate) {
       setInterval(() => {
         setCountDownTimer(countDownTime(dataProjectById?.endDate || ""));
+        setTimeCheck(countDownTime(dataProjectById?.endDate || ""));
       }, 1000);
     }
   }, [dataProjectById?.endDate]);
@@ -177,7 +179,29 @@ export function ProjectDetail(): JSX.Element {
         <div className="text-[6vw] text-[white] flex justify-center">
           {dataProjectById && dataProjectById?.name}
         </div>
-        <div className="text-[8vw] mt-[30px] text-[white] flex justify-center">
+        <div className="text-[3vw] text-[white] row-all-center">
+          <Image
+            src={
+              dataProjectById?.projectManager?.avatar ??
+              "/img/avatar/avatar.jpg"
+            }
+            width="7vw"
+            className="rounded-[50%]"
+            fallback="/img/avatar/avatar.jpg"
+          />
+        </div>
+        <div className="text-[3vw] text-[white] row-all-center">
+          <div>PM: {dataProjectById?.projectManager?.fullName}</div>
+        </div>
+        <div
+          className={
+            "text-[8vw] mt-[30px] flex justify-center " +
+            (Number(timeCheck) > 7 ||
+            (dataProjectById?.projectProgress || 0) >= 100
+              ? "text-[white]"
+              : "text-[#ff4d4f]")
+          }
+        >
           {countDownTimer}
         </div>
         <Progress

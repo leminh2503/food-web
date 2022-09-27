@@ -30,8 +30,8 @@ const path = {
   createOnsiteSalary: "/onsite-salary",
   createTotalSalary: "/total-salary",
   getUserOfProject: "/salary",
-  updateOnsiteSalary: "/onsite-salary/update-salaries",
-  updateOTSalary: "/overtime-salary/update-salaries",
+  updateOnsiteSalary: "/onsite-salary/accept",
+  updateOTSalary: "/overtime-salary/accept",
   createBonusSalary: "/bonus-salary",
   deleteBonusSalary: "/bonus-salary/",
   deleteProjectSalary: "/project-salary",
@@ -178,7 +178,7 @@ function getMyListOnsiteSalary(
   });
 }
 
-function updateOnsiteSalary(data: IDataOnsite[]): Promise<any> {
+function updateOnsiteSalary(data: {ids: number[]}): Promise<any> {
   return fetcher({
     url: path.updateOnsiteSalary,
     method: "post",
@@ -213,7 +213,7 @@ function getMyListOTSalary(
   });
 }
 
-function updateOTSalary(data: IDataOverTime[]): Promise<any> {
+function updateOTSalary(data: {ids: number[]}): Promise<any> {
   return fetcher({
     url: path.updateOTSalary,
     method: "post",

@@ -251,7 +251,7 @@ export default function DeductionSalaryTable({
     if (setDeductionSalary) {
       setDeductionSalary(totalSalary2);
     }
-  }, [isRefetchingD, isRefetchingH]);
+  }, [isRefetchingD, isRefetchingH, totalSalaryDay, totalSalaryHour]);
   return (
     <Card className="w-full">
       {isAdmin && (

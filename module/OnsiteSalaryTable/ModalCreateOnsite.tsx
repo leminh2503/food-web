@@ -163,7 +163,7 @@ export default function ModalCreateOnsite(
     ApiSalary.deleteOnsiteSalary(id)
       .then((r) => {
         props.refetchDataOnsite();
-        notification.success({message: "delete success"});
+        notification.success({message: "Xoá thành công"});
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -193,9 +193,9 @@ export default function ModalCreateOnsite(
       ).then((r) => {
         props.refetchDataOnsite();
         notification.success({message: "Tạo thành công"});
+        props.handleOk();
       });
     }
-    props.handleOk();
   };
 
   return (

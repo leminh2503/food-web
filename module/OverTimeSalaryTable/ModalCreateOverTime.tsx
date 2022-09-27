@@ -88,7 +88,7 @@ export default function ModalCreateOverTime(
       align: "center",
     },
     {
-      title: "số giờ OT",
+      title: "Số giờ OT",
       dataIndex: "hour",
       key: "hour",
       width: "90px",
@@ -192,7 +192,7 @@ export default function ModalCreateOverTime(
   const deleteOnsite = (id: number): void => {
     ApiSalary.deleteOTSalary(id).then((r) => {
       props.refetchDataOT();
-      notification.success({message: "delete success"});
+      notification.success({message: "Xoá thành công"});
     });
   };
 
@@ -201,9 +201,10 @@ export default function ModalCreateOverTime(
       data?.map((el, index) => {
         return {
           user: props.idUser,
-          project: props?.isManager
-            ? props?.idProject || -1
-            : el?.projectId || -1,
+          project:
+            props?.isManager && !props?.isAdmin
+              ? props?.idProject ?? -1
+              : el?.projectId ?? -1,
           hour: Number(el.hour) || 0,
           date:
             props.year +
@@ -213,15 +214,13 @@ export default function ModalCreateOverTime(
             formatNumber(index + 1),
         };
       }) || [];
-    if (body.filter((el) => el.project !== -1)?.length > 0) {
-      ApiSalary.createOTSalary(
-        body.filter((el) => el.project !== -1 && el.hour !== 0)
-      ).then((r) => {
-        props.refetchDataOT();
-        notification.success({message: "Tạo thành công"});
-      });
-    }
-    props.handleOk();
+    ApiSalary.createOTSalary(
+      body.filter((el) => el.project !== -1 && el.hour !== 0)
+    ).then((r) => {
+      props.refetchDataOT();
+      notification.success({message: "Tạo thành công"});
+      props.handleOk();
+    });
   };
 
   return (

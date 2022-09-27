@@ -72,11 +72,10 @@ export default function OnsiteSalaryTable({
 
   const handleUpdate = (): void => {
     const body = dataOnsite?.map((el) => {
-      el.state = 1;
-      return el;
+      return el.id;
     });
     if (body) {
-      updateDataOnsite.mutate(body, {onSuccess: refetch});
+      updateDataOnsite.mutate({ids: body}, {onSuccess: refetch});
     }
   };
 
@@ -137,7 +136,7 @@ export default function OnsiteSalaryTable({
     if (setOnsiteSalary) {
       setOnsiteSalary(totalSalary2);
     }
-  }, [isRefetching, dailyOnsiteRate]);
+  }, [isRefetching, dailyOnsiteRate, dataOnsite?.length]);
 
   for (let i = 1; i <= getDayOnMonth(month, year); i++) {
     let check = 0;

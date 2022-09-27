@@ -116,7 +116,7 @@ export default function ProjectSalaryTable({
     if (setProjectSalary) {
       setProjectSalary(totalSalary2);
     }
-  }, [isRefetching]);
+  }, [isRefetching, dataProject]);
   return (
     <Card className="w-full">
       {isAdmin && (

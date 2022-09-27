@@ -40,6 +40,7 @@ export default function ModalOtherSalary(
             rules={[{min: 1000, message: "Giá trị phải lớn hơn 1000"}]}
           >
             <InputNumber
+              name="salary"
               className="w-full"
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -69,13 +70,13 @@ export default function ModalOtherSalary(
     };
     createBonusSalary.mutate(data, {
       onSuccess: () => {
-        notification.success({message: "create success"});
+        notification.success({message: "Tạo thành công"});
         if (props?.handleRefetch) {
           props.handleRefetch();
         }
+        props.handleOk();
       },
     });
-    props.handleOk();
   };
 
   return (
@@ -84,7 +85,7 @@ export default function ModalOtherSalary(
       isModalVisible={props.isModalVisible}
       handleOk={handleOkModal}
       handleCancel={props.handleCancel}
-      title="Thêm lương dự án"
+      title="Thêm lương khác"
       content={renderContent()}
     />
   );

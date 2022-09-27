@@ -38,6 +38,7 @@ export function SalaryTableDetail(): JSX.Element {
   const [projectSalary, setProjectSalary] = useState<number>(0);
   const [deductionSalary, setDeductionSalary] = useState<number>(0);
   const [dailyOnsiteRate2, setDailyOnsiteRate2] = useState<number>();
+  const [totalSalary, setTotalSalary] = useState<number>();
 
   const getUserInfo = (): Promise<IUserLogin> => {
     return ApiUser.getUserInfo({id: Number(userId)});
@@ -128,14 +129,25 @@ export function SalaryTableDetail(): JSX.Element {
     },
   ];
 
-  const totalSalary =
-    onsiteSalary +
-    overtimeSalary +
-    bonusSalary +
-    projectSalary -
-    deductionSalary +
-    Number(total || 0) -
-    Number(taxSalary || 0);
+  useEffect(() => {
+    setTotalSalary(
+      onsiteSalary +
+        overtimeSalary +
+        bonusSalary +
+        projectSalary -
+        deductionSalary +
+        Number(total || 0) -
+        Number(taxSalary || 0)
+    );
+  }, [
+    onsiteSalary,
+    overtimeSalary,
+    bonusSalary,
+    projectSalary,
+    deductionSalary,
+    tax,
+    total,
+  ]);
 
   const menu = (
     <div className="p-4 bg-white shadow-2xl">
@@ -273,11 +285,11 @@ export function SalaryTableDetail(): JSX.Element {
                   });
                   ApiSalary.updateTotalSalary(
                     {
-                      onsiteSalary,
-                      overtimeSalary,
-                      bonusSalary,
-                      projectSalary,
-                      deductionSalary,
+                      onsiteSalary: Number(onsiteSalary) || undefined,
+                      overtimeSalary: Number(overtimeSalary) || undefined,
+                      bonusSalary: Number(bonusSalary) || undefined,
+                      projectSalary: Number(projectSalary) || undefined,
+                      deductionSalary: Number(deductionSalary) || undefined,
                     },
                     Number(id || 0)
                   ).then((r) => {

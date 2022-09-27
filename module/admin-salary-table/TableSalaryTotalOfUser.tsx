@@ -47,13 +47,11 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           dataIndex: "index",
           key: "index",
           align: "center",
-          fixed: "left",
           render: (_, record, index) => <div>{index + 1}</div>,
         },
         {
           title: "Họ tên",
           dataIndex: "fullName",
-          fixed: "left",
           key: "fullName",
           align: "center",
           render: (_, record) => {
@@ -63,7 +61,6 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         {
           title: "Ảnh",
           dataIndex: "avatar",
-          fixed: "left",
           key: "avatar",
           align: "center",
           width: 80,
@@ -100,6 +97,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           render: (_, record, index) => (
             <div>{record.baseSalary.toLocaleString("en-US")}</div>
           ),
+          sorter: (a, b) => a.baseSalary - b.baseSalary,
         },
         {
           title: "Lương quản lý",
@@ -109,6 +107,9 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           render: (_, record, index) => (
             <div>{record.manageSalary.toLocaleString("en-US")}</div>
           ),
+          filters: [{text: "quản lý", value: 0}],
+          sorter: (a, b) => a.manageSalary - b.manageSalary,
+          onFilter: (value: any, record) => record.manageSalary > value,
         },
         {
           title: "Lương dự án",
@@ -196,12 +197,12 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           render: (_, record, index) => (
             <div>{record?.totalSalary.toLocaleString("en-US")}</div>
           ),
+          sorter: (a, b) => a.totalSalary - b.totalSalary,
         },
         {
           title: "Trạng thái",
           dataIndex: "state",
           key: "state",
-          fixed: "right",
           align: "center",
           render: (index, _item) => {
             return (
@@ -250,7 +251,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           <span>Trạng thái : </span>
           <Select
             placeholder="trạng thái"
-            className="w-[120px] ml-4"
+            className="w-[120px] ml-3 mr-4"
             onChange={(e) => {
               if (e === "-1") {
                 setState(undefined);
@@ -304,7 +305,6 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         dataSource={data}
         className="hover-pointer"
         bordered
-        scroll={{x: "calc(100vw + 300px)", y: "calc(100vh - 300px)"}}
         pagination={{showSizeChanger: true, defaultPageSize: 100}}
         onRow={(record, rowIndex) => {
           return {

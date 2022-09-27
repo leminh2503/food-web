@@ -19,6 +19,7 @@
       background-color: $blue-color !important;
       &:hover {
         opacity: 0.7;
+        background-color: $blue-color !important;
       }
     }
   }
@@ -26,4 +27,13 @@
 
 .modal-family-circumstances {
   width: 1000px !important;
+}
+
+.ant-btn-primary {
+  color: $white-color;
+  background-color: $blue-color !important;
+  &:hover {
+    opacity: 0.7;
+    background-color: $blue-color !important;
+  }
 }

@@ -46,9 +46,10 @@ export default function ModalProjectSalary(
           <Form.Item
             label="Thưởng"
             name="salary"
-            rules={[{min: 1000, message: "Giá trị phải lớn hơn 1000"}]}
+            rules={[{min: 1000, message: "Giá trị phải chia hết cho 1000"}]}
           >
             <InputNumber
+              name="salary"
               className="w-full"
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -82,10 +83,10 @@ export default function ModalProjectSalary(
         if (props.handleRefetch) {
           props.handleRefetch();
         }
-        notification.success({message: "create success"});
+        notification.success({message: "Tạo thành công"});
+        props.handleOk();
       },
     });
-    props.handleOk();
   };
 
   return (

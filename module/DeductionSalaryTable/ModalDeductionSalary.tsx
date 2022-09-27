@@ -43,6 +43,7 @@ export default function ModalDeductionSalary(
             ]}
           >
             <InputNumber
+              name="b"
               max={31}
               min={0}
               className="w-full"
@@ -64,13 +65,13 @@ export default function ModalDeductionSalary(
     };
     createDeductionDaySalary.mutate(data, {
       onSuccess: () => {
-        notification.success({message: "create success"});
+        notification.success({message: "Tạo thành công"});
         if (props?.handleRefetch) {
           props.handleRefetch();
         }
+        props.handleOk();
       },
     });
-    props.handleOk();
   };
 
   return (

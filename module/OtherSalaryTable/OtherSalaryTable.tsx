@@ -58,7 +58,7 @@ export default function OtherSalaryTable({
           ),
         },
         {
-          title: "lý do",
+          title: "Lý do",
           dataIndex: "reason",
           key: "reason",
           align: "center",
@@ -116,7 +116,7 @@ export default function OtherSalaryTable({
     if (setBonusSalary) {
       setBonusSalary(totalSalary2);
     }
-  }, [isRefetching]);
+  }, [isRefetching, datBonus]);
 
   return (
     <Card className="w-full">
