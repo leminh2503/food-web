@@ -32,6 +32,7 @@ import fileDownload from "js-file-download";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
 import NameEventConstant from "@app/check_event/NameEventConstant";
+import ApiPermisstion, {IRole} from "@app/api/ApiPermisstion";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -64,6 +65,7 @@ export function AccountManager(): JSX.Element {
     dateOfBirth: "",
     deductionOwn: 0,
     familyCircumstances: null,
+    roleId: undefined,
   };
 
   const [dataDetail, setDataDetail] = useState<IUserLogin>(defaultValuesDetail);
@@ -162,6 +164,21 @@ export function AccountManager(): JSX.Element {
     return ApiUser.getListPosition();
   };
 
+  const getRoles = (): Promise<{
+    data: IRole[];
+    meta: IMetadata;
+  }> => {
+    const params = {
+      pageSize: pagingCurrent.pageSize,
+      pageNumber: pagingCurrent.currentPage,
+      searchFields: ["roleName"],
+      search: filterText,
+    };
+    return ApiPermisstion.getAllRole(params);
+  };
+
+  const {data: dataRoles} = useQuery(queryKeys.GET_ROLES, getRoles);
+
   const listWorkType = useQuery(queryKeys.GET_LIST_WORK_TYPE, getListWorkType);
   const listPosition = useQuery(queryKeys.GET_LIST_POSITION, getListPosition);
 
@@ -191,6 +208,18 @@ export function AccountManager(): JSX.Element {
     const renamedObj = renameKeys(el || {}, newKeys);
     listWorkTypeConvert.push(renamedObj);
     return listPositionConvert;
+  });
+
+  const newKeysRole = {id: "value", roleName: "label"};
+  const listRoleConvert: {
+    value: number;
+    label: string;
+    default?: boolean;
+  }[] = [];
+  dataRoles?.data?.map((el) => {
+    const renamedObj = renameKeys(el || {}, newKeysRole);
+    listRoleConvert.push(renamedObj);
+    return listRoleConvert;
   });
 
   const handleUserAction = (record: IUserLogin, type: string): void => {
@@ -241,6 +270,7 @@ export function AccountManager(): JSX.Element {
       englishCertificate: values.englishCertificate,
       englishScore: values.englishScore,
       manageSalary: Number(values.manageSalary),
+      roleId: values.roleId,
     };
     updateProfile.mutate(body);
   };
@@ -438,6 +468,20 @@ export function AccountManager(): JSX.Element {
       },
     },
     {
+      title: " Nhóm quyền ",
+      dataIndex: "roleId",
+      key: "roleId",
+      align: "center",
+      width: "10%",
+      render: (_, record): JSX.Element => {
+        return (
+          <div>
+            <span>{record?.role?.roleName}</span>
+          </div>
+        );
+      },
+    },
+    {
       title: "Trạng thái",
       align: "center",
       key: "state",
@@ -552,7 +596,7 @@ export function AccountManager(): JSX.Element {
         <Pagination
           className="mt-3 float-right"
           showSizeChanger
-          defaultPageSize={100}
+          defaultPageSize={pagingCurrent.pageSize}
           onShowSizeChange={onShowSizeChange}
           onChange={handleChangePagination}
           defaultCurrent={pagingCurrent.currentPage}
@@ -560,6 +604,7 @@ export function AccountManager(): JSX.Element {
         />
       </Card>
       <ModalInfo
+        listRoleConvert={listRoleConvert || []}
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}
         dataDetail={dataDetail}
@@ -571,6 +616,7 @@ export function AccountManager(): JSX.Element {
         setIsModalFamilyVisible={setIsModalFamilyVisible}
       />
       <ModalAddEmployee
+        listRoleConvert={listRoleConvert || []}
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}
         isModalVisible={isModalAddEmployeeVisible}

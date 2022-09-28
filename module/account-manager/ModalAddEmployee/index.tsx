@@ -8,6 +8,7 @@ import {defaultValidateMessages, layout} from "@app/validate/user";
 import moment from "moment";
 
 interface ModalInfoProps {
+  listRoleConvert: {value: number; label: string}[];
   isModalVisible: boolean;
   handleConfirmAddEmployee: (data: IRegisterAccountBody) => void;
   handleCancelAddEmployee: () => void;
@@ -17,6 +18,7 @@ interface ModalInfoProps {
 
 export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
   const {
+    listRoleConvert,
     isModalVisible,
     handleConfirmAddEmployee,
     handleCancelAddEmployee,
@@ -28,10 +30,10 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
 
   const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
-      password: "123123",
+      password: process.env.DEFAULT_PASSWORD || "123123",
       gender: undefined,
       englishCertificate: EEnglishCertificate.OTHER,
-      englishScore: 0,
+      englishScore: "",
       workRoom: "",
       personId: fieldsValue.personId,
       dateOfBirth: fieldsValue.dateOfBirth,
@@ -45,6 +47,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
       email: fieldsValue.email,
       employeeCode: fieldsValue.employeeCode,
       fullName: fieldsValue.fullName,
+      roleId: fieldsValue.roleId,
     };
     handleConfirmAddEmployee(data);
   };
@@ -189,6 +192,19 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
             <Select>
               {listWorkTypeConvert?.map((e) => (
                 <Select.Option key={"workType" + e.value} value={e.value}>
+                  {e.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Nhóm quyền"
+            name="roleId"
+            rules={[{required: true}]}
+          >
+            <Select>
+              {listRoleConvert?.map((e) => (
+                <Select.Option key={"roleId" + e.value} value={e.value}>
                   {e.label}
                 </Select.Option>
               ))}
