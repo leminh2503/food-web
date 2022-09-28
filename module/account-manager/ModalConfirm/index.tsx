@@ -16,6 +16,7 @@ interface ModalInfoProps {
   dataDetail: IUserLogin;
   listPositionConvert: {value: number; label: string}[];
   listWorkTypeConvert: {value: number; label: string}[];
+  listRoleConvert: {value: number; label: string}[];
   defaultValuesDetail: IUserLogin;
 }
 
@@ -27,6 +28,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     dataDetail,
     listPositionConvert,
     listWorkTypeConvert,
+    listRoleConvert,
     setIsModalChangePassVisible,
     setIsModalFamilyVisible,
     defaultValuesDetail,
@@ -77,6 +79,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishScore,
       workRoom,
       manageSalary,
+      roleId: role?.id,
     });
     setTypeCertificateEnglish(dataDetail?.englishCertificate);
   }, [dataDetail]);
@@ -100,7 +103,8 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishCertificate,
       englishScore,
       workRoom,
-      manageSalary,
+      manageSalary: manageSalary && manageSalary > 0 ? manageSalary : undefined,
+      roleId: role?.id,
     });
   }, [dataDetail, isModalVisible]);
 
@@ -122,6 +126,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishCertificate: fieldsValue?.englishCertificate,
       englishScore: fieldsValue?.englishScore,
       manageSalary: fieldsValue?.manageSalary || 0,
+      roleId: fieldsValue.roleId,
     };
     handleOk(data);
   };
@@ -329,6 +334,19 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 <Select>
                   {listWorkTypeConvert?.map((e) => (
                     <Select.Option key={"workType" + e.value} value={e.value}>
+                      {e.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Nhóm quyền"
+                name="roleId"
+                rules={[{required: true}]}
+              >
+                <Select>
+                  {listRoleConvert?.map((e) => (
+                    <Select.Option key={"roleId" + e.value} value={e.value}>
                       {e.label}
                     </Select.Option>
                   ))}

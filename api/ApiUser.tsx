@@ -20,7 +20,7 @@ export interface IRegisterAccountBody {
   password?: string;
   gender?: UserGender;
   englishCertificate?: EnglishCertificate;
-  englishScore?: number;
+  englishScore?: string;
   workRoom?: string;
   personId?: string;
   dateOfBirth?: string;
@@ -36,6 +36,7 @@ export interface IRegisterAccountBody {
   employeeCode: string;
   fullName: string;
   deductionOwn?: number;
+  roleId: number;
 }
 
 export interface IProfileBody {
@@ -54,7 +55,7 @@ export interface IInformationAccountBody {
   id?: number;
   gender?: string;
   englishCertificate?: string;
-  englishScore?: number;
+  englishScore?: string;
   workRoom?: string;
   personId?: string;
   dateOfBirth?: string;
@@ -71,6 +72,7 @@ export interface IInformationAccountBody {
   email?: string;
   employeeCode?: string;
   fullName?: string;
+  roleId?: number;
 }
 
 export interface IResetPasswordBody {

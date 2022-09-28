@@ -1,9 +1,10 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Checkbox, Form, Input, Modal} from "antd";
 import {IAddRoleGroupBody, IPermissionModify} from "@app/api/ApiPermisstion";
 import {defaultValidateMessages} from "@app/validate/user";
 
 interface ModalInfoProps {
+  arrayRole: any;
   dataDetail: IAddRoleGroupBody;
   handleAddRoleGroup: (data: IAddRoleGroupBody) => void;
   dataPermissionModify: IPermissionModify[];
@@ -13,6 +14,7 @@ interface ModalInfoProps {
 
 export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
   const {
+    arrayRole,
     dataDetail,
     handleAddRoleGroup,
     dataPermissionModify,
@@ -20,45 +22,46 @@ export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
     handleCloseModalFamily,
   } = props;
 
-  // const [defaultValue, setDefaultValue] = useState<number[]>(
-  //   dataDetail?.permissions
-  // );
-
   const [form] = Form.useForm();
 
-  // const onCheckAllChange = (isChecked: boolean) => {
-  //   setDefaultValue([]);
-  //   if (isChecked) {
-  //     setDefaultValue([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  //   }
-  // };
+  const [dataChosen, setDataChosen] = useState<any[]>(dataDetail.permissions);
+  const [arrayDataDefault, setArrayDataDefault] = useState(arrayRole);
+
+  useEffect(() => {
+    setDataChosen(dataDetail.permissions);
+    setArrayDataDefault(arrayRole);
+  }, [dataDetail]);
 
   const onFinish = (fieldsValue: any): void => {
-    // handle filter role was selected
-    let arrayRoleChosen: number[] = [];
-    for (let i = 0; i < dataPermissionModify.length; i++) {
-      if (fieldsValue["permissions" + i])
-        arrayRoleChosen = arrayRoleChosen.concat(
-          fieldsValue["permissions" + i]
-        );
+    const listKey = Object.keys(arrayDataDefault);
+    let arrayNeed: number[] = [];
+    for (const string of listKey) {
+      if (arrayDataDefault[string]) {
+        arrayNeed = arrayNeed.concat(arrayDataDefault[string]);
+      }
     }
     const data = {
       id: dataDetail.id,
       roleName: fieldsValue.nameGroupRole,
-      permissions: arrayRoleChosen,
+      permissions: Array.from(new Set(arrayNeed)),
     };
     handleAddRoleGroup(data);
   };
 
   useEffect(() => {
     form.resetFields();
-  }, [isModalVisible]);
-
-  useEffect(() => {
     form.setFieldsValue({
       nameGroupRole: dataDetail?.roleName,
     });
-  }, [dataDetail]);
+  }, [isModalVisible, dataDetail]);
+
+  const onChange = (checkedValues: any[], name: string) => {
+    setArrayDataDefault((prevState: any) => ({
+      ...prevState,
+      [name]: checkedValues,
+    }));
+    setDataChosen([...dataChosen, ...checkedValues]);
+  };
 
   const renderContent = (): JSX.Element => {
     return (
@@ -81,44 +84,208 @@ export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
           >
             <Input placeholder="Tên nhóm quyền" />
           </Form.Item>
-          {/* <Form.Item name="checkAll"> */}
-          {/*  <Checkbox */}
-          {/*    onChange={(e): void => onCheckAllChange(e.target.checked)} */}
-          {/*  > */}
-          {/*    Chọn tất cả */}
-          {/*  </Checkbox> */}
-          {/* </Form.Item> */}
           <div className="content-permission-checkbox">
             <div className="flex flex-wrap">
-              {dataPermissionModify?.map((permission, index) => {
-                return (
-                  <div className="w-6/12" key={permission.permissionGroup}>
-                    <div className="group-permission-checkbox">
-                      <Form.Item
-                        name={"permissions" + index}
-                        label={permission.permissionGroup}
-                        initialValue={dataDetail?.permissions}
-                      >
-                        <Checkbox.Group>
-                          <div className="flex flex-col">
-                            {permission.permissions?.map((el, index) => {
-                              return (
-                                <Checkbox
-                                  key={el.permissionKey + index}
-                                  value={el.id}
-                                  style={{lineHeight: "32px"}}
-                                >
-                                  {el.permissionName}
-                                </Checkbox>
-                              );
-                            })}
-                          </div>
-                        </Checkbox.Group>
-                      </Form.Item>
-                    </div>
-                  </div>
-                );
-              })}
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[0]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  value={arrayDataDefault?.a}
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "a");
+                  }}
+                >
+                  {dataPermissionModify[0]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[1]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "b");
+                  }}
+                  value={arrayDataDefault?.b}
+                >
+                  {dataPermissionModify[1]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[2]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "c");
+                  }}
+                  value={arrayDataDefault?.c}
+                >
+                  {dataPermissionModify[2]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[3]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "d");
+                  }}
+                  value={arrayDataDefault?.d}
+                >
+                  {dataPermissionModify[3]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[4]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "e");
+                  }}
+                  value={arrayDataDefault?.e}
+                >
+                  {dataPermissionModify[4]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[5]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "f");
+                  }}
+                  value={arrayDataDefault?.f}
+                >
+                  {dataPermissionModify[5]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[6]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "g");
+                  }}
+                  value={arrayDataDefault?.g}
+                >
+                  {dataPermissionModify[6]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[7]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "h");
+                  }}
+                  value={arrayDataDefault?.h}
+                >
+                  {dataPermissionModify[7]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[8]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "i");
+                  }}
+                  value={arrayDataDefault?.i}
+                >
+                  {dataPermissionModify[8]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
+              <div className="w-6/12">
+                <h5>{dataPermissionModify[9]?.permissionGroup}</h5>
+                <Checkbox.Group
+                  style={{width: "100%"}}
+                  onChange={(checkedValue) => {
+                    onChange(checkedValue, "j");
+                  }}
+                  value={arrayDataDefault?.j}
+                >
+                  {dataPermissionModify[9]?.permissions?.map((el) => (
+                    <Checkbox
+                      key={el.permissionKey + el.id}
+                      value={el.id}
+                      style={{lineHeight: "32px"}}
+                    >
+                      {el.permissionName}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </div>
             </div>
           </div>
         </Form>
@@ -135,7 +302,10 @@ export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
       onOk={(): void => {
         form.submit();
       }}
-      onCancel={handleCloseModalFamily}
+      onCancel={() => {
+        handleCloseModalFamily();
+        form.resetFields();
+      }}
       className="modal-ant modal-add-role-group"
     >
       {renderContent()}

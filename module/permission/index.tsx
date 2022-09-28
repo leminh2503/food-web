@@ -1,5 +1,5 @@
 import "./index.scss";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   Card,
@@ -34,6 +34,7 @@ export function Permission(): JSX.Element {
     currentPage: 1,
     pageSize: 10,
   });
+  const [arrayRole, setArrayRole] = useState<any>();
 
   const getPermissionGroup = (): Promise<{
     data: IPermission[];
@@ -180,6 +181,10 @@ export function Permission(): JSX.Element {
     setIsModalAddPermission(false);
   };
 
+  useEffect(() => {
+    refetchRoles();
+  }, [pagingCurrent]);
+
   const columns: ColumnsType<IRole> = [
     {
       title: "STT",
@@ -250,6 +255,7 @@ export function Permission(): JSX.Element {
                 permissions: [],
                 roleName: "",
               });
+              setArrayRole({});
               setIsModalAddPermission(true);
             }}
             className="bg-blue-500 text-neutral-50"
@@ -265,15 +271,54 @@ export function Permission(): JSX.Element {
           dataSource={dataRoles?.data}
           pagination={false}
           onRow={(record, rowIndex) => {
-            const data: IAddRoleGroupBody = {
-              id: record.id,
-              roleName: record.roleName,
-              permissions: record.permissions.map((el) => el.id),
-            };
             return {
               onDoubleClick: (): void => {
-                setIsModalAddPermission(true);
+                const data: IAddRoleGroupBody = {
+                  id: record.id,
+                  roleName: record.roleName,
+                  permissions: record?.permissions?.map((el) => el.id),
+                };
+                const dataArr: {
+                  a: number[];
+                  b: number[];
+                  c: number[];
+                  d: number[];
+                  e: number[];
+                  f: number[];
+                  g: number[];
+                  h: number[];
+                  i: number[];
+                  j: number[];
+                } = {
+                  a: [],
+                  b: [],
+                  c: [],
+                  d: [],
+                  e: [],
+                  f: [],
+                  g: [],
+                  h: [],
+                  i: [],
+                  j: [],
+                };
+                const listKey = Object.keys(dataArr);
+                for (let i = 0; i < 9; i++) {
+                  const dataArray =
+                    dataPermissionModify &&
+                    dataPermissionModify[i]?.permissions?.map((el) => el.id);
+                  const arrayPermissions = data.permissions;
+                  for (const data of arrayPermissions) {
+                    if (dataArray?.includes(data)) {
+                      const key: string = listKey[i];
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      dataArr[key].push(data);
+                    }
+                  }
+                }
+                setArrayRole(dataArr);
                 setDataDetail(data);
+                setIsModalAddPermission(true);
               },
             };
           }}
@@ -288,6 +333,7 @@ export function Permission(): JSX.Element {
         />
       </Card>
       <ModalAddRoleGroup
+        arrayRole={arrayRole}
         dataDetail={dataDetail}
         handleAddRoleGroup={handleAddRoleGroup}
         dataPermissionModify={dataPermissionModify || []}

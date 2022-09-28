@@ -81,6 +81,7 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
             name="phoneNumber"
             label="Số điện thoại"
             rules={[
+              {required: true},
               {whitespace: true},
               {
                 pattern:
@@ -97,7 +98,7 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
           <Form.Item
             name="relationship"
             label="Quan hệ"
-            rules={[{whitespace: true}, {min: 1}]}
+            rules={[{required: true}, {whitespace: true}, {min: 1}]}
           >
             <Input />
           </Form.Item>

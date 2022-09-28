@@ -313,6 +313,7 @@ export interface IUserLogin {
       permissionsKey: string;
     }[];
   };
+  roleId?: number;
   phoneNumberRelative?: string;
   baseSalary?: number;
   manageSalary?: number;
@@ -326,7 +327,7 @@ export interface IUserLogin {
   employeeCode?: string;
   workRoom?: string;
   englishCertificate?: EnglishCertificate;
-  englishScore?: number;
+  englishScore?: string;
 }
 
 export interface IDataProjectSalary {
