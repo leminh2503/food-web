@@ -30,6 +30,7 @@ export function SalaryTableDetail(): JSX.Element {
           <OnsiteSalaryTable
             idUser={idUser?.toString() || ""}
             projectName={projectName?.toString() || ""}
+            idProject={Number(idProject || 0)}
             isManager
             month={Number(month)}
             year={Number(year)}

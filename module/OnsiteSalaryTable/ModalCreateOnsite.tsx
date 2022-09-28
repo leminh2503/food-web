@@ -23,6 +23,7 @@ interface IModalCreateOnsite {
   handleCancel: () => void;
   isManager?: boolean;
   listProject?: IDataProjectList[];
+  projectName?: string;
 }
 
 export default function ModalCreateOnsite(
@@ -93,7 +94,7 @@ export default function ModalCreateOnsite(
           props?.listProject?.filter(
             (ele) => ele.name === _record?.onsitePlace
           ) || [];
-        return _record.state !== 1 ? (
+        return _record.state !== 1 && !props.isManager ? (
           <Select
             value={idPJ[0]?.id}
             onChange={(e, value) => {
@@ -107,8 +108,10 @@ export default function ModalCreateOnsite(
               </Select.Option>
             ))}
           </Select>
+        ) : _record?.onsitePlace ? (
+          <span>{props.projectName}</span>
         ) : (
-          <span>{_record.onsitePlace}</span>
+          <> </>
         );
       },
     },

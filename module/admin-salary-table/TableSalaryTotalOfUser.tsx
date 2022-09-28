@@ -17,13 +17,15 @@ export function TableSalaryTotalOfUser(): JSX.Element {
   const {year} = router.query;
   const [searchValue, setSearchValue] = useState<string>();
   const [state, setState] = useState<number>();
+  const [pageSize, setPageSize] = useState<number>(100);
 
   const getListSalaryTotalUser = (): Promise<IDataSalaryToTalOfUser[]> => {
     return ApiSalary.getListSalaryTotalUser(
       Number(year || 0),
       Number(month || 0),
       state,
-      searchValue === "" ? undefined : searchValue
+      searchValue === "" ? undefined : searchValue,
+      pageSize
     );
   };
   const {data, refetch} =
@@ -305,7 +307,11 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         dataSource={data}
         className="hover-pointer"
         bordered
-        pagination={{showSizeChanger: true, defaultPageSize: 100}}
+        pagination={{
+          showSizeChanger: true,
+          defaultPageSize: 100,
+          onChange: (page, ps) => setPageSize(ps),
+        }}
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {

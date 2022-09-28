@@ -20,6 +20,7 @@ export default function OnsiteSalaryTable({
   year,
   isManager,
   projectName,
+  idProject,
   setDailyOnsiteRate2,
   dailyOnsiteRate,
   setOnsiteSalary,
@@ -28,6 +29,7 @@ export default function OnsiteSalaryTable({
 }: {
   setDailyOnsiteRate2?: (val: number) => void;
   idTotal?: number;
+  idProject?: number;
   totalSalaryOS?: number;
   dailyOnsiteRate?: number;
   listProject?: IDataProjectList[];
@@ -59,7 +61,12 @@ export default function OnsiteSalaryTable({
 
   const getListOnsiteSalary = (): Promise<IDataOnsite[]> => {
     if (isManager) {
-      return ApiSalary.getMyListOnsiteSalary(year, month, Number(idUser));
+      return ApiSalary.getMyListOnsiteSalary(
+        year,
+        month,
+        Number(idUser),
+        Number(idProject)
+      );
     }
     return ApiSalary.getMyListOnsiteSalary(year, month);
   };
@@ -212,6 +219,7 @@ export default function OnsiteSalaryTable({
         month={month}
         refetchDataOnsite={refetch}
         year={year}
+        projectName={projectName}
         isManager={isManager}
         isModalVisible={isModalVisible}
         handleOk={handleOk}

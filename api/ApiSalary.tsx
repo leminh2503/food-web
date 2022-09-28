@@ -99,12 +99,14 @@ function getListSalaryTotalUser(
   year: number,
   month: number,
   state?: number,
-  search?: string
+  search?: string,
+  pageSize?: number
 ): Promise<IDataSalaryToTalOfUser[]> {
   return fetcher({
     url: path.getListSalaryTotalUser,
     method: "get",
     params: {
+      pageSize,
       filter: {date_month: month, date_year: year, state: state},
       searchFields: ["fullName", "email"],
       search,
@@ -169,12 +171,13 @@ function createOnsiteSalary(data: IBodyOnsiteSalary[]): Promise<IDataOnsite[]> {
 function getMyListOnsiteSalary(
   year: number,
   month: number,
-  userId?: number
+  userId?: number,
+  projectId?: number
 ): Promise<IDataOnsite[]> {
   return fetcher({
     url: userId ? path.getListOnsiteSalary : path.getMyListOnsiteSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year, userId}},
+    params: {filter: {date_month: month, date_year: year, userId, projectId}},
   });
 }
 
@@ -204,12 +207,13 @@ function createOTSalary(data: IBodyOTSalary[]): Promise<IDataOnsite[]> {
 function getMyListOTSalary(
   year: number,
   month: number,
-  userId?: number
+  userId?: number,
+  projectId?: number
 ): Promise<IDataOverTime[]> {
   return fetcher({
     url: userId ? path.getListOTSalary : path.getMyListOTSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year, userId}},
+    params: {filter: {date_month: month, date_year: year, userId, projectId}},
   });
 }
 
