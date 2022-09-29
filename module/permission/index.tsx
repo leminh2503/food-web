@@ -302,7 +302,7 @@ export function Permission(): JSX.Element {
                   j: [],
                 };
                 const listKey = Object.keys(dataArr);
-                for (let i = 0; i < 9; i++) {
+                for (let i = 0; i <= 9; i++) {
                   const dataArray =
                     dataPermissionModify &&
                     dataPermissionModify[i]?.permissions?.map((el) => el.id);
