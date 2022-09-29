@@ -85,7 +85,7 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryDay",
           key: "deductionSalaryDay",
           align: "center",
@@ -136,7 +136,7 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryDay",
           key: "deductionSalaryDay",
           align: "center",
@@ -149,13 +149,16 @@ export default function DeductionSalaryTable({
   const columns2: ColumnsType<IDataDeductionDay> = isAdmin
     ? [
         {
-          title: "giờ đi muộn",
+          title: "Giờ đi muộn",
           dataIndex: "hourLateWork",
           key: "hourLateWork",
           align: "center",
+          render: (_, record, index) => (
+            <div>{(record?.hourLateWork || "") + " (" + record.date + ")"}</div>
+          ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryHour",
           key: "deductionSalaryHour",
           align: "center",
@@ -199,13 +202,16 @@ export default function DeductionSalaryTable({
       ]
     : [
         {
-          title: "giờ đi muộn",
+          title: "Giờ đi muộn",
           dataIndex: "hourLateWork",
           key: "hourLateWork",
           align: "center",
+          render: (_, record, index) => (
+            <div>{(record?.hourLateWork || "") + " (" + record.date + ")"}</div>
+          ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryHour",
           key: "deductionSalaryHour",
           align: "center",

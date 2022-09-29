@@ -136,7 +136,7 @@ export function SalaryTableDetail(): JSX.Element {
         bonusSalary +
         projectSalary -
         deductionSalary +
-        Number(total || 0) -
+        Number(dataUser?.baseSalary || 0) -
         Number(taxSalary || 0)
     );
   }, [
@@ -265,7 +265,8 @@ export function SalaryTableDetail(): JSX.Element {
           </p>
         </Dropdown>
         <p className="mt-6 font-bold text-[26px]">
-          Tổng lương : {Number(totalSalary || 0)?.toLocaleString("en-US")} VND
+          Tổng lương :{" "}
+          {Math.floor(Number(totalSalary || 0))?.toLocaleString("en-US")} VND
         </p>
       </div>
       <div className="w-full row-all-center mt-8 mb-16">
@@ -285,11 +286,21 @@ export function SalaryTableDetail(): JSX.Element {
                   });
                   ApiSalary.updateTotalSalary(
                     {
-                      onsiteSalary: Number(onsiteSalary) || undefined,
-                      overtimeSalary: Number(overtimeSalary) || undefined,
-                      bonusSalary: Number(bonusSalary) || undefined,
-                      projectSalary: Number(projectSalary) || undefined,
-                      deductionSalary: Number(deductionSalary) || undefined,
+                      onsiteSalary:
+                        Math.floor(Number(onsiteSalary) / 1000) * 1000 ||
+                        undefined,
+                      overtimeSalary:
+                        Math.floor(Number(overtimeSalary) / 1000) * 1000 ||
+                        undefined,
+                      bonusSalary:
+                        Math.floor(Number(Number(bonusSalary)) / 1000) * 1000 ||
+                        undefined,
+                      projectSalary:
+                        Math.floor(Number(Number(projectSalary)) / 1000) *
+                          1000 || undefined,
+                      deductionSalary:
+                        Math.floor(Number(Number(deductionSalary)) / 1000) *
+                          1000 || undefined,
                     },
                     Number(id || 0)
                   ).then((r) => {
