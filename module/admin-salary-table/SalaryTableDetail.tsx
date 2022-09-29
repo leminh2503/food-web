@@ -24,7 +24,6 @@ export function SalaryTableDetail(): JSX.Element {
     year,
     userId,
     id,
-    total,
     tax,
     taxSalary,
     deductionTaxMe,
@@ -146,7 +145,7 @@ export function SalaryTableDetail(): JSX.Element {
     projectSalary,
     deductionSalary,
     tax,
-    total,
+    dataUser,
   ]);
 
   const menu = (
