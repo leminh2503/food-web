@@ -252,7 +252,7 @@ export function SalaryTableDetail(): JSX.Element {
           />
         </div>
       )}
-      <div className="mt-6 h-[150px] w-[400px] bg-white p-4">
+      <div className="mt-6 h-[150px] w-[450px] bg-white p-4">
         <Dropdown
           overlay={menu}
           placement="top"

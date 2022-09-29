@@ -150,7 +150,8 @@ export function MySalaryDetail(): JSX.Element {
               arrow={{pointAtCenter: true}}
             >
               <p className="font-bold hover-pointer" key={index}>
-                Thuế thu nhập cá nhân : {el?.taxSalary}
+                Thuế thu nhập cá nhân : {el?.taxSalary?.toLocaleString("en-US")}{" "}
+                VND
               </p>
             </Dropdown>
             <p className="mt-2 font-bold" key={index}>

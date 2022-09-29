@@ -109,7 +109,7 @@ export default function ModalCreateOnsite(
             ))}
           </Select>
         ) : _record?.onsitePlace ? (
-          <span>{props.projectName}</span>
+          <span>{props.projectName ?? _record?.onsitePlace}</span>
         ) : (
           <> </>
         );

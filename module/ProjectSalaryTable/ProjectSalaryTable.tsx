@@ -101,6 +101,9 @@ export default function ProjectSalaryTable({
           dataIndex: "salary",
           key: "salary",
           align: "center",
+          render: (_, record, index) => (
+            <div>{record?.salary?.toLocaleString("en-US")} VND</div>
+          ),
         },
       ];
 

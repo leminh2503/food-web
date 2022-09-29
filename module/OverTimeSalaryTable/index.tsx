@@ -53,13 +53,16 @@ export default function OverTimeSalaryTable({
   };
 
   const getListOTSalary = (): Promise<IDataOverTime[]> => {
-    if (isManager) {
+    if (idProject) {
       return ApiSalary.getMyListOTSalary(
         year,
         month,
         Number(idUser),
         Number(idProject)
       );
+    }
+    if (isManager) {
+      return ApiSalary.getMyListOTSalary(year, month, Number(idUser));
     }
     return ApiSalary.getMyListOTSalary(year, month);
   };

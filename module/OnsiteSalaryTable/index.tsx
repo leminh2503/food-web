@@ -60,13 +60,16 @@ export default function OnsiteSalaryTable({
   };
 
   const getListOnsiteSalary = (): Promise<IDataOnsite[]> => {
-    if (isManager) {
+    if (idProject) {
       return ApiSalary.getMyListOnsiteSalary(
         year,
         month,
         Number(idUser),
         Number(idProject)
       );
+    }
+    if (isManager) {
+      return ApiSalary.getMyListOnsiteSalary(year, month, Number(idUser));
     }
     return ApiSalary.getMyListOnsiteSalary(year, month);
   };

@@ -87,6 +87,12 @@ export default function OtherSalaryTable({
       ]
     : [
         {
+          title: "lý do",
+          dataIndex: "reason",
+          key: "reason",
+          align: "center",
+        },
+        {
           title: "Số tiền",
           dataIndex: "salary",
           key: "salary",
@@ -94,12 +100,6 @@ export default function OtherSalaryTable({
           render: (_, record, index) => (
             <div>{record?.salary?.toLocaleString("en-US")} VND</div>
           ),
-        },
-        {
-          title: "lý do",
-          dataIndex: "reason",
-          key: "reason",
-          align: "center",
         },
       ];
 
