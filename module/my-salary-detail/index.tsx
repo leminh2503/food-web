@@ -20,7 +20,7 @@ export function MySalaryDetail(): JSX.Element {
   const {month} = router.query;
   const {year} = router.query;
   const {onsiteSalary} = router.query;
-  const baseSalary = ApiUser.getInfoMe()?.baseSalary?.toLocaleString("en-US");
+  const baseSalary = Number(ApiUser.getInfoMe()?.baseSalary || 0);
   const manageSalary =
     ApiUser.getInfoMe()?.manageSalary?.toLocaleString("en-US");
   const userId = ApiUser.getInfoMe()?.id;
@@ -69,7 +69,7 @@ export function MySalaryDetail(): JSX.Element {
             {el?.detailTaxSalary?.taxableSalary?.toLocaleString("en-US")} VND
           </p>
           <p className="mt-2 font-bold" key={index}>
-            Thuế suất : {el?.detailTaxSalary?.tax?.toLocaleString("en-US")} %
+            Thuế suất : {el?.detailTaxSalary?.tax?.toLocaleString("en-US")}
           </p>
           <p className="mt-2 font-bold" key={index}>
             Thuế thu nhập cá nhân :{" "}
@@ -155,7 +155,11 @@ export function MySalaryDetail(): JSX.Element {
               </p>
             </Dropdown>
             <p className="mt-2 font-bold" key={index}>
-              Tổng lương : {el?.totalSalary?.toLocaleString("en-US")} VND
+              Tổng lương :{" "}
+              {((el?.totalSalary || 0) - (el?.taxSalary || 0))?.toLocaleString(
+                "en-US"
+              )}{" "}
+              VND
             </p>
           </>
         ))}
