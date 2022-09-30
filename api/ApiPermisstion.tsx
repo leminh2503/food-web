@@ -61,6 +61,13 @@ function getAllRole(
   });
 }
 
+function getAllRoleNoPaginate(): Promise<IRole[]> {
+  return fetcher({
+    url: path.getAllRole,
+    method: "get",
+  });
+}
+
 function deleteRoleGroup(id: number) {
   return fetcher({
     url: path.role + `/${id}`,
@@ -94,4 +101,5 @@ export default {
   getAllPermissionModify,
   addNewRoleGroup,
   updateRoleGroup,
+  getAllRoleNoPaginate,
 };
