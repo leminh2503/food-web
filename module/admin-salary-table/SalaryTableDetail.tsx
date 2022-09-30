@@ -222,6 +222,7 @@ export function SalaryTableDetail(): JSX.Element {
             year={Number(year)}
             listProject={listProject}
             isManager
+            isAdmin
           />
         </div>
       )}

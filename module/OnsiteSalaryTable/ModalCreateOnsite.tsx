@@ -24,6 +24,7 @@ interface IModalCreateOnsite {
   isManager?: boolean;
   listProject?: IDataProjectList[];
   projectName?: string;
+  isAdmin?: boolean;
 }
 
 export default function ModalCreateOnsite(
@@ -94,7 +95,7 @@ export default function ModalCreateOnsite(
           props?.listProject?.filter(
             (ele) => ele.name === _record?.onsitePlace
           ) || [];
-        return _record.state !== 1 && !props.isManager ? (
+        return (_record.state !== 1 && !props.isManager) || props.isAdmin ? (
           <Select
             value={idPJ[0]?.id}
             onChange={(e, value) => {

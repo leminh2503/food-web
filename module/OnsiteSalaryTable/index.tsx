@@ -24,9 +24,11 @@ export default function OnsiteSalaryTable({
   setDailyOnsiteRate2,
   dailyOnsiteRate,
   setOnsiteSalary,
+  isAdmin,
   listProject,
   totalSalaryOS,
 }: {
+  isAdmin?: boolean;
   setDailyOnsiteRate2?: (val: number) => void;
   idTotal?: number;
   idProject?: number;
@@ -222,6 +224,7 @@ export default function OnsiteSalaryTable({
         month={month}
         refetchDataOnsite={refetch}
         year={year}
+        isAdmin={isAdmin}
         projectName={projectName}
         isManager={isManager}
         isModalVisible={isModalVisible}
