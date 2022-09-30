@@ -5,9 +5,9 @@
   top: 0;
   position: fixed;
   left: 0;
+  overflow-y: auto;
   transition: width $transition-layout-time;
   z-index: 2;
-
   &::-webkit-scrollbar {
     width: 0;
   }
