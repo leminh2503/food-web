@@ -329,7 +329,7 @@ export function Permission(): JSX.Element {
           onShowSizeChange={onShowSizeChange}
           onChange={handleChangePagination}
           defaultCurrent={pagingCurrent.currentPage}
-          total={dataRoles?.meta.totalItems || 1}
+          total={dataRoles?.meta?.totalItems || 1}
         />
       </Card>
       <ModalAddRoleGroup

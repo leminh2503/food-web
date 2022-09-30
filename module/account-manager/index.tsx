@@ -164,20 +164,14 @@ export function AccountManager(): JSX.Element {
     return ApiUser.getListPosition();
   };
 
-  const getRoles = (): Promise<{
-    data: IRole[];
-    meta: IMetadata;
-  }> => {
-    const params = {
-      pageSize: pagingCurrent.pageSize,
-      pageNumber: pagingCurrent.currentPage,
-      searchFields: ["roleName"],
-      search: filterText,
-    };
-    return ApiPermisstion.getAllRole(params);
+  const getAllRoleNoPaginate = (): Promise<IRole[]> => {
+    return ApiPermisstion.getAllRoleNoPaginate();
   };
 
-  const {data: dataRoles} = useQuery(queryKeys.GET_ROLES, getRoles);
+  const {data: dataRoles} = useQuery(
+    queryKeys.GET_ROLES_NO_PAGINATE,
+    getAllRoleNoPaginate
+  );
 
   const listWorkType = useQuery(queryKeys.GET_LIST_WORK_TYPE, getListWorkType);
   const listPosition = useQuery(queryKeys.GET_LIST_POSITION, getListPosition);
@@ -216,7 +210,7 @@ export function AccountManager(): JSX.Element {
     label: string;
     default?: boolean;
   }[] = [];
-  dataRoles?.data?.map((el) => {
+  dataRoles?.map((el) => {
     const renamedObj = renameKeys(el || {}, newKeysRole);
     listRoleConvert.push(renamedObj);
     return listRoleConvert;
