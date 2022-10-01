@@ -97,19 +97,24 @@ export default function ModalCreateOnsite(
           ) || [];
         return (_record.state !== 1 && !props.isManager) || props.isAdmin ? (
           <Select
+            allowClear
             value={idPJ[0]?.id}
             onChange={(e, value) => {
-              handleChangeOnsite(Number(e), _record.day, (value as any)?.key);
+              handleChangeOnsite(
+                e ? Number(e) : undefined,
+                _record.day,
+                (value as any)?.key
+              );
             }}
             className="w-full"
           >
             {props?.listProject?.map((el, index) =>
               props.isAdmin ? (
-                <Select.Option key={index} value={el?.id}>
+                <Select.Option key={el?.name} value={el?.id}>
                   {el?.name}
                 </Select.Option>
               ) : (
-                <Select.Option key={index} value={el?.project?.id}>
+                <Select.Option key={el?.project?.name} value={el?.project?.id}>
                   {el?.project?.name}
                 </Select.Option>
               )
@@ -154,17 +159,18 @@ export default function ModalCreateOnsite(
   };
 
   const handleChangeOnsite = (
-    e: number,
+    e: number | undefined,
     day: string | number | undefined,
     name: string
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
-        el.project = e;
-        el.onsitePlace = name;
+        el.project = e ?? -1;
+        el.onsitePlace = name ?? "";
       }
       return el;
     });
+    console.log(dataChange);
     setData(dataChange);
   };
 

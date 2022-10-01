@@ -98,6 +98,7 @@ export default function ModalCreateOverTime(
           <span>{_record.hour}</span>
         ) : (
           <Input
+            id={"OT" + _record.day}
             min={0}
             type="number"
             value={_record.hour}
@@ -118,10 +119,11 @@ export default function ModalCreateOverTime(
           <span>{props?.projectName || _record.projectName}</span>
         ) : (
           <Select
+            allowClear
             value={_record?.projectId}
             style={{width: 120}}
             onChange={(e) =>
-              handleChangeOT("project", e.toString(), _record.day)
+              handleChangeOT("project", e?.toString(), _record.day)
             }
           >
             {props?.listProject?.map((el, index) =>
@@ -172,16 +174,19 @@ export default function ModalCreateOverTime(
 
   const handleChangeOT = (
     type: string,
-    e: string,
+    e: string | undefined,
     day: string | number | undefined
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
         if (type === "hour") {
-          el.hour = e;
+          el.hour = e ?? "";
         }
         if (type === "project") {
-          el.projectId = Number(e);
+          el.projectId = e ? Number(e) : undefined;
+        }
+        if (e === undefined) {
+          el.hour = e ?? undefined;
         }
       }
       return el;
