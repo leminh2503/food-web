@@ -93,7 +93,9 @@ export default function ModalCreateOnsite(
       render: (index, _record): JSX.Element => {
         const idPJ =
           props?.listProject?.filter(
-            (ele) => ele.name === _record?.onsitePlace
+            (ele) =>
+              ele.name === _record?.onsitePlace ||
+              ele?.project?.name === _record?.onsitePlace
           ) || [];
         return (_record.state !== 1 && !props.isManager) || props.isAdmin ? (
           <Select
