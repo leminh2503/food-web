@@ -135,6 +135,7 @@ export function SalaryTableDetail(): JSX.Element {
         bonusSalary +
         projectSalary -
         deductionSalary +
+        Number(dataUser?.manageSalary || 0) +
         Number(dataUser?.baseSalary || 0) -
         Number(taxSalary || 0)
     );

@@ -103,11 +103,17 @@ export default function ModalCreateOnsite(
             }}
             className="w-full"
           >
-            {props?.listProject?.map((el, index) => (
-              <Select.Option key={el.name} value={el?.id}>
-                {el?.name}
-              </Select.Option>
-            ))}
+            {props?.listProject?.map((el, index) =>
+              props.isAdmin ? (
+                <Select.Option key={index} value={el?.id}>
+                  {el?.name}
+                </Select.Option>
+              ) : (
+                <Select.Option key={index} value={el?.project?.id}>
+                  {el?.project?.name}
+                </Select.Option>
+              )
+            )}
           </Select>
         ) : _record?.onsitePlace ? (
           <span>{props.projectName ?? _record?.onsitePlace}</span>
