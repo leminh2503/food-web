@@ -141,15 +141,12 @@ export default function OtherSalaryTable({
             ?.toLocaleString("en-US")}{" "}
           VND
         </div>
-        {isAdmin &&
-          CheckPermissionEvent(
-            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_OTHER
-          ) && (
-            <PlusCircleOutlined
-              onClick={showModal}
-              className="text-[20px] text-[#0092ff] mr-3"
-            />
-          )}
+        {isAdmin && (
+          <PlusCircleOutlined
+            onClick={showModal}
+            className="text-[20px] text-[#0092ff] mr-3"
+          />
+        )}
       </div>
       <Table
         loading={isRefetching}

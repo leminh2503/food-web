@@ -575,14 +575,8 @@ export function AccountManager(): JSX.Element {
           onRow={(record, rowIndex) => {
             return {
               onDoubleClick: (): void => {
-                if (
-                  CheckPermissionEvent(
-                    NameEventConstant.PERMISSION_USER_KEY.GET_DETAIL_USER
-                  )
-                ) {
-                  setDataDetail(record);
-                  setIsModalVisible(true);
-                }
+                setDataDetail(record);
+                setIsModalVisible(true);
               },
             };
           }}

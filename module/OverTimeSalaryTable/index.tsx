@@ -10,8 +10,6 @@ import {IDataOverTime, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useMutation, useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function OverTimeSalaryTable({
   month,
@@ -96,36 +94,30 @@ export default function OverTimeSalaryTable({
     {
       title: (
         <>
-          {CheckPermissionEvent(
-            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_OT_SALARY
-          ) && (
-            <EditFilled
-              onClick={showModal}
-              className="text-[20px] text-[#0092ff] mr-3"
+          <EditFilled
+            onClick={showModal}
+            className="text-[20px] text-[#0092ff] mr-3"
+          />
+
+          {isManager && (
+            <CheckCircleFilled
+              className={
+                disableCheck
+                  ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
+                  : "text-[20px] text-[green]"
+              }
+              onClick={(): void => {
+                if (!disableCheck) {
+                  Modal.confirm({
+                    title: "Bạn muốn duyệt tất cả lương OT ?",
+                    centered: true,
+                    onOk: handleUpdate,
+                  });
+                }
+              }}
+              disabled={disableCheck}
             />
           )}
-          {isManager &&
-            CheckPermissionEvent(
-              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ACCEPT_SALARY_OT
-            ) && (
-              <CheckCircleFilled
-                className={
-                  disableCheck
-                    ? "text-[20px] text-[#ADE597FF] hover:cursor-not-allowed"
-                    : "text-[20px] text-[green]"
-                }
-                onClick={(): void => {
-                  if (!disableCheck) {
-                    Modal.confirm({
-                      title: "Bạn muốn duyệt tất cả lương OT ?",
-                      centered: true,
-                      onOk: handleUpdate,
-                    });
-                  }
-                }}
-                disabled={disableCheck}
-              />
-            )}
         </>
       ),
       dataIndex: "col1",

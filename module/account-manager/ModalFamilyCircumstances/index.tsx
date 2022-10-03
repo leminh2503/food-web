@@ -8,8 +8,6 @@ import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {ModalAddFamily} from "@app/module/account-manager/ModalAddFamily";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {queryKeys} from "@app/utils/constants/react-query";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface ModalInfoProps {
   isModalVisible: boolean;
@@ -211,20 +209,16 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
   const renderContent = (): JSX.Element => {
     return (
       <div className="modal-info-family">
-        {CheckPermissionEvent(
-          NameEventConstant.PERMISSION_USER_KEY.ADD_USER_DEPENDENTS
-        ) && (
-          <Button
-            style={{backgroundColor: "#1890FF", color: "#fff"}}
-            className="mb-4 float-right"
-            onClick={(): void => {
-              setDataDetail(defaultValuesDetail);
-              setIsToggleModal(true);
-            }}
-          >
-            Thêm người phụ thuộc
-          </Button>
-        )}
+        <Button
+          style={{backgroundColor: "#1890FF", color: "#fff"}}
+          className="mb-4 float-right"
+          onClick={(): void => {
+            setDataDetail(defaultValuesDetail);
+            setIsToggleModal(true);
+          }}
+        >
+          Thêm người phụ thuộc
+        </Button>
         <Table
           loading={isFetching}
           columns={columns}
@@ -233,14 +227,8 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
           onRow={(record, rowIndex) => {
             return {
               onDoubleClick: (): void => {
-                if (
-                  CheckPermissionEvent(
-                    NameEventConstant.PERMISSION_USER_KEY.UPDATE_USER_DEPENDENTS
-                  )
-                ) {
-                  setIsToggleModal(true);
-                  setDataDetail(record);
-                }
+                setIsToggleModal(true);
+                setDataDetail(record);
               },
             };
           }}

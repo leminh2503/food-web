@@ -8,8 +8,6 @@ import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import baseURL from "@app/config/baseURL";
 import {LeftOutlined, PlusCircleFilled} from "@ant-design/icons";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function TableSalaryTotalOfUser(): JSX.Element {
   const router = useRouter();
@@ -276,31 +274,28 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             </Select.Option>
           </Select>
         </div>
-        {CheckPermissionEvent(
-          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.CREATE_ALL_SALARY
-        ) && (
-          <Button
-            type="primary"
-            onClick={(): void => {
-              Modal.confirm({
-                title: "Bạn chắc chắn muốn taọ lương cho toàn bộ nhân viên ?",
-                onOk: () => {
-                  ApiSalary.createSalaryAllEmployee(
-                    Number(year),
-                    Number(month)
-                  ).then((r) => {
-                    notification.success({message: "create success"});
-                    refetch();
-                  });
-                },
-              });
-            }}
-            className="bg-blue-500 items-center flex"
-            icon={<PlusCircleFilled />}
-          >
-            Tạo lương tất cả nhân viên
-          </Button>
-        )}
+
+        <Button
+          type="primary"
+          onClick={(): void => {
+            Modal.confirm({
+              title: "Bạn chắc chắn muốn taọ lương cho toàn bộ nhân viên ?",
+              onOk: () => {
+                ApiSalary.createSalaryAllEmployee(
+                  Number(year),
+                  Number(month)
+                ).then((r) => {
+                  notification.success({message: "create success"});
+                  refetch();
+                });
+              },
+            });
+          }}
+          className="bg-blue-500 items-center flex"
+          icon={<PlusCircleFilled />}
+        >
+          Tạo lương tất cả nhân viên
+        </Button>
       </div>
       <Table
         columns={columns}
@@ -315,30 +310,23 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {
-              if (
-                CheckPermissionEvent(
-                  NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
-                    .GET_DETAIL_SALARY
-                )
-              ) {
-                router.push({
-                  pathname: baseURL.SALARY.CREATE_SALARY,
-                  query: {
-                    month: month,
-                    year: year,
-                    userId: record.user.id,
-                    id: record.id,
-                    total: record.totalSalary,
-                    taxSalary: record.taxSalary,
-                    deductionTaxMe: record?.detailTaxSalary?.deductionOwn,
-                    deductionFamilyTaxMe:
-                      record?.detailTaxSalary?.deductionFamilyCircumstances,
-                    taxableSalary: record.detailTaxSalary?.taxableSalary,
-                    tax: record?.detailTaxSalary?.tax,
-                    dailyOnsiteRate: record?.dailyOnsiteRate,
-                  },
-                });
-              }
+              router.push({
+                pathname: baseURL.SALARY.CREATE_SALARY,
+                query: {
+                  month: month,
+                  year: year,
+                  userId: record.user.id,
+                  id: record.id,
+                  total: record.totalSalary,
+                  taxSalary: record.taxSalary,
+                  deductionTaxMe: record?.detailTaxSalary?.deductionOwn,
+                  deductionFamilyTaxMe:
+                    record?.detailTaxSalary?.deductionFamilyCircumstances,
+                  taxableSalary: record.detailTaxSalary?.taxableSalary,
+                  tax: record?.detailTaxSalary?.tax,
+                  dailyOnsiteRate: record?.dailyOnsiteRate,
+                },
+              });
             },
           };
         }}

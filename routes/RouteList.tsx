@@ -107,7 +107,7 @@ const routes: IRoute[] = [
     path: "/work-schedule",
     name: "Lịch làm việc",
     isPrivate: true,
-    role: NameEventConstant.PERMISSION_WORK_CALENDAR_KEY.LIST_ALL,
+    // role: NameEventConstant.PERMISSION_WORK_CALENDAR_KEY.LIST_ALL,
     icon: "CalenderWork",
     isSidebar: true,
   },

@@ -14,8 +14,6 @@ import {ModalOpenSchedule} from "../ModalOpenSchedule";
 import {ModalLockSchedule} from "../ModalLockSchedule";
 import {IMetadata} from "@app/api/Fetcher";
 import {queryKeys} from "@app/utils/constants/react-query";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function AdminWorkSchedule(): JSX.Element {
   const [filterYear, setFilterYear] = useState<number>(moment().year());
@@ -144,26 +142,19 @@ export function AdminWorkSchedule(): JSX.Element {
           setFilterYear={setFilterYear}
         />
         <div>
-          {CheckPermissionEvent(
-            NameEventConstant.PERMISSION_WORK_CALENDAR_KEY.UNLOCK_WORK_CALENDAR
-          ) && (
-            <Button
-              onClick={() => setIsModalOpenVisible(true)}
-              className="open_calender mr-5"
-            >
-              Mở lịch
-            </Button>
-          )}
-          {CheckPermissionEvent(
-            NameEventConstant.PERMISSION_WORK_CALENDAR_KEY.LOCK_WORK_CALENDAR
-          ) && (
-            <Button
-              onClick={() => setIsModalLockVisible(true)}
-              className="close_calender"
-            >
-              Khóa lịch
-            </Button>
-          )}
+          <Button
+            onClick={() => setIsModalOpenVisible(true)}
+            className="open_calender mr-5"
+          >
+            Mở lịch
+          </Button>
+
+          <Button
+            onClick={() => setIsModalLockVisible(true)}
+            className="close_calender"
+          >
+            Khóa lịch
+          </Button>
         </div>
       </div>
       <Table

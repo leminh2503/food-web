@@ -12,10 +12,8 @@ import DeductionSalaryTable from "@app/module/DeductionSalaryTable/DeductionSala
 import {IDataProjectList, IUserLogin} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {Button, Image, Modal, notification, Table, Dropdown} from "antd";
+import {Button, Dropdown, Image, Modal, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
@@ -271,69 +269,62 @@ export function SalaryTableDetail(): JSX.Element {
         </p>
       </div>
       <div className="w-full row-all-center mt-8 mb-16">
-        {CheckPermissionEvent(
-          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ACCEPT_SALARY_TOTAL
-        ) && (
-          <Button
-            type="primary"
-            className="bg-blue-500"
-            onClick={() => {
-              Modal.confirm({
-                title: "Bạn chắc chắn muốn duyệt lương ?",
-                centered: true,
-                onOk: (): void => {
-                  ApiSalary.acceptToTalSalary([Number(id || 0)]).then((r) => {
-                    notification.success({message: "accept success"});
-                  });
-                  ApiSalary.updateTotalSalary(
-                    {
-                      onsiteSalary:
-                        Math.floor(Number(onsiteSalary) / 1000) * 1000 ||
-                        undefined,
-                      overtimeSalary:
-                        Math.floor(Number(overtimeSalary) / 1000) * 1000 ||
-                        undefined,
-                      bonusSalary:
-                        Math.floor(Number(Number(bonusSalary)) / 1000) * 1000 ||
-                        undefined,
-                      projectSalary:
-                        Math.floor(Number(Number(projectSalary)) / 1000) *
-                          1000 || undefined,
-                      deductionSalary:
-                        Math.floor(Number(Number(deductionSalary)) / 1000) *
-                          1000 || undefined,
-                    },
-                    Number(id || 0)
-                  ).then((r) => {
-                    //
-                  });
-                },
-              });
-            }}
-          >
-            Duyệt bảng lương
-          </Button>
-        )}
-        {CheckPermissionEvent(
-          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.LOCK_SALARY
-        ) && (
-          <Button
-            className="ml-8 bg-red-500 text-[white]"
-            onClick={() => {
-              Modal.confirm({
-                title: "Bạn chắc chắn muốn khoá bảng lương ?",
-                centered: true,
-                onOk: (): void => {
-                  ApiSalary.lockToTalSalary([Number(id || 0)]).then((r) => {
-                    notification.success({message: "Lock success"});
-                  });
-                },
-              });
-            }}
-          >
-            Khoá bảng lương
-          </Button>
-        )}
+        <Button
+          type="primary"
+          className="bg-blue-500"
+          onClick={() => {
+            Modal.confirm({
+              title: "Bạn chắc chắn muốn duyệt lương ?",
+              centered: true,
+              onOk: (): void => {
+                ApiSalary.acceptToTalSalary([Number(id || 0)]).then((r) => {
+                  notification.success({message: "accept success"});
+                });
+                ApiSalary.updateTotalSalary(
+                  {
+                    onsiteSalary:
+                      Math.floor(Number(onsiteSalary) / 1000) * 1000 ||
+                      undefined,
+                    overtimeSalary:
+                      Math.floor(Number(overtimeSalary) / 1000) * 1000 ||
+                      undefined,
+                    bonusSalary:
+                      Math.floor(Number(Number(bonusSalary)) / 1000) * 1000 ||
+                      undefined,
+                    projectSalary:
+                      Math.floor(Number(Number(projectSalary)) / 1000) * 1000 ||
+                      undefined,
+                    deductionSalary:
+                      Math.floor(Number(Number(deductionSalary)) / 1000) *
+                        1000 || undefined,
+                  },
+                  Number(id || 0)
+                ).then((r) => {
+                  //
+                });
+              },
+            });
+          }}
+        >
+          Duyệt bảng lương
+        </Button>
+
+        <Button
+          className="ml-8 bg-red-500 text-[white]"
+          onClick={() => {
+            Modal.confirm({
+              title: "Bạn chắc chắn muốn khoá bảng lương ?",
+              centered: true,
+              onOk: (): void => {
+                ApiSalary.lockToTalSalary([Number(id || 0)]).then((r) => {
+                  notification.success({message: "Lock success"});
+                });
+              },
+            });
+          }}
+        >
+          Khoá bảng lương
+        </Button>
       </div>
     </div>
   );
