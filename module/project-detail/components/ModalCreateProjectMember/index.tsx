@@ -163,14 +163,14 @@ export function ModalCreateProjectMember({
                       : dateString,
                 }));
               }}
-              disabledDate={(d): boolean => {
-                return (
-                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
-                    moment(date.startDate, "DD/MM/YYYY") ||
-                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-                    moment(date.endDate, "DD/MM/YYYY")
-                );
-              }}
+              // disabledDate={(d): boolean => {
+              //   return (
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
+              //       moment(date.startDate, "DD/MM/YYYY") ||
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+              //       moment(date.endDate, "DD/MM/YYYY")
+              //   );
+              // }}
             />
           </Form.Item>
           <Form.Item

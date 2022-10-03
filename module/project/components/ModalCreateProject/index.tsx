@@ -107,7 +107,14 @@ export function ModalCreateProject({
             label="PM dự án"
             rules={[{required: true}]}
           >
-            <Select>
+            <Select
+              showSearch
+              filterOption={(input, option) =>
+                (option!.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
               {listUserConvert?.map((e) => (
                 <Select.Option key={e.value} value={e.value}>
                   {e.label}
@@ -131,22 +138,22 @@ export function ModalCreateProject({
                       : dateString,
                 }));
               }}
-              disabledDate={(d): boolean => {
-                console.log(
-                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY"),
-                  moment(date.endDate, "DD/MM/YYYY"),
-                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-                    moment(date.endDate, "DD/MM/YYYY")
-                );
-                if (date.endDate !== moment().format("DD/MM/YYYY")) {
-                  return (
-                    d.isBefore() ||
-                    moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-                      moment(date.endDate, "DD/MM/YYYY")
-                  );
-                }
-                return d.isBefore();
-              }}
+              // disabledDate={(d): boolean => {
+              //   console.log(
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY"),
+              //     moment(date.endDate, "DD/MM/YYYY"),
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+              //       moment(date.endDate, "DD/MM/YYYY")
+              //   );
+              //   if (date.endDate !== moment().format("DD/MM/YYYY")) {
+              //     return (
+              //       d.isBefore() ||
+              //       moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+              //         moment(date.endDate, "DD/MM/YYYY")
+              //     );
+              //   }
+              //   return d.isBefore();
+              // }}
             />
           </Form.Item>
           <Form.Item

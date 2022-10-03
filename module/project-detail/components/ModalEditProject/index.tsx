@@ -25,7 +25,7 @@ export function ModalEditProject({
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
 
-  const [date, setDate] = useState({
+  const [, setDate] = useState({
     startDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
     endDate: moment(dataProjectById.endDate).format("DD/MM/YYYY"),
   });
@@ -62,7 +62,10 @@ export function ModalEditProject({
       use: fieldsValue.use,
       technicality: fieldsValue.technicality,
       description: fieldsValue.description,
-      projectProgress: fieldsValue?.projectProgress,
+      projectProgress:
+        fieldsValue?.projectProgress && fieldsValue?.projectProgress > 0
+          ? fieldsValue?.projectProgress
+          : undefined,
     };
     handleEditProject(data);
   };
@@ -119,7 +122,14 @@ export function ModalEditProject({
             label="PM dự án"
             rules={[{required: true}]}
           >
-            <Select>
+            <Select
+              showSearch
+              filterOption={(input, option) =>
+                (option!.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
               {listUserConvert?.map((e) => (
                 <Select.Option key={e.value} value={e.value}>
                   {e.label}
@@ -146,9 +156,9 @@ export function ModalEditProject({
                       : dateString,
                 }))
               }
-              disabledDate={(d): boolean =>
-                d.isBefore(moment(date.startDate, "DD/MM/YYYY"))
-              }
+              // disabledDate={(d): boolean =>
+              //   d.isBefore(moment(date.startDate, "DD/MM/YYYY"))
+              // }
             />
           </Form.Item>
           <Form.Item
