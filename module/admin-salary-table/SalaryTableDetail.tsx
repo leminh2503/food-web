@@ -265,7 +265,10 @@ export function SalaryTableDetail(): JSX.Element {
         </Dropdown>
         <p className="mt-6 font-bold text-[26px]">
           Tổng lương :{" "}
-          {Math.floor(Number(totalSalary || 0))?.toLocaleString("en-US")} VND
+          {(
+            Number((Number(totalSalary || 0) / 1000).toFixed(0)) * 1000
+          ).toLocaleString("en-US")}{" "}
+          VND
         </p>
       </div>
       <div className="w-full row-all-center mt-8 mb-16">
@@ -282,21 +285,11 @@ export function SalaryTableDetail(): JSX.Element {
                 });
                 ApiSalary.updateTotalSalary(
                   {
-                    onsiteSalary:
-                      Math.floor(Number(onsiteSalary) / 1000) * 1000 ||
-                      undefined,
-                    overtimeSalary:
-                      Math.floor(Number(overtimeSalary) / 1000) * 1000 ||
-                      undefined,
-                    bonusSalary:
-                      Math.floor(Number(Number(bonusSalary)) / 1000) * 1000 ||
-                      undefined,
-                    projectSalary:
-                      Math.floor(Number(Number(projectSalary)) / 1000) * 1000 ||
-                      undefined,
-                    deductionSalary:
-                      Math.floor(Number(Number(deductionSalary)) / 1000) *
-                        1000 || undefined,
+                    onsiteSalary: Number(onsiteSalary),
+                    overtimeSalary: Number(overtimeSalary),
+                    bonusSalary: Number(bonusSalary),
+                    projectSalary: Number(projectSalary),
+                    deductionSalary: Number(deductionSalary),
                   },
                   Number(id || 0)
                 ).then((r) => {
