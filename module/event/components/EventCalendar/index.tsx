@@ -118,7 +118,7 @@ export function EventCalendar({dataEvent}: EventCalendarProps): JSX.Element {
         </div>
         <div className="p-2 mb-4">
           {CheckPermissionEvent(
-            NameEventConstant.PERMISSION_EVENT_KEY.DELETE_EVENT
+            NameEventConstant.PERMISSION_EVENT_KEY.LIST_ALL_EVENT
           ) && (
             <Button
               className="mr-4 w-40 btn-red"
@@ -128,7 +128,7 @@ export function EventCalendar({dataEvent}: EventCalendarProps): JSX.Element {
             </Button>
           )}
           {CheckPermissionEvent(
-            NameEventConstant.PERMISSION_EVENT_KEY.ADD_EVENT
+            NameEventConstant.PERMISSION_EVENT_KEY.LIST_ALL_EVENT
           ) && (
             <Button className="w-40 btn-blue" onClick={showModalCreateEvent}>
               Thêm sự kiện

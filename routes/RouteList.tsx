@@ -137,7 +137,7 @@ const routes: IRoute[] = [
         path: "/work-type",
         name: "Loại hình làm việc",
         icon: "",
-        role: NameEventConstant.PERMISSION_POSITION_KEY.LIST_ALL,
+        role: NameEventConstant.PERMISSION_WORK_TYPE.LIST_ALL,
         isPrivate: true,
         isSidebar: true,
       },

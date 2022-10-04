@@ -231,7 +231,7 @@ export function LeaveWork(): JSX.Element {
               onClick={(): void => {
                 if (
                   CheckPermissionEvent(
-                    NameEventConstant.PERMISSION_ON_LEAVE_KEY.ACCEPT_ON_LEAVE
+                    NameEventConstant.PERMISSION_ON_LEAVE_KEY.LIST_ALL_ON_LEAVE
                   )
                 ) {
                   handleApprovalLeaveWork(record);
@@ -244,7 +244,7 @@ export function LeaveWork(): JSX.Element {
               onClick={(): void => {
                 if (
                   CheckPermissionEvent(
-                    NameEventConstant.PERMISSION_ON_LEAVE_KEY.UPDATE_ON_LEAVE
+                    NameEventConstant.PERMISSION_ON_LEAVE_KEY.LIST_ALL_ON_LEAVE
                   )
                 ) {
                   showModalRefuseLeaveWork();

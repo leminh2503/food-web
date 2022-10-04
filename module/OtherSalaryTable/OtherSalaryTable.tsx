@@ -7,8 +7,6 @@ import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import {CloseCircleOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import ModalOtherSalary from "@app/module/OtherSalaryTable/ModalOtherSalary";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function OtherSalaryTable({
   month,
@@ -67,10 +65,7 @@ export default function OtherSalaryTable({
           title: "",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return CheckPermissionEvent(
-              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
-                .DELETE_SALARY_OTHER
-            ) ? (
+            return (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteBonusSalary(_record?.id || 0).then((r) =>
@@ -79,8 +74,6 @@ export default function OtherSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
-            ) : (
-              <> </>
             );
           },
         },

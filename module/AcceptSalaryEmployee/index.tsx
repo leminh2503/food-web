@@ -10,8 +10,6 @@ import ApiSalary from "@app/api/ApiSalary";
 import {IDataProjectList} from "@app/types";
 import ApiUser from "@app/api/ApiUser";
 import {queryKeys} from "@app/utils/constants/react-query";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function AcceptSalaryEmployee(): JSX.Element {
   const router = useRouter();
@@ -75,23 +73,17 @@ export function AcceptSalaryEmployee(): JSX.Element {
   const onRow = (record: any): {onDoubleClick: () => void} => {
     return {
       onDoubleClick: (): void => {
-        if (
-          CheckPermissionEvent(
-            NameEventConstant.PERMISSION_SALARY_APPROVAL_KEY.SALARY_APPROVAL
-          )
-        ) {
-          router.push({
-            pathname: baseURL.SALARY.ACCEPT_SALARY_DETAIL,
-            query: {
-              month: month,
-              year: year,
-              idUser: record?.userId,
-              idProject: idProject,
-              projectName: nameProject,
-              userName: record?.username,
-            },
-          });
-        }
+        router.push({
+          pathname: baseURL.SALARY.ACCEPT_SALARY_DETAIL,
+          query: {
+            month: month,
+            year: year,
+            idUser: record?.userId,
+            idProject: idProject,
+            projectName: nameProject,
+            userName: record?.username,
+          },
+        });
       },
     };
   };

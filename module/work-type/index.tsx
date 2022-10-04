@@ -9,6 +9,8 @@ import {ModalCreateWorkType} from "@app/module/work-type/components/ModalCreateW
 import {ModalEditWorkType} from "@app/module/work-type/components/ModalEditWorkType";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function WorkType(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
@@ -77,9 +79,14 @@ export function WorkType(): JSX.Element {
   return (
     <div className="container-work-type">
       <div className="mb-5 flex justify-end">
-        <Button className="btn-primary w-48" onClick={showModalCreateWorkType}>
-          Thêm loại hình làm việc
-        </Button>
+        {CheckPermissionEvent(NameEventConstant.PERMISSION_WORK_TYPE.ADD) && (
+          <Button
+            className="btn-primary w-48"
+            onClick={showModalCreateWorkType}
+          >
+            Thêm loại hình làm việc
+          </Button>
+        )}
       </div>
       <Table
         columns={[
@@ -109,18 +116,26 @@ export function WorkType(): JSX.Element {
             width: 200,
             render: (_, record) => (
               <>
-                <Button
-                  className="mr-2"
-                  icon={<Icon icon="Edit" size={20} color="#0092ff" />}
-                  onClick={(): void => {
-                    setWorkType(record);
-                    showModalEditWorkType();
-                  }}
-                />
-                <Button
-                  icon={<Icon icon="Delete" size={20} color="#cb2131" />}
-                  onClick={(): void => handleDeleteWorkType(record)}
-                />
+                {CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_WORK_TYPE.UPDATE
+                ) && (
+                  <Button
+                    className="mr-2"
+                    icon={<Icon icon="Edit" size={20} color="#0092ff" />}
+                    onClick={(): void => {
+                      setWorkType(record);
+                      showModalEditWorkType();
+                    }}
+                  />
+                )}
+                {CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_WORK_TYPE.DELETE
+                ) && (
+                  <Button
+                    icon={<Icon icon="Delete" size={20} color="#cb2131" />}
+                    onClick={(): void => handleDeleteWorkType(record)}
+                  />
+                )}
               </>
             ),
           },
