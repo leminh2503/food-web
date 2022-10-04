@@ -72,10 +72,6 @@ ModalChangePassword): JSX.Element {
       });
     } else {
       // onClose()
-
-      notification.success({
-        message: "Đổi mật khẩu thành công",
-      });
       HandleSubmit(values);
     }
   };
@@ -90,19 +86,24 @@ ModalChangePassword): JSX.Element {
   const HandleSubmit = (values: IChangePassword): void => {
     changePasswordMutation.mutate(
       {
-        // newPassword:values.newPassword,
+        oldPassword: data.oldPassword,
         newPassword: data.newPassword,
       },
       {
         onSuccess: () => {
           // router.push("/#");
           //   setSubmitting(false);
-
+          notification.success({
+            message: "Đổi mật khẩu thành công",
+          });
           dispatch(logoutUser());
           router.push("/login");
         },
         onError: (error) => {
-          //   setSubmitting(false);
+          notification.error({
+            message:
+              "Mật khẩu phải có ít nhất 6 ký tự chứa 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt",
+          });
         },
       }
     );
@@ -110,7 +111,7 @@ ModalChangePassword): JSX.Element {
 
   return (
     <Formik
-      initialValues={{newPassword: ""}}
+      initialValues={{newPassword: "", oldPassword: ""}}
       validateOnChange={false}
       validateOnBlur
       onSubmit={HandleSubmit}

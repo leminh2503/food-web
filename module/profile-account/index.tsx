@@ -92,6 +92,7 @@ export function ProfileAccount(): JSX.Element {
         message: `Sửa thành công`,
       });
       dataRefetch();
+      setComponentDisabled(true);
     },
     onError: () => {
       notification.error({
@@ -132,7 +133,7 @@ export function ProfileAccount(): JSX.Element {
       gender: fieldsValue?.gender,
       workRoom: fieldsValue?.workRoom,
       englishCertificate: fieldsValue?.englishCertificate,
-      englishScore: Number(fieldsValue?.englishScore),
+      englishScore: fieldsValue?.englishScore?.toString(),
     };
     handleConfirmEdit(data);
   };
@@ -233,7 +234,7 @@ export function ProfileAccount(): JSX.Element {
               </Form.Item>
               <Form.Item
                 name="phoneNumberRelative"
-                label="Số điện thoại người thân"
+                label="Sđt người thân"
                 rules={[
                   {required: true},
                   {

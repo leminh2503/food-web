@@ -14,7 +14,6 @@ interface SignInProps {
 }
 export function SignIn({changeTab}: SignInProps): JSX.Element {
   const dispatch = useDispatch();
-
   const loginMutation = useMutation(ApiUser.login);
 
   const handleLogin = (
@@ -28,7 +27,7 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
           dispatch(loginUser({...res}));
           localStorage.setItem("role", res.role?.id?.toString() || "0");
           setSubmitting(false);
-          window.location.reload();
+          window.location.replace("/");
         },
         onError: (error) => {
           setSubmitting(false);
