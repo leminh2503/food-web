@@ -36,7 +36,7 @@ export interface IRegisterAccountBody {
   employeeCode: string;
   fullName: string;
   deductionOwn?: number;
-  roleId: number;
+  role: number;
 }
 
 export interface IProfileBody {
@@ -72,7 +72,7 @@ export interface IInformationAccountBody {
   email?: string;
   employeeCode?: string;
   fullName?: string;
-  roleId?: number;
+  role?: number;
 }
 
 export interface IResetPasswordBody {

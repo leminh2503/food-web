@@ -27,7 +27,7 @@ export function NumberInput({
   required,
   keyValue,
 }: NumberInputProps): JSX.Element {
-  const handleChange = (value: number): void => {
+  const handleChange = (value: number | null): void => {
     onChange((prev: ISetStateModal) => ({
       ...prev,
       [keyValue]: value,

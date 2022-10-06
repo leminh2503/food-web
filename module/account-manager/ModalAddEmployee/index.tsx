@@ -47,7 +47,7 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
       email: fieldsValue.email,
       employeeCode: fieldsValue.employeeCode,
       fullName: fieldsValue.fullName,
-      roleId: fieldsValue.roleId,
+      role: fieldsValue.role,
     };
     handleConfirmAddEmployee(data);
   };
@@ -197,14 +197,10 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            label="Nhóm quyền"
-            name="roleId"
-            rules={[{required: true}]}
-          >
+          <Form.Item label="Nhóm quyền" name="role" rules={[{required: true}]}>
             <Select>
               {listRoleConvert?.map((e) => (
-                <Select.Option key={"roleId" + e.value} value={e.value}>
+                <Select.Option key={"role" + e.value} value={e.value}>
                   {e.label}
                 </Select.Option>
               ))}
