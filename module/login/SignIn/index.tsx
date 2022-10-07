@@ -1,6 +1,6 @@
 import "./index.scss";
 import {Formik} from "formik";
-import {Form, Image, Row} from "antd";
+import {Form, Image, notification} from "antd";
 import {TextInput} from "@app/components/TextInput";
 import {ButtonSubmit} from "@app/components/ButtonSubmit";
 import {useMutation} from "react-query";
@@ -20,36 +20,39 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
     values: ILoginBody,
     {setSubmitting}: {setSubmitting: (isSubmitting: boolean) => void}
   ): void => {
-    loginMutation.mutate(
-      {email: values.email, password: values.password},
-      {
-        onSuccess: (res: IAccountInfo) => {
-          dispatch(loginUser({...res}));
-          localStorage.setItem("role", res.role?.id?.toString() || "0");
-          setSubmitting(false);
-          window.location.replace("/");
-        },
-        onError: (error) => {
-          setSubmitting(false);
-        },
-      }
-    );
+    if (values.email && values.password) {
+      loginMutation.mutate(
+        {email: values.email, password: values.password},
+        {
+          onSuccess: (res: IAccountInfo) => {
+            dispatch(loginUser({...res}));
+            localStorage.setItem("role", res.role?.id?.toString() || "0");
+            setSubmitting(false);
+            window.location.replace("/");
+          },
+          onError: (error) => {
+            setSubmitting(false);
+          },
+        }
+      );
+    } else {
+      setSubmitting(false);
+    }
   };
   return (
     <Formik
       initialValues={{email: "", password: ""}}
+      validate={(values): void => {
+        if (!values.email) {
+          notification.error({
+            message: "Tài khoản và mật khẩu không được để trống!",
+          });
+        }
+      }}
       validateOnChange={false}
-      validateOnBlur
-      // validate={loginValidation}
       onSubmit={handleLogin}
     >
-      {({
-        values,
-        handleChange,
-        handleBlur,
-        isSubmitting,
-        handleSubmit,
-      }): JSX.Element => (
+      {({values, handleChange, isSubmitting, handleSubmit}): JSX.Element => (
         <div className="container-sign-in">
           <Form onFinish={handleSubmit} className="container-sign-in">
             <div className="header-wrapper">
@@ -65,7 +68,6 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
                 placeholder="Nhập tài khoản"
                 label="Tài khoản"
                 value={values.email}
-                handleBlur={handleBlur}
                 handleChange={handleChange}
                 name="email"
               />
@@ -76,19 +78,20 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
                 placeholder="Nhập mật khẩu"
                 value={values.password}
                 handleChange={handleChange}
-                handleBlur={handleBlur}
                 name="password"
                 type="password"
               />
             </div>
-            <Row
-              role="button"
-              tabIndex={0}
-              className="forgot-pass pt-20"
-              onClick={(): void => changeTab("forgotPassword")}
-            >
-              Quên mật khẩu?
-            </Row>
+            <div className="flex justify-end">
+              <span
+                role="button"
+                tabIndex={0}
+                className="forgot-pass pt-20"
+                onClick={(): void => changeTab("forgotPassword")}
+              >
+                Quên mật khẩu?
+              </span>
+            </div>
 
             <ButtonSubmit
               label="Đăng nhập"

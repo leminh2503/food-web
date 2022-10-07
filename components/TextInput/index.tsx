@@ -9,7 +9,7 @@ interface TextInputProps {
   placeholder: string;
   value: string;
   handleChange: (e: string | ChangeEvent<any>) => void;
-  handleBlur: (e: string | ChangeEvent<any>) => void;
+  handleBlur?: (e: string | ChangeEvent<any>) => void;
   name: string;
 }
 

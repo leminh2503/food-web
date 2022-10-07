@@ -50,6 +50,10 @@ export function AccountManager(): JSX.Element {
     pageSize: 10,
   });
 
+  const toggleModal = (): void => {
+    setIsModalVisible(false);
+  };
+
   const defaultValuesDetail: IUserLogin = {
     role: undefined,
     fullName: "",
@@ -80,6 +84,7 @@ export function AccountManager(): JSX.Element {
         okText: "Xác nhận",
         cancelText: "Huỷ",
         onOk: () => {
+          toggleModal();
           handleUpdateInformationAccount(data);
         },
       });
@@ -265,7 +270,7 @@ export function AccountManager(): JSX.Element {
       englishCertificate: values.englishCertificate,
       englishScore: values.englishScore,
       manageSalary: Number(values.manageSalary),
-      roleId: values.roleId,
+      role: values.roleId,
       workRoom: values.workRoom,
     };
     updateProfile.mutate(body);
@@ -328,12 +333,6 @@ export function AccountManager(): JSX.Element {
       });
       refetch();
       setIsModalAddEmployeeVisible(false);
-    },
-    onError: () => {
-      notification.error({
-        duration: 1,
-        message: `Thêm thất bại`,
-      });
     },
   });
 

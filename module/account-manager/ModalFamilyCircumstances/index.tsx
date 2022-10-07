@@ -60,7 +60,6 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
         type === TypeOfAction.ADD
           ? handleAddNewFamily(data)
           : handleEditFamily(data);
-        setIsToggleModal(false);
       },
     });
   };
@@ -79,12 +78,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
       queryClient.refetchQueries({
         queryKey: queryKeys.GET_LIST_ACCOUNT,
       });
-    },
-    onError: () => {
-      notification.error({
-        duration: 1,
-        message: `Thêm thất bại`,
-      });
+      setIsToggleModal(false);
     },
   });
 
@@ -102,12 +96,7 @@ export function ModalFamilyCircumstance(props: ModalInfoProps): JSX.Element {
       queryClient.refetchQueries({
         queryKey: queryKeys.GET_LIST_ACCOUNT,
       });
-    },
-    onError: () => {
-      notification.error({
-        duration: 1,
-        message: `Sửa thất bại`,
-      });
+      setIsToggleModal(false);
     },
   });
 
