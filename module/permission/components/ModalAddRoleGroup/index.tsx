@@ -221,8 +221,14 @@ export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
             label="Tên nhóm quyền"
             rules={[
               {
-                required: true,
-                message: "Tên nhóm quyền không được để trống!",
+                // eslint-disable-next-line consistent-return
+                validator: async (rule, value) => {
+                  if (value.trim().length === 0) {
+                    return Promise.reject(
+                      new Error("Tên nhóm quyền không được để trống!")
+                    );
+                  }
+                },
               },
             ]}
           >
@@ -499,7 +505,7 @@ export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
       onOk={(): void => {
         form.submit();
       }}
-      onCancel={() => {
+      onCancel={(): void => {
         handleCloseModalFamily();
         form.resetFields();
       }}

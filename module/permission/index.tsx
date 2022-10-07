@@ -128,7 +128,7 @@ export function Permission(): JSX.Element {
   };
 
   const addRoleGroup = useMutation(ApiPermisstion.addNewRoleGroup, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       notification.success({
         duration: 1,
         message: `Tạo thành công`,
@@ -145,7 +145,7 @@ export function Permission(): JSX.Element {
   });
 
   const updateRoleGroup = useMutation(ApiPermisstion.updateRoleGroup, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       notification.success({
         duration: 1,
         message: `Cập nhật thành công`,
@@ -163,7 +163,7 @@ export function Permission(): JSX.Element {
 
   const handleAddRoleGroup = (data: IAddRoleGroupBody): void => {
     Modal.confirm({
-      title: "Xác nhận tạo nhóm quyền?",
+      title: `Xác nhận ${dataDetail?.roleName ? "sửa" : "thêm"} nhóm quyền`,
       okType: "primary",
       okText: "Xác nhận",
       cancelText: "Huỷ",

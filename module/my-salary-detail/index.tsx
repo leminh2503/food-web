@@ -39,6 +39,8 @@ export function MySalaryDetail(): JSX.Element {
       enabled: false,
     }) || [];
 
+  const dailyOnsiteRate = dataSalary ? dataSalary[0].dailyOnsiteRate : null;
+
   useEffect(() => {
     if (month && year) {
       listProjectRefetch();
@@ -116,6 +118,7 @@ export function MySalaryDetail(): JSX.Element {
             year={Number(year)}
             listProject={listProject}
             totalSalaryOS={Number(onsiteSalary || 0)}
+            dailyOnsiteRate={dailyOnsiteRate}
           />
         </div>
       )}

@@ -254,6 +254,7 @@ export interface IDataSalary {
   totalSalary: number;
   updatedAt: string;
   detailTaxSalary: IDetailTax;
+  dailyOnsiteRate: number;
 }
 
 export interface IProfile {

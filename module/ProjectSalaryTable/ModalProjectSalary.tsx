@@ -46,10 +46,22 @@ export default function ModalProjectSalary(
           <Form.Item
             label="Thưởng"
             name="salary"
-            rules={[{min: 1000, message: "Giá trị phải chia hết cho 1000"}]}
+            rules={[
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value % 1000 === 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('Giá trị phải chia hết cho 1000"')
+                  );
+                },
+              }),
+            ]}
           >
             <InputNumber
               name="salary"
+              step={1000}
               className="w-full"
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")

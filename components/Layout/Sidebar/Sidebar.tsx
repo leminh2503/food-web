@@ -98,6 +98,7 @@ export default function Sidebar(): JSX.Element {
           .purge()
           .then(() => {
             dispatch(logoutUser());
+            window.location.reload();
           })
           .catch(() => {
             // eslint-disable-next-line no-alert

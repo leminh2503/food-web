@@ -237,6 +237,7 @@ export function AccountManager(): JSX.Element {
         duration: 1,
         message: `Sửa thành công`,
       });
+      setIsModalVisible(false);
       refetch();
     },
     onError: () => {
@@ -265,6 +266,7 @@ export function AccountManager(): JSX.Element {
       englishScore: values.englishScore,
       manageSalary: Number(values.manageSalary),
       roleId: values.roleId,
+      workRoom: values.workRoom,
     };
     updateProfile.mutate(body);
   };
