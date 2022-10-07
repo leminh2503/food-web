@@ -1,6 +1,6 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
-import {Card, Table} from "antd";
+import {Card, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataProject, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
@@ -113,6 +113,18 @@ export default function ProjectSalaryTable({
       setProjectSalary(totalSalary2);
     }
   }, [isRefetching, dataProject]);
+
+  const handleAddProjectSalary = (): void => {
+    if (data.length < 5) {
+      showModal();
+    } else {
+      notification.warning({
+        message: "Thêm thất bại",
+        description: "Thưởng tối đa 5 dự án",
+      });
+    }
+  };
+
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -140,7 +152,7 @@ export default function ProjectSalaryTable({
         </span>
         {isAdmin && (
           <PlusCircleOutlined
-            onClick={showModal}
+            onClick={handleAddProjectSalary}
             className="text-[20px] text-[#0092ff] mr-3"
           />
         )}
