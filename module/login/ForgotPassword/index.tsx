@@ -31,8 +31,12 @@ export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
         {
           onSuccess: () => {
             setData(values.email);
-            changeTab("signIn");
+            changeTab("newPassword");
             setSubmitting(false);
+            notification.success({
+              duration: 1,
+              message: "Hãy cập nhật lại mật khẩu!",
+            });
           },
           onError: (error) => {
             setSubmitting(false);

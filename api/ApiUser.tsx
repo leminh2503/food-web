@@ -117,6 +117,7 @@ export interface ISetPassword {
   email: string;
   otp: string;
   newPassword: string;
+  confirmPass: string;
 }
 
 const path = {
@@ -209,7 +210,15 @@ function forgotPassword(body: IForgotPassword): Promise<IUserLogin> {
 }
 
 function setPassword(body: ISetPassword): Promise<IUserLogin> {
-  return fetcher({url: path.setpassword, method: "post", data: body});
+  return fetcher({
+    url: path.setpassword,
+    method: "post",
+    data: {
+      email: body.email,
+      newPassword: body.newPassword,
+      otp: body.otp,
+    },
+  });
 }
 function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
   return fetcher({url: path.addNewEmployee, method: "post", data: body});
