@@ -112,6 +112,7 @@ export function ModalCreateLeaveWork({
             <InputNumber
               min={0.5}
               max={daysAllowedLeave?.quantity}
+              step={0.5}
               defaultValue={0.5}
             />
           </Form.Item>

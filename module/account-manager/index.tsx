@@ -242,6 +242,7 @@ export function AccountManager(): JSX.Element {
         duration: 1,
         message: `Sửa thành công`,
       });
+      setIsModalVisible(false);
       refetch();
     },
     onError: () => {

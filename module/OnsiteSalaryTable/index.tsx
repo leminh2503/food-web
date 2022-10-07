@@ -10,6 +10,8 @@ import ApiSalary from "@app/api/ApiSalary";
 import {useMutation, useQuery} from "react-query";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import {IDataOnsite, IDataProjectList} from "@app/types";
+import {useSelector} from "react-redux";
+import {IRootState} from "@app/redux/store";
 
 export default function OnsiteSalaryTable({
   idUser,
@@ -31,7 +33,7 @@ export default function OnsiteSalaryTable({
   idTotal?: number;
   idProject?: number;
   totalSalaryOS?: number;
-  dailyOnsiteRate?: number;
+  dailyOnsiteRate?: number | null;
   listProject?: IDataProjectList[];
   setOnsiteSalary?: (val: number) => void;
   projectName?: string;
@@ -46,6 +48,8 @@ export default function OnsiteSalaryTable({
   const [salary, setSalary] = useState<number>(dailyOnsiteRate || 0);
 
   const updateDataOnsite = useMutation(ApiSalary.updateOnsiteSalary);
+
+  const user = useSelector((state: IRootState) => state.user);
 
   const showModal = (): void => {
     setIsModalVisible(true);
@@ -206,6 +210,11 @@ export default function OnsiteSalaryTable({
       });
     }
   }
+
+  const isEditDailyOnsiteRate = user.role?.permissions.find(
+    (el) => el.permissionKey === "SALARY.MANAGE"
+  );
+
   return (
     <Card className="max-w-full">
       <ModalCreateOnsite
@@ -237,10 +246,12 @@ export default function OnsiteSalaryTable({
             <div className="mb-4 font-bold">
               {" "}
               {dailyOnsiteRate?.toLocaleString("en-US")} VND/ngày
-              <EditFilled
-                className="text-[20px] text-[#0092ff] ml-2"
-                onClick={(): void => setIsUpdate(true)}
-              />
+              {isEditDailyOnsiteRate && (
+                <EditFilled
+                  className="text-[20px] text-[#0092ff] ml-2"
+                  onClick={(): void => setIsUpdate(true)}
+                />
+              )}
             </div>
           ) : (
             <div className="mb-4 font-bold flex items-center">

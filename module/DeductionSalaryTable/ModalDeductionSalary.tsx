@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import "../my-salary-detail/index.scss";
 import React, {useState} from "react";
 import {ModalCustom} from "@app/components/ModalCustom";
@@ -29,23 +30,37 @@ export default function ModalDeductionSalary(
             <Input
               type="date"
               className="w-full"
-              onChange={(e) => {
+              onChange={(e): void => {
                 setDate(e.target.value);
               }}
             />
           </Form.Item>
           <Form.Item
-            label="số ngày nghỉ"
+            label="Số ngày nghỉ"
             name="b"
             rules={[
-              {min: 0, message: "Giá trị phải lớn hơn 0"},
-              {max: 31, message: "Giá trị phải nhỏ hơn hoặc bằng 31"},
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value > 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Giá trị phải lớn hơn 0"));
+                },
+              }),
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value < 32) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Giá trị phải nhỏ hơn hoặc bằng 31")
+                  );
+                },
+              }),
             ]}
           >
             <InputNumber
               name="b"
-              max={31}
-              min={0}
               className="w-full"
               onChange={(e) => {
                 setDayOffWork(Number(e));
