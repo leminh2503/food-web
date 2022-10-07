@@ -17,33 +17,35 @@ interface SignInProps {
 }
 
 export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
-  // const [data, setData] = useState<IForgotPassword>(
-  //   {
-  //     email:"",
-  //   }
-  // )
-
   const forgotPassMutation = useMutation(ApiUser.forgotPassword);
 
   const handleForgotPassword = (
     values: IForgotPassword,
     {setSubmitting}: {setSubmitting: (isSubmitting: boolean) => void}
   ): void => {
-    forgotPassMutation.mutate(
-      {
-        email: values.email,
-      },
-      {
-        onSuccess: () => {
-          setData(values.email);
-          changeTab("inputOTP");
-          setSubmitting(false);
+    if (values.email) {
+      forgotPassMutation.mutate(
+        {
+          email: values.email,
         },
-        onError: (error) => {
-          setSubmitting(false);
-        },
-      }
-    );
+        {
+          onSuccess: () => {
+            setData(values.email);
+            changeTab("newPassword");
+            setSubmitting(false);
+            notification.success({
+              duration: 1,
+              message: "Hãy cập nhật lại mật khẩu!",
+            });
+          },
+          onError: (error) => {
+            setSubmitting(false);
+          },
+        }
+      );
+    } else {
+      setSubmitting(false);
+    }
   };
   return (
     <Formik
@@ -51,22 +53,14 @@ export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
       validate={(values) => {
         if (!values.email) {
           notification.error({
-            message: "Chưa nhập email",
+            message: "Vui lòng nhập email!",
           });
         }
       }}
       validateOnChange={false}
-      validateOnBlur
-      // validate={loginValidation}
       onSubmit={handleForgotPassword}
     >
-      {({
-        values,
-        handleChange,
-        handleBlur,
-        isSubmitting,
-        handleSubmit,
-      }): JSX.Element => (
+      {({values, handleChange, isSubmitting, handleSubmit}): JSX.Element => (
         <div className="container-sign-in">
           <button
             type="button"
@@ -84,7 +78,6 @@ export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
                 placeholder="Nhập email"
                 label="Email"
                 value={values.email}
-                handleBlur={handleBlur}
                 handleChange={handleChange}
                 name="email"
               />

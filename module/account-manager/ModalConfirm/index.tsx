@@ -104,7 +104,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishScore,
       workRoom,
       manageSalary: manageSalary && manageSalary > 0 ? manageSalary : undefined,
-      roleId: role?.id,
+      role: role?.id,
     });
   }, [dataDetail, isModalVisible]);
 
@@ -126,7 +126,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishCertificate: fieldsValue?.englishCertificate,
       englishScore: fieldsValue?.englishScore,
       manageSalary: fieldsValue?.manageSalary || 0,
-      roleId: fieldsValue.roleId,
+      roleId: fieldsValue.role,
     };
     handleOk(data);
   };
@@ -199,6 +199,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   disabledDate={(current) =>
                     current.isAfter(moment().subtract(18, "years"))
                   }
+                  allowClear={false}
                 />
               </Form.Item>
               <Form.Item
@@ -341,12 +342,12 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
               </Form.Item>
               <Form.Item
                 label="Nhóm quyền"
-                name="roleId"
+                name="role"
                 rules={[{required: true}]}
               >
                 <Select>
                   {listRoleConvert?.map((e) => (
-                    <Select.Option key={"roleId" + e.value} value={e.value}>
+                    <Select.Option key={"role" + e.value} value={e.value}>
                       {e.label}
                     </Select.Option>
                   ))}
