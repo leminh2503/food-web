@@ -66,13 +66,13 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
             rules={[
               {required: true},
               {whitespace: true},
-              {
-                pattern:
-                  /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
-                message: "Họ và tên không đúng định dạng!",
-              },
               {min: 5},
               {max: 30},
+              {
+                pattern:
+                  /^[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ ]+$/,
+                message: "Họ và tên không đúng định dạng!",
+              },
             ]}
           >
             <Input />
@@ -98,11 +98,12 @@ export function ModalAddFamily(props: ModalInfoProps): JSX.Element {
             rules={[
               {required: true},
               {whitespace: true},
-              // {
-              //   pattern:
-              //     /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
-              //   message: " Số CMND/CCCD không đúng định dạng",
-              // },
+              {min: 9},
+              {max: 12},
+              {
+                pattern: /[0-9]/g,
+                message: " Số CMND/CCCD không đúng định dạng",
+              },
             ]}
           >
             <Input />

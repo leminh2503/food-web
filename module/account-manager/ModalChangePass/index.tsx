@@ -36,7 +36,17 @@ export function ModalChangePass(props: ModalInfoProps): JSX.Element {
           <Form.Item
             label="Mật khẩu mới"
             name="newPassword"
-            rules={[{required: true, message: "Mật khẩu không được để trống!"}]}
+            rules={[
+              {required: true, message: "Mật khẩu không được để trống!"},
+              {min: 5},
+              {max: 30},
+              {
+                pattern:
+                  /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$&+,:;=?@#|'<>.^*()%!-]).{5,30}/,
+                message:
+                  "Mật khẩu phải chứa ký tự in thường, ký tự in hoa và ký tự đặc biệt!",
+              },
+            ]}
           >
             <Input.Password />
           </Form.Item>

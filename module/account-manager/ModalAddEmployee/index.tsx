@@ -188,7 +188,11 @@ export function ModalAddEmployee(props: ModalInfoProps): JSX.Element {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Vị trí" name="workType" rules={[{required: true}]}>
+          <Form.Item
+            label="Loại hình làm việc"
+            name="workType"
+            rules={[{required: true}]}
+          >
             <Select>
               {listWorkTypeConvert?.map((e) => (
                 <Select.Option key={"workType" + e.value} value={e.value}>
