@@ -93,16 +93,18 @@ function displayError(dataError: IDataError): void {
   try {
     const {errorCode} = dataError;
     let errorMessage;
+    let errorMessageMain;
 
     const error = ListErrorMessage.find((dt) => dt.error_code === errorCode);
     if (error) {
       errorMessage = error.description;
+      errorMessageMain = error.message;
     } else {
       errorMessage = dataError.errorMessage ?? "Somethings Wrong";
     }
 
     notification.error({
-      message: "Có lỗi xảy ra. Hãy thử lại!",
+      message: errorMessageMain || "Có lỗi xảy ra. Hãy thử lại!",
       description: errorMessage,
       duration: 3,
     });
