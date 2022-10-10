@@ -328,7 +328,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 </Select>
               </Form.Item>
               <Form.Item
-                label="Vị trí"
+                label="Loại hình làm việc"
                 name="workType"
                 rules={[{required: true}]}
               >

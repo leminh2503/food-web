@@ -7,7 +7,7 @@ import moment from "moment";
 import ApiLeaveWork from "@app/api/ApiLeaveWork";
 import {ELeaveWork, ILeaveWork} from "@app/types";
 import {useMutation, useQuery} from "react-query";
-import {ModalCreateLeaveWork} from "@app/module/leave-work/components/ModalCreateLeaveWork";
+import {ModalCreateLeaveWork} from "@app/module/leave-work-user/components/ModalCreateLeaveWork";
 import {FilterLeaveWork} from "@app/module/leave-work/components/FilterLeaveWork";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
@@ -19,7 +19,7 @@ export function LeaveWorkUser(): JSX.Element {
     month: moment().month() + 1,
     year: moment().year(),
   });
-  const [pageSize, setPageSize] = useState<number>(50);
+  const [pageSize, setPageSize] = useState<number>(100);
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const showModalCreateLeaveWork = (): void => {
@@ -165,9 +165,9 @@ export function LeaveWorkUser(): JSX.Element {
         dataSource={dataLeaveWorkMe?.data ?? []}
         pagination={{
           total: dataLeaveWorkMe?.meta.totalItems,
-          defaultPageSize: 50,
+          defaultPageSize: 100,
           showSizeChanger: true,
-          pageSizeOptions: ["50", "100", "150", "200"],
+          pageSizeOptions: ["50", "100"],
           onChange: (page, numberPerPage): void => {
             setPageNumber(page);
             setPageSize(numberPerPage);
