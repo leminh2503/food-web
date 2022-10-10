@@ -6,20 +6,17 @@ import {useMutation, useQueryClient} from "react-query";
 import {Button, Form, Input, notification} from "antd";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {defaultValidateMessages, layout} from "@app/validate/user";
-import {IPermission} from "@app/types";
 
 interface ModalRefuseLeaveWorkProps {
   isModalVisible: boolean;
   toggleModal: () => void;
   refuseWorkLeaveId: number;
-  role?: {id: number; roleName: string; permissions: IPermission[]};
 }
 
 export function ModalRefuseLeaveWork({
   isModalVisible,
   toggleModal,
   refuseWorkLeaveId,
-  role,
 }: ModalRefuseLeaveWorkProps): JSX.Element {
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
@@ -44,15 +41,9 @@ export function ModalRefuseLeaveWork({
           duration: 1,
           message: "Từ chối đơn xin nghỉ phép thành công!",
         });
-        if (role) {
-          queryClient.refetchQueries({
-            queryKey: queryKeys.GET_LIST_LEAVE_WORK,
-          });
-        } else {
-          queryClient.refetchQueries({
-            queryKey: queryKeys.GET_LIST_LEAVE_WORK_ME,
-          });
-        }
+        queryClient.refetchQueries({
+          queryKey: queryKeys.GET_LIST_LEAVE_WORK,
+        });
         toggleModal();
       },
       onError: () => {

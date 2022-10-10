@@ -102,13 +102,13 @@ function displayError(dataError: IDataError): void {
     }
 
     notification.error({
-      message: "Something is wrong. Please try again",
+      message: "Có lỗi xảy ra. Hãy thử lại!",
       description: errorMessage,
       duration: 3,
     });
   } catch (e) {
     notification.error({
-      message: "Something is wrong. Please try again",
+      message: "Có lỗi xảy ra. Hãy thử lại!",
       description: _.toString(e),
       duration: 3,
     });
@@ -268,7 +268,7 @@ export async function fetcher<T>(
         } else {
           // Native error
           // notification.error({
-          //   message: "Something is wrong. Please try again",
+          //   message: "Có lỗi xảy ra. Hãy thử lại!",
           //   description: _.toString(error),
           // });
         }
@@ -414,7 +414,7 @@ export async function fetcherWithMetadata<T>(
         } else {
           // Native error
           // notification.error({
-          //   message: "Something is wrong. Please try again",
+          //   message: "Có lỗi xảy ra. Hãy thử lại!",
           //   description: _.toString(error),
           //   duration: 3,
           // });

@@ -47,7 +47,7 @@ export function AccountManager(): JSX.Element {
   const [filterPosition, setFilterPosition] = useState<number>(-1);
   const [pagingCurrent, setPagingCurrent] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 100,
   });
 
   const toggleModal = (): void => {
@@ -371,8 +371,9 @@ export function AccountManager(): JSX.Element {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: "5%",
-      render: (_, record, index) => <div>{index + 1}</div>,
+      width: "2%",
+      render: (_, record, index) =>
+        (pagingCurrent.currentPage - 1) * pagingCurrent.pageSize + index + 1,
     },
     {
       title: "Ảnh",
@@ -398,14 +399,14 @@ export function AccountManager(): JSX.Element {
       dataIndex: "email",
       key: "email",
       align: "center",
-      width: "10%",
+      width: "15%",
     },
     {
       title: "Họ & Tên",
       dataIndex: "fullName",
       key: "fullName",
       align: "center",
-      width: "10%",
+      width: "13%",
     },
     {
       title: "Số điện thoại",
@@ -419,23 +420,10 @@ export function AccountManager(): JSX.Element {
       dataIndex: "address",
       key: "address",
       align: "center",
-      width: "20%",
+      width: "15%",
     },
-    // {
-    //   title: "Quản lý",
-    //   dataIndex: "manager",
-    //   key: "manager",
-    //   align: "center",
-    //   render: (_, record): JSX.Element => {
-    //     return (
-    //       <div>
-    //         <span>{record?.manager?.fullName}</span>
-    //       </div>
-    //     );
-    //   },
-    // },
     {
-      title: "Vị trí",
+      title: "Loại hình làm việc",
       dataIndex: "workType",
       key: "workType",
       align: "center",
@@ -571,7 +559,6 @@ export function AccountManager(): JSX.Element {
           columns={columns}
           dataSource={dataUserAccount?.data}
           bordered
-          scroll={{x: "100vw"}}
           pagination={false}
           onRow={(record, rowIndex) => {
             return {
@@ -585,6 +572,7 @@ export function AccountManager(): JSX.Element {
         <Pagination
           className="mt-3 float-right"
           showSizeChanger
+          pageSizeOptions={[50, 100]}
           defaultPageSize={pagingCurrent.pageSize}
           onShowSizeChange={onShowSizeChange}
           onChange={handleChangePagination}
