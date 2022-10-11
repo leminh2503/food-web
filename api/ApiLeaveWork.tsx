@@ -33,8 +33,8 @@ export interface IParamsGetLeaveWork {
   pageNumber?: number;
   filter?: {
     state_IN: number[];
-    createdAt_MONTH: number;
-    createdAt_YEAR: number;
+    startDate_MONTH: number;
+    startDate_YEAR: number;
   };
   sort?: string[];
 }

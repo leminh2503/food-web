@@ -128,6 +128,9 @@ export function TableSalaryTotalOfUser(): JSX.Element {
               dataIndex: "manager",
               key: "manager",
               align: "center",
+              render: (_, record, index) => (
+                <div>{record.hourOT?.toLocaleString("en-US")}</div>
+              ),
             },
             {
               title: "số tiền",
@@ -148,6 +151,9 @@ export function TableSalaryTotalOfUser(): JSX.Element {
               dataIndex: "manager",
               key: "manager",
               align: "center",
+              render: (_, record, index) => (
+                <div>{record.dayOS?.toLocaleString("en-US")}</div>
+              ),
             },
             {
               title: "số tiền",
