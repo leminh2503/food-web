@@ -1,5 +1,4 @@
-/* eslint-disable prettier/prettier */
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import {Filter} from "@app/components/Filter";
 import moment from "moment";
 import {queryKeys} from "@app/utils/constants/react-query";
