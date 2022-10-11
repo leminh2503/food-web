@@ -22,7 +22,7 @@ export function ModalOpenSchedule({
 }: IModalOpenScheduleProps): JSX.Element {
   const [scheduleOpenId, setScheduleOpenId] = useState<number[]>([]);
 
-  const handleCheck = (checked: boolean, id: number): void => {
+  const handleCheckOpen = (checked: boolean, id: number): void => {
     if (checked) {
       if (!scheduleOpenId.includes(id)) {
         setScheduleOpenId([...scheduleOpenId, id]);
@@ -48,7 +48,7 @@ export function ModalOpenSchedule({
       );
     });
   };
-  const renderContent = (): JSX.Element => {
+  const renderContentOpenModal = (): JSX.Element => {
     return (
       <Table
         columns={[
@@ -59,7 +59,9 @@ export function ModalOpenSchedule({
             align: "center",
             render: (_, record) => (
               <Checkbox
-                onChange={(e): void => handleCheck(e.target.checked, record.id)}
+                onChange={(e): void =>
+                  handleCheckOpen(e.target.checked, record.id)
+                }
               >
                 {" "}
               </Checkbox>
@@ -86,7 +88,7 @@ export function ModalOpenSchedule({
       isModalVisible={isModalVisible}
       handleCancel={toggleModal}
       title="Mở lịch với nhân viên 😉"
-      content={renderContent()}
+      content={renderContentOpenModal()}
       handleOk={okBtn}
     />
   );

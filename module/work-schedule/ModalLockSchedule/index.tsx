@@ -22,7 +22,7 @@ export function ModalLockSchedule({
 }: IModalLockScheduleProps): JSX.Element {
   const [scheduleLockId, setScheduleLockId] = useState<number[]>([]);
 
-  const handleCheck = (checked: boolean, id: number): void => {
+  const handleCheckLock = (checked: boolean, id: number): void => {
     if (checked) {
       if (!scheduleLockId.includes(id)) {
         setScheduleLockId([...scheduleLockId, id]);
@@ -49,7 +49,7 @@ export function ModalLockSchedule({
     });
   };
 
-  const renderContent = (): JSX.Element => {
+  const renderContentLockModal = (): JSX.Element => {
     return (
       <Table
         columns={[
@@ -60,7 +60,9 @@ export function ModalLockSchedule({
             align: "center",
             render: (_, record: IWorkSchedule) => (
               <Checkbox
-                onChange={(e): void => handleCheck(e.target.checked, record.id)}
+                onChange={(e): void =>
+                  handleCheckLock(e.target.checked, record.id)
+                }
               >
                 {" "}
               </Checkbox>
@@ -87,7 +89,7 @@ export function ModalLockSchedule({
       isModalVisible={isModalVisible}
       handleCancel={toggleModal}
       title="Khóa lịch với nhân viên 🙃"
-      content={renderContent()}
+      content={renderContentLockModal()}
       handleOk={okBtn}
     />
   );
