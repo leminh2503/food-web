@@ -1,16 +1,15 @@
-import "./index.scss";
 import {Badge, Calendar, Select, Button} from "antd";
 import React, {useState} from "react";
 import moment, {Moment} from "moment";
-import {useSelector} from "react-redux";
-import {IRootState} from "@app/redux/store";
 import {IEvent} from "@app/types";
 import {ModalCreateEvent} from "@app/module/event/components/ModalCreateEvent";
 import {ModalDeleteEvent} from "@app/module/event/components/ModalDeleteEvent";
+import {IMetadata} from "@app/api/Fetcher";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface EventCalendarProps {
-  dataEvent?: IEvent[];
-  dataRefetch: () => void;
+  dataEvent: {data: IEvent[]; meta: IMetadata};
 }
 
 interface ListData {
@@ -18,11 +17,7 @@ interface ListData {
   content?: string;
 }
 
-export function EventCalendar({
-  dataEvent,
-  dataRefetch,
-}: EventCalendarProps): JSX.Element {
-  const role = useSelector((state: IRootState) => state.user.role);
+export function EventCalendar({dataEvent}: EventCalendarProps): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
 
   const showModalCreateEvent = (): void => {
@@ -43,7 +38,7 @@ export function EventCalendar({
       value.month() + 1 < 10 ? "0" + (value.month() + 1) : value.month() + 1;
     const day = value.date() < 10 ? "0" + value.date() : value.date();
     const date = value.year() + "" + month + day;
-    dataEvent?.forEach((item) => {
+    dataEvent.data.forEach((item) => {
       if (
         moment(date).diff(moment(item.startDate, "YYYY-MM-DD"), "days") >= 0 &&
         moment(date).diff(moment(item.endDate, "YYYY-MM-DD"), "days") <= 0
@@ -76,8 +71,8 @@ export function EventCalendar({
   ): JSX.Element => {
     const start = 0;
     const end = 12;
-    const monthOptions = [];
-    const yearOptions = [];
+    const monthOptions: any = [];
+    const yearOptions: any = [];
     const year = value.year();
     const month = value.month();
 
@@ -121,25 +116,31 @@ export function EventCalendar({
             {monthOptions}
           </Select>
         </div>
-        {role && (
-          <div className="p-2 mb-4">
+        <div className="p-2 mb-4">
+          {CheckPermissionEvent(
+            NameEventConstant.PERMISSION_EVENT_KEY.LIST_ALL_EVENT
+          ) && (
             <Button
               className="mr-4 w-40 btn-red"
               onClick={showModalDeleteEvent}
             >
               Xóa sự kiện
             </Button>
+          )}
+          {CheckPermissionEvent(
+            NameEventConstant.PERMISSION_EVENT_KEY.LIST_ALL_EVENT
+          ) && (
             <Button className="w-40 btn-blue" onClick={showModalCreateEvent}>
               Thêm sự kiện
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   };
 
   return (
-    <div>
+    <>
       <Calendar
         headerRender={({value, onChange}): JSX.Element =>
           headerRender(value, onChange)
@@ -149,14 +150,11 @@ export function EventCalendar({
       <ModalCreateEvent
         isModalVisible={isModalVisible === "modalCreateEvent"}
         toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
       />
       <ModalDeleteEvent
         isModalVisible={isModalVisible === "modalDeleteEvent"}
         toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
-        dataEvent={dataEvent}
       />
-    </div>
+    </>
   );
 }

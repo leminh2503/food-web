@@ -8,8 +8,6 @@ import {useQuery} from "react-query";
 import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
 import ModalDeductionSalary from "@app/module/DeductionSalaryTable/ModalDeductionSalary";
 import ModalDeductionHourSalary from "@app/module/DeductionSalaryTable/ModalDeductionHourSalary";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function DeductionSalaryTable({
   month,
@@ -85,7 +83,7 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryDay",
           key: "deductionSalaryDay",
           align: "center",
@@ -94,23 +92,16 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: CheckPermissionEvent(
-            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_DEDUCTION
-          ) ? (
+          title: (
             <EditFilled
               onClick={showModalDay}
               className="text-[20px] text-[#0092ff] mr-3"
             />
-          ) : (
-            <> </>
           ),
           align: "center",
           width: "100px",
           render: (index, _record): JSX.Element => {
-            return CheckPermissionEvent(
-              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
-                .DELETE_SALARY_DEDUCTION
-            ) ? (
+            return (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteDeductionDaySalary(_record?.id || 0).then(
@@ -119,8 +110,6 @@ export default function DeductionSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
-            ) : (
-              <> </>
             );
           },
         },
@@ -136,7 +125,7 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryDay",
           key: "deductionSalaryDay",
           align: "center",
@@ -149,13 +138,16 @@ export default function DeductionSalaryTable({
   const columns2: ColumnsType<IDataDeductionDay> = isAdmin
     ? [
         {
-          title: "giờ đi muộn",
+          title: "Giờ đi muộn",
           dataIndex: "hourLateWork",
           key: "hourLateWork",
           align: "center",
+          render: (_, record, index) => (
+            <div>{(record?.hourLateWork || "") + " (" + record.date + ")"}</div>
+          ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryHour",
           key: "deductionSalaryHour",
           align: "center",
@@ -166,23 +158,16 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: CheckPermissionEvent(
-            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_DEDUCTION
-          ) ? (
+          title: (
             <EditFilled
               onClick={showModalHour}
               className="text-[20px] text-[#0092ff] mr-3"
             />
-          ) : (
-            <> </>
           ),
           width: "100px",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return CheckPermissionEvent(
-              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
-                .DELETE_SALARY_DEDUCTION
-            ) ? (
+            return (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteDeductionHourSalary(_record?.id || 0).then(
@@ -191,21 +176,22 @@ export default function DeductionSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
-            ) : (
-              <> </>
             );
           },
         },
       ]
     : [
         {
-          title: "giờ đi muộn",
+          title: "Giờ đi muộn",
           dataIndex: "hourLateWork",
           key: "hourLateWork",
           align: "center",
+          render: (_, record, index) => (
+            <div>{(record?.hourLateWork || "") + " (" + record.date + ")"}</div>
+          ),
         },
         {
-          title: "số tiền trừ",
+          title: "Số tiền trừ",
           dataIndex: "deductionSalaryHour",
           key: "deductionSalaryHour",
           align: "center",
@@ -251,7 +237,7 @@ export default function DeductionSalaryTable({
     if (setDeductionSalary) {
       setDeductionSalary(totalSalary2);
     }
-  }, [isRefetchingD, isRefetchingH]);
+  }, [isRefetchingD, isRefetchingH, totalSalaryDay, totalSalaryHour]);
   return (
     <Card className="w-full">
       {isAdmin && (

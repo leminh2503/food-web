@@ -24,9 +24,10 @@ export default function ModalDeductionHourSalary(
   const renderContent = (): JSX.Element => {
     return (
       <div className="modal-info">
-        <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
-          <Form.Item label="Ngày nghỉ" name="a">
+        <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
+          <Form.Item label="Ngày đi muộn" name="a">
             <Input
+              name="a"
               type="date"
               className="w-full"
               onChange={(e) => {
@@ -34,9 +35,17 @@ export default function ModalDeductionHourSalary(
               }}
             />
           </Form.Item>
-          <Form.Item label="số giờ nghỉ" name="b">
+          <Form.Item
+            label="Số giờ đi muộn"
+            name="b"
+            rules={[
+              {min: 0, message: "Giá trị phải lớn hơn 0"},
+              {max: 24, message: "Giá trị phải nhỏ hơn hoặc bằng 24"},
+            ]}
+          >
             <InputNumber
-              max={31}
+              name="b"
+              max={24}
               min={0}
               className="w-full"
               onChange={(e) => {
@@ -57,13 +66,13 @@ export default function ModalDeductionHourSalary(
     };
     createDeductionHourSalary.mutate(data, {
       onSuccess: () => {
-        notification.success({message: "create success"});
+        notification.success({message: "Tạo thành công"});
         if (props?.handleRefetch) {
           props.handleRefetch();
         }
+        props.handleOk();
       },
     });
-    props.handleOk();
   };
 
   return (

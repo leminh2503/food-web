@@ -9,8 +9,6 @@ import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import {CloseCircleOutlined} from "@ant-design/icons";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import ApiSalary from "@app/api/ApiSalary";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface IModalCreateOnsite {
   dataOnsite: IDataOnsite[];
@@ -23,6 +21,8 @@ interface IModalCreateOnsite {
   handleCancel: () => void;
   isManager?: boolean;
   listProject?: IDataProjectList[];
+  projectName?: string;
+  isAdmin?: boolean;
 }
 
 export default function ModalCreateOnsite(
@@ -91,24 +91,39 @@ export default function ModalCreateOnsite(
       render: (index, _record): JSX.Element => {
         const idPJ =
           props?.listProject?.filter(
-            (ele) => ele.name === _record?.onsitePlace
+            (ele) =>
+              ele.name === _record?.onsitePlace ||
+              ele?.project?.name === _record?.onsitePlace
           ) || [];
-        return _record.state !== 1 ? (
+        return (_record.state !== 1 && !props.isManager) || props.isAdmin ? (
           <Select
+            allowClear
             value={idPJ[0]?.id}
             onChange={(e, value) => {
-              handleChangeOnsite(Number(e), _record.day, (value as any)?.key);
+              handleChangeOnsite(
+                e ? Number(e) : undefined,
+                _record.day,
+                (value as any)?.key
+              );
             }}
             className="w-full"
           >
-            {props?.listProject?.map((el, index) => (
-              <Select.Option key={el.name} value={el?.id}>
-                {el?.name}
-              </Select.Option>
-            ))}
+            {props?.listProject?.map((el, index) =>
+              props.isAdmin ? (
+                <Select.Option key={el?.name} value={el?.id}>
+                  {el?.name}
+                </Select.Option>
+              ) : (
+                <Select.Option key={el?.project?.name} value={el?.project?.id}>
+                  {el?.project?.name}
+                </Select.Option>
+              )
+            )}
           </Select>
+        ) : _record?.onsitePlace ? (
+          <span>{props.projectName ?? _record?.onsitePlace}</span>
         ) : (
-          <span>{_record.onsitePlace}</span>
+          <> </>
         );
       },
     },
@@ -119,11 +134,8 @@ export default function ModalCreateOnsite(
       align: "center",
       width: "20px",
       render: (index, _record): JSX.Element => {
-        return CheckPermissionEvent(
-          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.DELETE_ONSITE_SALARY
-        ) &&
-          ((_record.action && _record.state !== 1) ||
-            (_record.action && props.isManager)) ? (
+        return (_record.action && _record.state !== 1) ||
+          (_record.action && props.isManager) ? (
           <CloseCircleOutlined
             onClick={() => deleteOnsite(_record.id)}
             className="text-[red] text-[20px]"
@@ -144,17 +156,18 @@ export default function ModalCreateOnsite(
   };
 
   const handleChangeOnsite = (
-    e: number,
+    e: number | undefined,
     day: string | number | undefined,
     name: string
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
-        el.project = e;
-        el.onsitePlace = name;
+        el.project = e ?? -1;
+        el.onsitePlace = name ?? "";
       }
       return el;
     });
+    console.log(dataChange);
     setData(dataChange);
   };
 
@@ -163,7 +176,7 @@ export default function ModalCreateOnsite(
     ApiSalary.deleteOnsiteSalary(id)
       .then((r) => {
         props.refetchDataOnsite();
-        notification.success({message: "delete success"});
+        notification.success({message: "Xoá thành công"});
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -193,9 +206,9 @@ export default function ModalCreateOnsite(
       ).then((r) => {
         props.refetchDataOnsite();
         notification.success({message: "Tạo thành công"});
+        props.handleOk();
       });
     }
-    props.handleOk();
   };
 
   return (

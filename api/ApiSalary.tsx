@@ -30,8 +30,8 @@ const path = {
   createOnsiteSalary: "/onsite-salary",
   createTotalSalary: "/total-salary",
   getUserOfProject: "/salary",
-  updateOnsiteSalary: "/onsite-salary/update-salaries",
-  updateOTSalary: "/overtime-salary/update-salaries",
+  updateOnsiteSalary: "/onsite-salary/accept",
+  updateOTSalary: "/overtime-salary/accept",
   createBonusSalary: "/bonus-salary",
   deleteBonusSalary: "/bonus-salary/",
   deleteProjectSalary: "/project-salary",
@@ -41,6 +41,7 @@ const path = {
   lockToTalSalary: "/total-salary/lock",
   createSalaryAllEmployee: "/total-salary/create-all-user",
   updateTotalSalary: "/total-salary/",
+  updateOSSalary: "/total-salary/",
 };
 
 interface IBodyOTSalary {
@@ -54,6 +55,17 @@ interface IBodyOnsiteSalary {
   user: number | string;
   onsitePlace: string;
   date: string;
+}
+
+function updateOSSalary(
+  id: number,
+  dailyOnsiteRate: number
+): Promise<IDataOnsite[]> {
+  return fetcher({
+    url: path.updateOSSalary + `${id}/daily-onsite-rate`,
+    method: "patch",
+    data: {dailyOnsiteRate},
+  });
 }
 
 function createSalaryAllEmployee(
@@ -87,12 +99,14 @@ function getListSalaryTotalUser(
   year: number,
   month: number,
   state?: number,
-  search?: string
+  search?: string,
+  pageSize?: number
 ): Promise<IDataSalaryToTalOfUser[]> {
   return fetcher({
     url: path.getListSalaryTotalUser,
     method: "get",
     params: {
+      pageSize,
       filter: {date_month: month, date_year: year, state: state},
       searchFields: ["fullName", "email"],
       search,
@@ -157,16 +171,17 @@ function createOnsiteSalary(data: IBodyOnsiteSalary[]): Promise<IDataOnsite[]> {
 function getMyListOnsiteSalary(
   year: number,
   month: number,
-  userId?: number
+  userId?: number,
+  projectId?: number
 ): Promise<IDataOnsite[]> {
   return fetcher({
     url: userId ? path.getListOnsiteSalary : path.getMyListOnsiteSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year, userId}},
+    params: {filter: {date_month: month, date_year: year, userId, projectId}},
   });
 }
 
-function updateOnsiteSalary(data: IDataOnsite[]): Promise<any> {
+function updateOnsiteSalary(data: {ids: number[]}): Promise<any> {
   return fetcher({
     url: path.updateOnsiteSalary,
     method: "post",
@@ -192,16 +207,17 @@ function createOTSalary(data: IBodyOTSalary[]): Promise<IDataOnsite[]> {
 function getMyListOTSalary(
   year: number,
   month: number,
-  userId?: number
+  userId?: number,
+  projectId?: number
 ): Promise<IDataOverTime[]> {
   return fetcher({
     url: userId ? path.getListOTSalary : path.getMyListOTSalary,
     method: "get",
-    params: {filter: {date_month: month, date_year: year, userId}},
+    params: {filter: {date_month: month, date_year: year, userId, projectId}},
   });
 }
 
-function updateOTSalary(data: IDataOverTime[]): Promise<any> {
+function updateOTSalary(data: {ids: number[]}): Promise<any> {
   return fetcher({
     url: path.updateOTSalary,
     method: "post",
@@ -337,6 +353,7 @@ function createSalaryProject(data: {
   user: number;
   project: number;
   salary: number;
+  totalSalaryId: number;
   date: string;
 }): Promise<any> {
   return fetcher({
@@ -406,4 +423,5 @@ export default {
   lockToTalSalary,
   createSalaryAllEmployee,
   updateTotalSalary,
+  updateOSSalary,
 };

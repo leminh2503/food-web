@@ -34,12 +34,29 @@ export default function ModalOtherSalary(
               }}
             />
           </Form.Item>
-          <Form.Item label="Số tiền" name="salary">
+          <Form.Item
+            label="Số tiền"
+            name="salary"
+            rules={[
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value % 1000 === 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Giá trị phải chia hết cho 1000")
+                  );
+                },
+              }),
+            ]}
+          >
             <InputNumber
+              name="salary"
               className="w-full"
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
+              step={1000}
               parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
               onChange={(e) => {
                 setSalary(Number(e));
@@ -65,13 +82,13 @@ export default function ModalOtherSalary(
     };
     createBonusSalary.mutate(data, {
       onSuccess: () => {
-        notification.success({message: "create success"});
+        notification.success({message: "Tạo thành công"});
         if (props?.handleRefetch) {
           props.handleRefetch();
         }
+        props.handleOk();
       },
     });
-    props.handleOk();
   };
 
   return (
@@ -80,7 +97,7 @@ export default function ModalOtherSalary(
       isModalVisible={props.isModalVisible}
       handleOk={handleOkModal}
       handleCancel={props.handleCancel}
-      title="Thêm lương dự án"
+      title="Thêm lương khác"
       content={renderContent()}
     />
   );

@@ -1,10 +1,11 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   LeftOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import {Modal, notification, Table} from "antd";
+import {Button, Image, Modal, notification, Progress, Table} from "antd";
 import moment from "moment";
 import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
@@ -24,6 +25,7 @@ import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
 import ApiUser from "@app/api/ApiUser";
 import {renameKeys} from "@app/utils/convert/ConvertHelper";
+import {countDownTime} from "@app/utils/date/countDownTime";
 
 export function ProjectDetail(): JSX.Element {
   const router = useRouter();
@@ -151,15 +153,81 @@ export function ProjectDetail(): JSX.Element {
     });
   };
 
+  const [visibleCountDown, setVisibleCountDown] = useState(false);
+  const [countDownTimer, setCountDownTimer] = useState<string | number>();
+  const [timeCheck, setTimeCheck] = useState<string | number>();
+  useEffect(() => {
+    if (dataProjectById?.endDate) {
+      setInterval(() => {
+        setCountDownTimer(countDownTime(dataProjectById?.endDate || ""));
+        setTimeCheck(countDownTime(dataProjectById?.endDate || ""));
+      }, 1000);
+    }
+  }, [dataProjectById?.endDate]);
+
   return (
     <div className="container-project">
+      <Modal
+        title={null}
+        footer={null}
+        wrapClassName="modal-countdown"
+        visible={visibleCountDown}
+        onCancel={(): void => setVisibleCountDown(false)}
+      >
+        <div className="text-[6vw] text-[white] flex justify-center">
+          {dataProjectById && dataProjectById?.name}
+        </div>
+        <div className="text-[3vw] text-[white] row-all-center">
+          <Image
+            src={
+              dataProjectById?.projectManager?.avatar ??
+              "/img/avatar/avatar.jpg"
+            }
+            width="7vw"
+            className="rounded-[50%]"
+            fallback="/img/avatar/avatar.jpg"
+          />
+        </div>
+        <div className="text-[3vw] text-[white] row-all-center">
+          <div>PM: {dataProjectById?.projectManager?.fullName}</div>
+        </div>
+        <div
+          className={
+            "text-[8vw] mt-[30px] flex justify-center " +
+            (Number(timeCheck) > 7 ||
+            (dataProjectById?.projectProgress || 0) >= 100
+              ? "text-[white]"
+              : "text-[#ff4d4f]")
+          }
+        >
+          {countDownTimer}
+        </div>
+        <Progress
+          percent={dataProjectById?.projectProgress}
+          status="active"
+          className="mt-8"
+        />
+      </Modal>
       <div className="flex justify-between items-center mb-5">
         <button type="button" className="btn-back-page" onClick={router.back}>
           <LeftOutlined />
         </button>
-        <button type="button" onClick={showModalEditProject}>
-          <EditOutlined style={{color: "#0092ff", fontSize: 25}} />
-        </button>
+        <div className="flex">
+          <Button
+            type="primary"
+            className="btn-primary flex items-center mr-6"
+            onClick={(): void => {
+              setVisibleCountDown(true);
+            }}
+          >
+            <EyeOutlined />
+            <span className="ml-2"> Tiến độ dự án </span>
+          </Button>
+
+          <button type="button" onClick={showModalEditProject}>
+            <EditOutlined style={{color: "#0092ff", fontSize: 25}} />
+          </button>
+        </div>
       </div>
       <div>
         <Table
@@ -344,6 +412,7 @@ export function ProjectDetail(): JSX.Element {
                   >
                     <EditOutlined style={{color: "#0092ff", fontSize: 20}} />
                   </button>
+
                   <button
                     type="button"
                     onClick={(): void => {
@@ -360,6 +429,7 @@ export function ProjectDetail(): JSX.Element {
           bordered
           pagination={false}
         />
+
         {dataProjectById && (
           <ModalCreateProjectMember
             isModalVisible={isModalVisible === "modalCreateProjectMember"}

@@ -34,6 +34,10 @@ export function ModalCreateProject({
       startDate: moment(),
       endDate: moment(),
     });
+    setDate({
+      startDate: moment().format("DD/MM/YYYY"),
+      endDate: moment().format("DD/MM/YYYY"),
+    });
   }, [isModalVisible]);
 
   const onFinish = (fieldsValue: IProjectBody): void => {
@@ -91,7 +95,7 @@ export function ModalCreateProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 ]+$/,
+                  /^(?![_|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|-]+$/,
                 message: "Tên dự án không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -103,7 +107,14 @@ export function ModalCreateProject({
             label="PM dự án"
             rules={[{required: true}]}
           >
-            <Select>
+            <Select
+              showSearch
+              filterOption={(input, option) =>
+                (option!.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
               {listUserConvert?.map((e) => (
                 <Select.Option key={e.value} value={e.value}>
                   {e.label}
@@ -127,16 +138,22 @@ export function ModalCreateProject({
                       : dateString,
                 }));
               }}
-              disabledDate={(d): boolean => {
-                if (date.endDate !== moment().format("DD/MM/YYYY")) {
-                  return (
-                    d.isBefore() ||
-                    moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-                      moment(date.endDate, "DD/MM/YYYY")
-                  );
-                }
-                return d.isBefore();
-              }}
+              // disabledDate={(d): boolean => {
+              //   console.log(
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY"),
+              //     moment(date.endDate, "DD/MM/YYYY"),
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+              //       moment(date.endDate, "DD/MM/YYYY")
+              //   );
+              //   if (date.endDate !== moment().format("DD/MM/YYYY")) {
+              //     return (
+              //       d.isBefore() ||
+              //       moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+              //         moment(date.endDate, "DD/MM/YYYY")
+              //     );
+              //   }
+              //   return d.isBefore();
+              // }}
             />
           </Form.Item>
           <Form.Item
@@ -184,7 +201,7 @@ export function ModalCreateProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 ]+$/,
+                  /^(?![_|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|-]+$/,
                 message: "Khách hàng không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -199,7 +216,7 @@ export function ModalCreateProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 | ,]+$/,
+                  /^(?![_|,|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|,|-]+$/,
                 message: "Công cụ sử dụng không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -214,7 +231,7 @@ export function ModalCreateProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 | , ]+$/,
+                  /^(?![_|,|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|,|-]+$/,
                 message: "Kỹ thuật không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -224,7 +241,14 @@ export function ModalCreateProject({
           <Form.Item
             name="description"
             label="Mô tả"
-            rules={[{required: true}, {whitespace: true}]}
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {
+                pattern: /^(?![`~!@#$%^&*()?_+=/''-:{}|<>])/,
+                message: "Mô tả không được bắt đầu bởi ký tự đặc biệt!",
+              },
+            ]}
           >
             <Input.TextArea rows={5} />
           </Form.Item>

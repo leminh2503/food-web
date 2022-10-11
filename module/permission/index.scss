@@ -1,0 +1,38 @@
+.container-work-type {
+  width: 100%;
+
+  .btn-primary {
+    color: $white-color;
+    background-color: $blue-color;
+  }
+}
+
+.modal-add-role-group {
+  width: 800px !important;
+  height: 100vh !important;
+  .content-permission-checkbox {
+    height: 70vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .group-permission-checkbox {
+    .ant-form-item-label {
+      width: 100%;
+    }
+    .ant-form-item-control {
+      flex: unset !important;
+    }
+    .ant-checkbox-wrapper-in-form-item {
+      margin-left: 0;
+    }
+  }
+  h5 {
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  label {
+    margin-left: 0 !important;
+    width: 100%;
+  }
+}

@@ -13,6 +13,8 @@ import {renameKeys} from "@app/utils/convert/ConvertHelper";
 import {EProjectState, IUserLogin} from "@app/types";
 import {IMetadata} from "@app/api/Fetcher";
 import ApiUser from "@app/api/ApiUser";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function Project(): JSX.Element {
   const router = useRouter();
@@ -126,9 +128,11 @@ export function Project(): JSX.Element {
             },
           ]}
         />
-        <Button className="btn-primary w-48" onClick={showModalCreateProject}>
-          Thêm dự án
-        </Button>
+        {CheckPermissionEvent(NameEventConstant.PERMISSION_PROJECT_KEY.ADD) && (
+          <Button className="btn-primary w-48" onClick={showModalCreateProject}>
+            Thêm dự án
+          </Button>
+        )}
       </div>
       <Table
         columns={[
@@ -216,12 +220,18 @@ export function Project(): JSX.Element {
         onRow={(record): {onDoubleClick: () => void} => {
           return {
             onDoubleClick: (): void => {
-              router.push({
-                pathname: baseURL.PROJECT.PROJECT_DETAIL,
-                query: {
-                  id: record.id,
-                },
-              });
+              if (
+                CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_PROJECT_KEY.GET_DETAIL
+                )
+              ) {
+                router.push({
+                  pathname: baseURL.PROJECT.PROJECT_DETAIL,
+                  query: {
+                    id: record.id,
+                  },
+                });
+              }
             },
           };
         }}

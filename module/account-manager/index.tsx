@@ -30,6 +30,9 @@ import {LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {IMetadata} from "@app/api/Fetcher";
 import fileDownload from "js-file-download";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
+import ApiPermisstion, {IRole} from "@app/api/ApiPermisstion";
 
 export function AccountManager(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -44,10 +47,15 @@ export function AccountManager(): JSX.Element {
   const [filterPosition, setFilterPosition] = useState<number>(-1);
   const [pagingCurrent, setPagingCurrent] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 100,
   });
 
+  const toggleModal = (): void => {
+    setIsModalVisible(false);
+  };
+
   const defaultValuesDetail: IUserLogin = {
+    role: undefined,
     fullName: "",
     email: "",
     avatar: "",
@@ -61,21 +69,26 @@ export function AccountManager(): JSX.Element {
     dateOfBirth: "",
     deductionOwn: 0,
     familyCircumstances: null,
+    roleId: undefined,
   };
 
   const [dataDetail, setDataDetail] = useState<IUserLogin>(defaultValuesDetail);
 
   const handleOk = (data: IUserLogin): void => {
-    Modal.confirm({
-      title: "Xác nhận sửa thông tin nhân viên?",
-      okType: "primary",
-      okText: "Xác nhận",
-      cancelText: "Huỷ",
-      onOk: () => {
-        handleUpdateInformationAccount(data);
-        setIsModalVisible(false);
-      },
-    });
+    if (
+      CheckPermissionEvent(NameEventConstant.PERMISSION_USER_KEY.UPDATE_USER)
+    ) {
+      Modal.confirm({
+        title: "Xác nhận sửa thông tin nhân viên?",
+        okType: "primary",
+        okText: "Xác nhận",
+        cancelText: "Huỷ",
+        onOk: () => {
+          toggleModal();
+          handleUpdateInformationAccount(data);
+        },
+      });
+    }
   };
 
   const handleCancel = (): void => {
@@ -94,7 +107,6 @@ export function AccountManager(): JSX.Element {
       cancelText: "Huỷ",
       onOk: () => {
         handleAddNewEmployee(data);
-        setIsModalAddEmployeeVisible(false);
       },
     });
   };
@@ -157,6 +169,15 @@ export function AccountManager(): JSX.Element {
     return ApiUser.getListPosition();
   };
 
+  const getAllRoleNoPaginate = (): Promise<IRole[]> => {
+    return ApiPermisstion.getAllRoleNoPaginate();
+  };
+
+  const {data: dataRoles} = useQuery(
+    queryKeys.GET_ROLES_NO_PAGINATE,
+    getAllRoleNoPaginate
+  );
+
   const listWorkType = useQuery(queryKeys.GET_LIST_WORK_TYPE, getListWorkType);
   const listPosition = useQuery(queryKeys.GET_LIST_POSITION, getListPosition);
 
@@ -188,6 +209,18 @@ export function AccountManager(): JSX.Element {
     return listPositionConvert;
   });
 
+  const newKeysRole = {id: "value", roleName: "label"};
+  const listRoleConvert: {
+    value: number;
+    label: string;
+    default?: boolean;
+  }[] = [];
+  dataRoles?.map((el) => {
+    const renamedObj = renameKeys(el || {}, newKeysRole);
+    listRoleConvert.push(renamedObj);
+    return listRoleConvert;
+  });
+
   const handleUserAction = (record: IUserLogin, type: string): void => {
     const title = type === "lock" ? "Khóa" : "Mở khóa";
     Modal.confirm({
@@ -209,6 +242,7 @@ export function AccountManager(): JSX.Element {
         duration: 1,
         message: `Sửa thành công`,
       });
+      setIsModalVisible(false);
       refetch();
     },
     onError: () => {
@@ -236,6 +270,8 @@ export function AccountManager(): JSX.Element {
       englishCertificate: values.englishCertificate,
       englishScore: values.englishScore,
       manageSalary: Number(values.manageSalary),
+      role: values.roleId,
+      workRoom: values.workRoom,
     };
     updateProfile.mutate(body);
   };
@@ -247,6 +283,7 @@ export function AccountManager(): JSX.Element {
         message: `Thành công`,
       });
       refetch();
+      setIsModalVisible(false);
     },
     onError: () => {
       notification.error({
@@ -295,12 +332,7 @@ export function AccountManager(): JSX.Element {
         message: `Thêm thành công`,
       });
       refetch();
-    },
-    onError: () => {
-      notification.error({
-        duration: 1,
-        message: `Thêm thất bại`,
-      });
+      setIsModalAddEmployeeVisible(false);
     },
   });
 
@@ -339,8 +371,9 @@ export function AccountManager(): JSX.Element {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: "5%",
-      render: (_, record, index) => <div>{index + 1}</div>,
+      width: "2%",
+      render: (_, record, index) =>
+        (pagingCurrent.currentPage - 1) * pagingCurrent.pageSize + index + 1,
     },
     {
       title: "Ảnh",
@@ -356,7 +389,6 @@ export function AccountManager(): JSX.Element {
               style={{objectFit: "cover"}}
               src={record.avatar || "img/avatar/avatar.jpg"}
               fallback="img/avatar/avatar.jpg"
-              // preview={false}
             />
           </div>
         );
@@ -367,14 +399,14 @@ export function AccountManager(): JSX.Element {
       dataIndex: "email",
       key: "email",
       align: "center",
-      width: "10%",
+      width: "15%",
     },
     {
       title: "Họ & Tên",
       dataIndex: "fullName",
       key: "fullName",
       align: "center",
-      width: "10%",
+      width: "13%",
     },
     {
       title: "Số điện thoại",
@@ -388,23 +420,10 @@ export function AccountManager(): JSX.Element {
       dataIndex: "address",
       key: "address",
       align: "center",
-      width: "20%",
+      width: "15%",
     },
-    // {
-    //   title: "Quản lý",
-    //   dataIndex: "manager",
-    //   key: "manager",
-    //   align: "center",
-    //   render: (_, record): JSX.Element => {
-    //     return (
-    //       <div>
-    //         <span>{record?.manager?.fullName}</span>
-    //       </div>
-    //     );
-    //   },
-    // },
     {
-      title: "Vị trí",
+      title: "Loại hình làm việc",
       dataIndex: "workType",
       key: "workType",
       align: "center",
@@ -432,6 +451,20 @@ export function AccountManager(): JSX.Element {
       },
     },
     {
+      title: " Nhóm quyền ",
+      dataIndex: "roleId",
+      key: "roleId",
+      align: "center",
+      width: "10%",
+      render: (_, record): JSX.Element => {
+        return (
+          <div>
+            <span>{record?.role?.roleName}</span>
+          </div>
+        );
+      },
+    },
+    {
       title: "Trạng thái",
       align: "center",
       key: "state",
@@ -453,28 +486,33 @@ export function AccountManager(): JSX.Element {
       key: "action",
       align: "center",
       width: "5%",
-      render: (_, record) => (
-        <div>
-          {Number(record.id) === 1 ? (
-            <div />
-          ) : (
-            <Button
-              className="mr-1"
-              onClick={(): void => {
-                const type = record.state === 1 ? "lock" : "unlock";
-                handleUserAction(record, type);
-              }}
-              icon={
-                record.state === 1 ? (
-                  <LockOutlined style={{color: "red"}} />
-                ) : (
-                  <UnlockOutlined style={{color: "green"}} />
-                )
-              }
-            />
-          )}
-        </div>
-      ),
+      render: (_, record) =>
+        CheckPermissionEvent(
+          NameEventConstant.PERMISSION_USER_KEY.DELETE_USER
+        ) ? (
+          <div>
+            {Number(record.id) === 1 ? (
+              <div />
+            ) : (
+              <Button
+                className="mr-1"
+                onClick={(): void => {
+                  const type = record.state === 1 ? "lock" : "unlock";
+                  handleUserAction(record, type);
+                }}
+                icon={
+                  record.state === 1 ? (
+                    <LockOutlined style={{color: "red"}} />
+                  ) : (
+                    <UnlockOutlined style={{color: "green"}} />
+                  )
+                }
+              />
+            )}
+          </div>
+        ) : (
+          <> </>
+        ),
     },
   ];
 
@@ -500,12 +538,16 @@ export function AccountManager(): JSX.Element {
                 >
                   Xuất Excel
                 </Button>
-                <Button
-                  onClick={(): void => setIsModalAddEmployeeVisible(true)}
-                  className="bg-blue-500 text-neutral-50"
-                >
-                  Tạo tài khoản mới
-                </Button>
+                {CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_USER_KEY.CREATE_USER
+                ) && (
+                  <Button
+                    onClick={(): void => setIsModalAddEmployeeVisible(true)}
+                    className="bg-blue-500 text-neutral-50"
+                  >
+                    Tạo tài khoản mới
+                  </Button>
+                )}
               </div>
             </Col>
           </Row>
@@ -517,7 +559,6 @@ export function AccountManager(): JSX.Element {
           columns={columns}
           dataSource={dataUserAccount?.data}
           bordered
-          scroll={{x: "100vw"}}
           pagination={false}
           onRow={(record, rowIndex) => {
             return {
@@ -531,6 +572,8 @@ export function AccountManager(): JSX.Element {
         <Pagination
           className="mt-3 float-right"
           showSizeChanger
+          pageSizeOptions={[50, 100]}
+          defaultPageSize={pagingCurrent.pageSize}
           onShowSizeChange={onShowSizeChange}
           onChange={handleChangePagination}
           defaultCurrent={pagingCurrent.currentPage}
@@ -538,6 +581,7 @@ export function AccountManager(): JSX.Element {
         />
       </Card>
       <ModalInfo
+        listRoleConvert={listRoleConvert || []}
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}
         dataDetail={dataDetail}
@@ -549,6 +593,7 @@ export function AccountManager(): JSX.Element {
         setIsModalFamilyVisible={setIsModalFamilyVisible}
       />
       <ModalAddEmployee
+        listRoleConvert={listRoleConvert || []}
         listPositionConvert={listPositionConvert}
         listWorkTypeConvert={listWorkTypeConvert}
         isModalVisible={isModalAddEmployeeVisible}

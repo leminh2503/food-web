@@ -2,16 +2,19 @@ import "./index.scss";
 import React, {useEffect, useState} from "react";
 import {Button, Modal, notification, Table} from "antd";
 import {IWorkType} from "@app/types";
-import ApiWorkType, {IWorkTypeWithMeta} from "@app/api/ApiWorkType";
+import ApiWorkType from "@app/api/ApiWorkType";
 import {useMutation, useQuery} from "react-query";
 import Icon from "@app/components/Icon/Icon";
 import {ModalCreateWorkType} from "@app/module/work-type/components/ModalCreateWorkType";
 import {ModalEditWorkType} from "@app/module/work-type/components/ModalEditWorkType";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {IMetadata} from "@app/api/Fetcher";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function WorkType(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
-  const [WorkTypeId, setWorkTypeId] = useState<number | undefined>();
+  const [workType, setWorkType] = useState<IWorkType>();
   const [pageSize, setPageSize] = useState<number>(50);
   const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -27,30 +30,27 @@ export function WorkType(): JSX.Element {
     setIsModalVisible("");
   };
 
-  const getWorkType = (): Promise<IWorkTypeWithMeta> => {
+  const getWorkType = (): Promise<{data: IWorkType[]; meta: IMetadata}> => {
     return ApiWorkType.getWorkType({
       pageSize: pageSize,
       pageNumber: pageNumber,
+      sort: ["name"],
     });
   };
-  const dataWorkType = useQuery(
+  const {data: dataWorkType, refetch} = useQuery(
     queryKeys.GET_LIST_WORK_TYPE_FOR_SETTING,
     getWorkType
   );
 
-  const dataRefetch = (): void => {
-    dataWorkType.refetch();
-  };
-
   useEffect(() => {
-    dataRefetch();
+    refetch();
   }, [pageSize, pageNumber]);
 
   const deleteWorkTypeMutation = useMutation(ApiWorkType.deleteWorkType);
   const handleDeleteWorkType = (record: IWorkType): void => {
     Modal.confirm({
-      title: "Bạn có muốn xóa chức vụ?",
-      content: "Chức vụ sẽ bị xóa vĩnh viễn!",
+      title: "Bạn có muốn xóa loại hình làm việc?",
+      content: "Loại hình làm việc sẽ bị xóa vĩnh viễn!",
       okType: "primary",
       cancelText: "Huỷ",
       okText: "Xóa",
@@ -60,14 +60,14 @@ export function WorkType(): JSX.Element {
             onSuccess: () => {
               notification.success({
                 duration: 1,
-                message: "Xóa chức vụ thành công!",
+                message: "Xóa loại hình làm việc thành công!",
               });
-              dataRefetch();
+              refetch();
             },
             onError: () => {
               notification.error({
                 duration: 1,
-                message: "Xóa chức vụ thất bại!",
+                message: "Xóa loại hình làm việc thất bại!",
               });
             },
           });
@@ -79,9 +79,14 @@ export function WorkType(): JSX.Element {
   return (
     <div className="container-work-type">
       <div className="mb-5 flex justify-end">
-        <Button className="btn-primary w-48" onClick={showModalCreateWorkType}>
-          Thêm chức vụ
-        </Button>
+        {CheckPermissionEvent(NameEventConstant.PERMISSION_WORK_TYPE.ADD) && (
+          <Button
+            className="btn-primary w-48"
+            onClick={showModalCreateWorkType}
+          >
+            Thêm loại hình làm việc
+          </Button>
+        )}
       </div>
       <Table
         columns={[
@@ -94,7 +99,7 @@ export function WorkType(): JSX.Element {
             render: (_, __, index) => <div>{index + 1}</div>,
           },
           {
-            title: "Chức vụ",
+            title: "Loại hình làm việc",
             dataIndex: "name",
             key: "name",
             align: "center",
@@ -111,26 +116,34 @@ export function WorkType(): JSX.Element {
             width: 200,
             render: (_, record) => (
               <>
-                <Button
-                  className="mr-2"
-                  icon={<Icon icon="Edit" size={20} color="#0092ff" />}
-                  onClick={(): void => {
-                    setWorkTypeId(record.id);
-                    showModalEditWorkType();
-                  }}
-                />
-                <Button
-                  icon={<Icon icon="Delete" size={20} color="#cb2131" />}
-                  onClick={(): void => handleDeleteWorkType(record)}
-                />
+                {CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_WORK_TYPE.UPDATE
+                ) && (
+                  <Button
+                    className="mr-2"
+                    icon={<Icon icon="Edit" size={20} color="#0092ff" />}
+                    onClick={(): void => {
+                      setWorkType(record);
+                      showModalEditWorkType();
+                    }}
+                  />
+                )}
+                {CheckPermissionEvent(
+                  NameEventConstant.PERMISSION_WORK_TYPE.DELETE
+                ) && (
+                  <Button
+                    icon={<Icon icon="Delete" size={20} color="#cb2131" />}
+                    onClick={(): void => handleDeleteWorkType(record)}
+                  />
+                )}
               </>
             ),
           },
         ]}
-        dataSource={dataWorkType.data?.data}
+        dataSource={dataWorkType?.data}
         bordered
         pagination={{
-          total: dataWorkType.data?.meta.totalItems,
+          total: dataWorkType?.meta.totalItems,
           defaultPageSize: 50,
           showSizeChanger: true,
           pageSizeOptions: ["50", "100", "150", "200"],
@@ -143,15 +156,14 @@ export function WorkType(): JSX.Element {
       <ModalCreateWorkType
         isModalVisible={isModalVisible === "modalCreateWorkType"}
         toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
       />
-      <ModalEditWorkType
-        isModalVisible={isModalVisible === "modalEditWorkType"}
-        toggleModal={toggleModal}
-        dataRefetch={dataRefetch}
-        workTypeId={WorkTypeId}
-        dataWorkType={dataWorkType.data?.data}
-      />
+      {workType && (
+        <ModalEditWorkType
+          isModalVisible={isModalVisible === "modalEditWorkType"}
+          toggleModal={toggleModal}
+          workType={workType}
+        />
+      )}
     </div>
   );
 }

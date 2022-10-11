@@ -1,57 +1,96 @@
+import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
-import React, {useState} from "react";
-import {TextArea} from "@app/components/Modal/TextArea";
+import React, {useEffect} from "react";
 import ApiLeaveWork, {IRefuseLeaveWorkBody} from "@app/api/ApiLeaveWork";
-import {useMutation} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
+import {Button, Form, Input, notification} from "antd";
+import {queryKeys} from "@app/utils/constants/react-query";
+import {defaultValidateMessages, layout} from "@app/validate/user";
 
 interface ModalRefuseLeaveWorkProps {
   isModalVisible: boolean;
   toggleModal: () => void;
-  refuseWorkLeaveId?: number;
-  dataRefetch: () => void;
+  refuseWorkLeaveId: number;
 }
 
 export function ModalRefuseLeaveWork({
   isModalVisible,
   toggleModal,
   refuseWorkLeaveId,
-  dataRefetch,
 }: ModalRefuseLeaveWorkProps): JSX.Element {
-  const [data, setData] = useState<IRefuseLeaveWorkBody>({
-    refuseReason: "",
-  });
+  const [form] = Form.useForm();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    form.resetFields();
+  }, [isModalVisible]);
+
+  const onFinish = (fieldsValue: IRefuseLeaveWorkBody): void => {
+    const data = {
+      id: refuseWorkLeaveId,
+      refuseReason: fieldsValue.refuseReason,
+    };
+    handleRefuseLeaveWork(data);
+  };
 
   const refuseLeaveWorkMutation = useMutation(ApiLeaveWork.refuseLeaveWork);
-  const handleRefuseLeaveWork = (values: IRefuseLeaveWorkBody): void => {
-    refuseLeaveWorkMutation.mutate(
-      {
-        id: values.id,
-        refuseReason: values.refuseReason,
-      }
-      // {
-      //   onSuccess: () => {
-      //     //todo
-      //   },
-      //   onError: () => {
-      //     //todo
-      //   },
-      // }
-    );
-    toggleModal();
-    dataRefetch();
+  const handleRefuseLeaveWork = (data: IRefuseLeaveWorkBody): void => {
+    refuseLeaveWorkMutation.mutate(data, {
+      onSuccess: () => {
+        notification.success({
+          duration: 1,
+          message: "Từ chối đơn xin nghỉ phép thành công!",
+        });
+        queryClient.refetchQueries({
+          queryKey: queryKeys.GET_LIST_LEAVE_WORK,
+        });
+        toggleModal();
+      },
+      onError: () => {
+        notification.error({
+          duration: 1,
+          message: "Từ chối đơn xin nghỉ phép thất bại!",
+        });
+      },
+    });
   };
 
   const renderContent = (): JSX.Element => {
     return (
-      <div className="modal-refuse-leave-work">
-        <TextArea
-          keyValue="refuseReason"
-          value={data.refuseReason ?? ""}
-          label="Lý do"
-          required
-          placeholder="Lý do từ chối"
-          onChange={setData}
-        />
+      <div className="modal-refuse-leave-work-form">
+        <Form
+          form={form}
+          {...layout}
+          name="nest-messages"
+          onFinish={onFinish}
+          validateMessages={defaultValidateMessages}
+        >
+          <Form.Item
+            name="refuseReason"
+            label="Lý do"
+            rules={[{required: true}, {whitespace: true}]}
+          >
+            <Input.TextArea rows={10} placeholder="Lý do từ chối" />
+          </Form.Item>
+          <Form.Item>
+            <div className="footer-modal">
+              <Button
+                className="button-cancel mr-3"
+                type="primary"
+                onClick={toggleModal}
+              >
+                Hủy
+              </Button>
+              <Button
+                className="button-confirm"
+                type="primary"
+                htmlType="submit"
+              >
+                Xác Nhận
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -59,15 +98,10 @@ export function ModalRefuseLeaveWork({
   return (
     <ModalCustom
       isModalVisible={isModalVisible}
-      handleOk={(): void =>
-        handleRefuseLeaveWork({
-          id: refuseWorkLeaveId,
-          refuseReason: data.refuseReason,
-        })
-      }
       handleCancel={toggleModal}
       title="Lý do từ chối"
       content={renderContent()}
+      footer={null}
     />
   );
 }

@@ -1,16 +1,20 @@
-import {IRootState} from "@app/redux/store";
 import "./index.scss";
 import React from "react";
-import {useSelector} from "react-redux";
 import {AdminWorkSchedule} from "./AdminWorkSchedule";
 import {UserWorkSchedule} from "./UserWorkSchedule";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function WorkSchedule(): JSX.Element {
-  const role = useSelector((state: IRootState) => state.user.role);
-
   return (
     <div className="container-work-schedule">
-      {role ? <AdminWorkSchedule /> : <UserWorkSchedule />}
+      {CheckPermissionEvent(
+        NameEventConstant.PERMISSION_WORK_CALENDAR_KEY.LIST_ALL
+      ) ? (
+        <AdminWorkSchedule />
+      ) : (
+        <UserWorkSchedule />
+      )}
     </div>
   );
 }

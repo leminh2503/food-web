@@ -1,8 +1,14 @@
 import {Project} from "@app/module/project";
-import ApiUser from "@app/api/ApiUser";
 import {Salary} from "@app/module/salary";
+import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
+import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function index() {
-  const role = ApiUser.getUserRole();
-  return role?.toString() === "1" ? <Project /> : <Salary />;
+  return CheckPermissionEvent(
+    NameEventConstant.PERMISSION_PROJECT_KEY.LIST_ALL
+  ) ? (
+    <Project />
+  ) : (
+    <Salary />
+  );
 }

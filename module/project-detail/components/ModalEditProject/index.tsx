@@ -25,7 +25,7 @@ export function ModalEditProject({
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
 
-  const [date, setDate] = useState({
+  const [, setDate] = useState({
     startDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
     endDate: moment(dataProjectById.endDate).format("DD/MM/YYYY"),
   });
@@ -62,6 +62,10 @@ export function ModalEditProject({
       use: fieldsValue.use,
       technicality: fieldsValue.technicality,
       description: fieldsValue.description,
+      projectProgress:
+        fieldsValue?.projectProgress && fieldsValue?.projectProgress > 0
+          ? fieldsValue?.projectProgress
+          : undefined,
     };
     handleEditProject(data);
   };
@@ -106,8 +110,8 @@ export function ModalEditProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9]+$/,
-                message: "Mô tả không được chứa ký tự đặc biệt!",
+                  /^(?![_|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|-]+$/,
+                message: "Tên dự án không được chứa ký tự đặc biệt!",
               },
             ]}
           >
@@ -118,7 +122,14 @@ export function ModalEditProject({
             label="PM dự án"
             rules={[{required: true}]}
           >
-            <Select>
+            <Select
+              showSearch
+              filterOption={(input, option) =>
+                (option!.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
               {listUserConvert?.map((e) => (
                 <Select.Option key={e.value} value={e.value}>
                   {e.label}
@@ -145,9 +156,9 @@ export function ModalEditProject({
                       : dateString,
                 }))
               }
-              disabledDate={(d): boolean =>
-                d.isBefore(moment(date.startDate, "DD/MM/YYYY"))
-              }
+              // disabledDate={(d): boolean =>
+              //   d.isBefore(moment(date.startDate, "DD/MM/YYYY"))
+              // }
             />
           </Form.Item>
           <Form.Item
@@ -171,7 +182,7 @@ export function ModalEditProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 ]+$/,
+                  /^(?![_|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|-]+$/,
                 message: "Khách hàng không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -186,7 +197,7 @@ export function ModalEditProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 | , ]+$/,
+                  /^(?![_|,|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|,|-]+$/,
                 message: "Công cụ sử dụng không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -201,7 +212,7 @@ export function ModalEditProject({
               {whitespace: true},
               {
                 pattern:
-                  /^[a-zA-ZÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ0-9 | , ]+$/,
+                  /^(?![_|,|-])[a-zA-ZàáảạãÀÁẢẠÃâầấẩậẫÂẦẤẨẬẪăằắẳặẵĂẰẮẲẶẴđĐèéẻẹẽÈÉẺẸẼêềếểệễÊỀẾỂỆỄìíỉịĩÌÍỈỊĨòóỏọõÒÓỎỌÕôồốổộỗÔỒỐỔỘỖơờớởợỡƠỜỚỞỢỠùúủụũÙÚỦỤŨưừứửựữƯỪỨỬỰỮỳýỷỵỹỲÝỶỴỸ0-9\s|_|,|-]+$/,
                 message: "Kỹ thuật không được chứa ký tự đặc biệt!",
               },
             ]}
@@ -209,9 +220,28 @@ export function ModalEditProject({
             <Input />
           </Form.Item>
           <Form.Item
+            name="projectProgress"
+            label="Tiến độ hoàn thành"
+            rules={[
+              {
+                pattern: /^([1-9][0-9]*)$/,
+                message: "Quy mô phải là số nguyên dương!",
+              },
+            ]}
+          >
+            <Input min={0} maxLength={3} max={100} />
+          </Form.Item>
+          <Form.Item
             name="description"
             label="Mô tả"
-            rules={[{required: true}, {whitespace: true}]}
+            rules={[
+              {required: true},
+              {whitespace: true},
+              {
+                pattern: /^(?![`~!@#$%^&*()?_+=/''-:{}|<>])/,
+                message: "Mô tả không được bắt đầu bởi ký tự đặc biệt!",
+              },
+            ]}
           >
             <Input.TextArea rows={5} />
           </Form.Item>

@@ -9,8 +9,6 @@ import {findDayOnWeek} from "@app/utils/date/findDayOnWeek";
 import {CloseCircleOutlined} from "@ant-design/icons";
 import {formatNumber} from "@app/utils/fomat/FormatNumber";
 import ApiSalary from "@app/api/ApiSalary";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 interface IModalCreateOnsite {
   dataOverTime: IDataOverTime[];
@@ -88,7 +86,7 @@ export default function ModalCreateOverTime(
       align: "center",
     },
     {
-      title: "số giờ OT",
+      title: "Số giờ OT",
       dataIndex: "hour",
       key: "hour",
       width: "90px",
@@ -98,6 +96,7 @@ export default function ModalCreateOverTime(
           <span>{_record.hour}</span>
         ) : (
           <Input
+            id={"OT" + _record.day}
             min={0}
             type="number"
             value={_record.hour}
@@ -118,10 +117,11 @@ export default function ModalCreateOverTime(
           <span>{props?.projectName || _record.projectName}</span>
         ) : (
           <Select
+            allowClear
             value={_record?.projectId}
             style={{width: 120}}
             onChange={(e) =>
-              handleChangeOT("project", e.toString(), _record.day)
+              handleChangeOT("project", e?.toString(), _record.day)
             }
           >
             {props?.listProject?.map((el, index) =>
@@ -146,11 +146,8 @@ export default function ModalCreateOverTime(
       align: "center",
       width: "20px",
       render: (index, _record): JSX.Element => {
-        return CheckPermissionEvent(
-          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.DELETE_OT_SALARY
-        ) &&
-          ((_record.action && _record.state !== 1) ||
-            (_record.action && props.isManager)) ? (
+        return (_record.action && _record.state !== 1) ||
+          (_record.action && props.isManager) ? (
           <CloseCircleOutlined
             onClick={() => deleteOnsite(_record.id)}
             className="text-[red] text-[20px]"
@@ -172,16 +169,19 @@ export default function ModalCreateOverTime(
 
   const handleChangeOT = (
     type: string,
-    e: string,
+    e: string | undefined,
     day: string | number | undefined
   ) => {
     const dataChange = data?.map((el, index) => {
       if (el.day === day) {
         if (type === "hour") {
-          el.hour = e;
+          el.hour = e ?? "";
         }
         if (type === "project") {
-          el.projectId = Number(e);
+          el.projectId = e ? Number(e) : undefined;
+        }
+        if (e === undefined) {
+          el.hour = e ?? undefined;
         }
       }
       return el;
@@ -192,7 +192,7 @@ export default function ModalCreateOverTime(
   const deleteOnsite = (id: number): void => {
     ApiSalary.deleteOTSalary(id).then((r) => {
       props.refetchDataOT();
-      notification.success({message: "delete success"});
+      notification.success({message: "Xoá thành công"});
     });
   };
 
@@ -201,9 +201,10 @@ export default function ModalCreateOverTime(
       data?.map((el, index) => {
         return {
           user: props.idUser,
-          project: props?.isManager
-            ? props?.idProject || -1
-            : el?.projectId || -1,
+          project:
+            props?.isManager && !props?.isAdmin
+              ? props?.idProject ?? -1
+              : el?.projectId ?? -1,
           hour: Number(el.hour) || 0,
           date:
             props.year +
@@ -213,15 +214,13 @@ export default function ModalCreateOverTime(
             formatNumber(index + 1),
         };
       }) || [];
-    if (body.filter((el) => el.project !== -1)?.length > 0) {
-      ApiSalary.createOTSalary(
-        body.filter((el) => el.project !== -1 && el.hour !== 0)
-      ).then((r) => {
-        props.refetchDataOT();
-        notification.success({message: "Tạo thành công"});
-      });
-    }
-    props.handleOk();
+    ApiSalary.createOTSalary(
+      body.filter((el) => el.project !== -1 && el.hour !== 0)
+    ).then((r) => {
+      props.refetchDataOT();
+      notification.success({message: "Tạo thành công"});
+      props.handleOk();
+    });
   };
 
   return (

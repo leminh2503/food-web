@@ -15,6 +15,7 @@ interface IModalCreateProject {
   userId: number;
   month: number;
   year: number;
+  idTotal?: number;
   handleRefetch?: () => void;
 }
 
@@ -42,8 +43,25 @@ export default function ModalProjectSalary(
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Thưởng" name="salary">
+          <Form.Item
+            label="Thưởng"
+            name="salary"
+            rules={[
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value % 1000 === 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('Giá trị phải chia hết cho 1000"')
+                  );
+                },
+              }),
+            ]}
+          >
             <InputNumber
+              name="salary"
+              step={1000}
               className="w-full"
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -64,6 +82,7 @@ export default function ModalProjectSalary(
       user: props?.userId || 0,
       project: project || 0,
       salary: salary || 0,
+      totalSalaryId: props?.idTotal || 0,
       date:
         props.year +
         "/" +
@@ -76,10 +95,10 @@ export default function ModalProjectSalary(
         if (props.handleRefetch) {
           props.handleRefetch();
         }
-        notification.success({message: "create success"});
+        notification.success({message: "Tạo thành công"});
+        props.handleOk();
       },
     });
-    props.handleOk();
   };
 
   return (

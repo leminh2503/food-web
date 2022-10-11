@@ -49,8 +49,14 @@ export enum TypeOfAction {
   ADD = "ADD",
 }
 
+export interface IPermission {
+  id: number;
+  permissionKey: string;
+  permissionName: string;
+}
+
 export interface IWorkType {
-  id?: number;
+  id: number;
   name?: string;
   description?: string;
 }
@@ -226,8 +232,9 @@ export interface IDataSalaryToTalOfUser {
     email: string;
   };
   totalSalary: number;
-  detailTaxSalary: object;
+  detailTaxSalary: IDetailTax;
   afterTaxSalary: number;
+  dailyOnsiteRate: number;
 }
 
 export interface IDataSalary {
@@ -247,6 +254,7 @@ export interface IDataSalary {
   totalSalary: number;
   updatedAt: string;
   detailTaxSalary: IDetailTax;
+  dailyOnsiteRate: number;
 }
 
 export interface IProfile {
@@ -306,6 +314,7 @@ export interface IUserLogin {
       permissionsKey: string;
     }[];
   };
+  roleId?: number;
   phoneNumberRelative?: string;
   baseSalary?: number;
   manageSalary?: number;
@@ -319,7 +328,7 @@ export interface IUserLogin {
   employeeCode?: string;
   workRoom?: string;
   englishCertificate?: EnglishCertificate;
-  englishScore?: number;
+  englishScore?: string;
 }
 
 export interface IDataProjectSalary {
@@ -334,23 +343,15 @@ export interface IAccountInfo {
   isConfirmed?: boolean;
   dataProfile?: IProfile;
   role?: {
-    id?: IAccountRole;
-    roleName?: string;
-    permissions: {
-      id: number;
-      permissionName: string;
-      permissionKey: string;
-    }[];
+    id: number;
+    roleName: string;
+    permissions: IPermission[];
   };
 }
 
 export interface ILeaveWork {
-  id?: number;
-  user?: {
-    id: number;
-    email: string;
-    fullName: string;
-  };
+  id: number;
+  user?: IProfile;
   startDate?: Date;
   reason?: string;
   reasonRefuse?: string;
@@ -403,7 +404,7 @@ export interface IEvent {
 }
 
 export interface IPosition {
-  id?: number;
+  id: number;
   name?: string;
   description?: string;
 }
@@ -420,6 +421,7 @@ export interface IProject {
   description?: string;
   state?: number;
   projectManager?: IProfile;
+  projectProgress?: number;
 }
 
 export enum ERolePosition {
@@ -454,11 +456,29 @@ export interface ISetStateModal {
   description?: string;
 }
 
+export interface IRules {
+  tittle?: string;
+  link?: string;
+  startTime?: string;
+}
+
+// export enum EUserGender {
+//   OTHER = "Other",
+//   MALE = "Male",
+//   FEMALE = "Female",
+// }
+
 export enum EEnglishCertificate {
   TOEIC = "Toeic",
   TOEFL = "Toefl",
   IELTS = "Ielts",
   OTHER = "Other",
+}
+
+export enum ELeaveWork {
+  DANG_CHO_DUYET = 0,
+  DA_CHAP_NHAN = 1,
+  BI_TU_CHOI = 2,
 }
 
 export enum EProjectState {

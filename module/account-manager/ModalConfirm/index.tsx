@@ -16,6 +16,7 @@ interface ModalInfoProps {
   dataDetail: IUserLogin;
   listPositionConvert: {value: number; label: string}[];
   listWorkTypeConvert: {value: number; label: string}[];
+  listRoleConvert: {value: number; label: string}[];
   defaultValuesDetail: IUserLogin;
 }
 
@@ -27,11 +28,13 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     dataDetail,
     listPositionConvert,
     listWorkTypeConvert,
+    listRoleConvert,
     setIsModalChangePassVisible,
     setIsModalFamilyVisible,
     defaultValuesDetail,
   } = props;
   const {
+    role,
     fullName,
     email,
     avatar,
@@ -55,7 +58,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
   const [adString, setAdString] = useState<IUserLogin>(defaultValuesDetail);
 
   const [typeCertificateEnglish, setTypeCertificateEnglish] =
-    useState<EnglishCertificate>(dataDetail?.englishCertificate || "");
+    useState<EnglishCertificate>();
 
   useEffect(() => {
     setAdString({
@@ -76,7 +79,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishScore,
       workRoom,
       manageSalary,
+      roleId: role?.id,
     });
+    setTypeCertificateEnglish(dataDetail?.englishCertificate);
   }, [dataDetail]);
 
   const date = dateOfBirth && new Date(dateOfBirth);
@@ -98,9 +103,10 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishCertificate,
       englishScore,
       workRoom,
-      manageSalary,
+      manageSalary: manageSalary && manageSalary > 0 ? manageSalary : undefined,
+      role: role?.id,
     });
-  }, [dataDetail, typeCertificateEnglish, isModalVisible]);
+  }, [dataDetail, isModalVisible]);
 
   const onFinish = (fieldsValue: IRegisterAccountBody): void => {
     const data = {
@@ -120,15 +126,13 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       englishCertificate: fieldsValue?.englishCertificate,
       englishScore: fieldsValue?.englishScore,
       manageSalary: fieldsValue?.manageSalary || 0,
+      roleId: fieldsValue.role,
     };
     handleOk(data);
   };
 
-  const handleChangeCertificate = (value: {
-    value: EnglishCertificate;
-    label: React.ReactNode;
-  }) => {
-    setTypeCertificateEnglish(value.value);
+  const handleChangeCertificate = (value: EnglishCertificate) => {
+    setTypeCertificateEnglish(value);
     if (form.getFieldValue("englishCertificate") === "") {
       form.setFieldValue("englishScore", "");
     }
@@ -187,7 +191,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   {max: 255},
                 ]}
               >
-                <Input />
+                <Input disabled />
               </Form.Item>
               <Form.Item name="dateOfBirth" label="Ngày sinh">
                 <DatePicker
@@ -195,6 +199,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   disabledDate={(current) =>
                     current.isAfter(moment().subtract(18, "years"))
                   }
+                  allowClear={false}
                 />
               </Form.Item>
               <Form.Item
@@ -203,7 +208,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 rules={[
                   {
                     pattern:
-                      /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                      /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
                     message: "Số điện thoại không đúng định dạng!",
                   },
                 ]}
@@ -216,7 +221,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 rules={[
                   {
                     pattern:
-                      /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[1-4|6-9]))+([0-9]{7})$/g,
+                      /^(((\+){0,1}(843[2-9]|845[6|8|9]|847[0|6|7|8|9]|848[1-9]|849[1-4|6-9]))|(03[2-9]|05[6|8|9]|07[0|6|7|8|9]|08[1-9]|09[0-4|6-9]))+([0-9]{7})$/g,
                     message: "Số điện thoại không đúng định dạng!",
                   },
                 ]}
@@ -234,7 +239,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   <Select.Option key="3" value="Ielts">
                     Ielts
                   </Select.Option>
-                  <Select.Option key="3" value="Other">
+                  <Select.Option key="4" value="Other">
                     Khác
                   </Select.Option>
                   <Select.Option key="0" value="">
@@ -294,7 +299,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   {whitespace: true},
                   {
                     pattern:
-                      /^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
+                      /^[-/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/,
                     message: "Địa chỉ không được hợp lệ!",
                   },
                   {max: 255},
@@ -323,7 +328,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 </Select>
               </Form.Item>
               <Form.Item
-                label="Vị trí"
+                label="Loại hình làm việc"
                 name="workType"
                 rules={[{required: true}]}
               >
@@ -336,17 +341,27 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 </Select>
               </Form.Item>
               <Form.Item
+                label="Nhóm quyền"
+                name="role"
+                rules={[{required: true}]}
+              >
+                <Select>
+                  {listRoleConvert?.map((e) => (
+                    <Select.Option key={"role" + e.value} value={e.value}>
+                      {e.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
                 name="baseSalary"
                 label="Lương cơ bản"
                 rules={[
                   {required: true},
                   {
-                    pattern: /^(?:\d*)$/,
-                    message: "Vui lòng nhập vào số nguyên!",
-                  },
-                  {
-                    pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
-                    message: "Lương cơ bản phải chia hết cho 1000!",
+                    pattern: /^([1-9]\d{2,}|[1-9][5-9])0$/,
+                    message:
+                      "Lương cơ bản phải là số nguyên và chia hết cho 1000!",
                   },
                 ]}
               >
@@ -356,14 +371,9 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 name="manageSalary"
                 label="Lương quản lý"
                 rules={[
-                  {required: true},
                   {
-                    pattern: /^(?:\d*)$/,
-                    message: "Vui lòng nhập vào số nguyên!",
-                  },
-                  {
-                    pattern: /^([1-9]\d{2,}|[3-9]\d|2[5-9])000$/,
-                    message: "Lương phải chia hết cho 1000!",
+                    pattern: /^([1-9]\d{2,}|[1-9][5-9])0$/,
+                    message: "Lương phải là số nguyên và chia hết cho 1000!",
                   },
                 ]}
               >
@@ -399,6 +409,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                 className="button-confirm"
                 type="primary"
                 htmlType="submit"
+                disabled={role?.id === 1}
               >
                 Xác Nhận
               </Button>

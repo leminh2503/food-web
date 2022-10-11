@@ -2,15 +2,10 @@ import "./index.scss";
 import React, {useState} from "react";
 import {NewPassword} from "@app/module/login/NewPassword";
 import {ForgotPassword} from "@app/module/login/ForgotPassword";
-import {VerifyPassword} from "@app/module/login/VerifyPassword";
 import {SignIn} from "@app/module/login/SignIn";
 
 export function Login(): JSX.Element {
-  // const [data, setData] = useState({
-  //   email: "",
-  //   code: "",
-  //   password: "",
-  // });
+  const [data, setData] = useState("");
 
   const [tab, setTab] = useState("signIn");
 
@@ -20,9 +15,6 @@ export function Login(): JSX.Element {
     },
     forgotPassword: {
       component: ForgotPassword,
-    },
-    verifyPassword: {
-      component: VerifyPassword,
     },
     newPassword: {
       component: NewPassword,
@@ -35,8 +27,8 @@ export function Login(): JSX.Element {
         <div className="form">
           {React.createElement(tabList[tab as keyof typeof tabList].component, {
             changeTab: setTab,
-            // data: data,
-            // setData: setData,
+            setData: setData,
+            data: data,
           })}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {MenuOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {IRootState, persistor} from "@app/redux/store";
@@ -8,15 +8,16 @@ import {useQuery} from "react-query";
 import {IUserLogin} from "@app/types";
 import ApiUser from "@app/api/ApiUser";
 import {Dropdown, Image, Menu, Modal} from "antd";
-import Link from "next/link";
 import Icon from "@app/components/Icon/Icon";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {useRouter} from "next/router";
-
+import {ModalChangePassword} from "@app/components/Layout/Navbar/ModalChangePassword";
+import "./Navbar.scss";
 /**
  *
  */
 export default function Navbar(): JSX.Element {
+  const [toggleModal, setToggleModal] = useState(false);
   const user = useSelector((state: IRootState) => state.user);
   const router = useRouter();
 
@@ -32,7 +33,11 @@ export default function Navbar(): JSX.Element {
     dataUser.refetch().then((data) => {
       dispatch(loginUser({...user, user: data?.data}));
     });
-  }, []);
+  }, [toggleModal]);
+
+  // const handleModal= ():void =>{
+  //   setIsModalOpen(true)
+  // }
 
   const handleLogout = (): void => {
     Modal.confirm({
@@ -60,13 +65,14 @@ export default function Navbar(): JSX.Element {
    */
   const renderDropdown = (): JSX.Element => (
     <Menu>
-      <Menu.Item key="0">
-        <Link href="/user/home" passHref>
-          <div>
-            <Icon icon="BlockUser" size={20} color="#000" className="mr-2" />
-            Đổi mật khẩu
-          </div>
-        </Link>
+      <Menu.Item key="0" onClick={() => setToggleModal(true)}>
+        {toggleModal && (
+          <ModalChangePassword isModalVisible setToggleModal={setToggleModal} />
+        )}
+        <div>
+          <Icon icon="BlockUser" size={20} color="#000" className="mr-2" />
+          Đổi mật khẩu
+        </div>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="1" onClick={handleLogout}>
@@ -91,7 +97,7 @@ export default function Navbar(): JSX.Element {
         <Dropdown overlay={renderDropdown()} trigger={["click"]}>
           <div className="cursor-pointer flex items-center">
             <Image
-              src={dataUser?.data?.avatar}
+              src={dataUser?.data?.avatar || "/img/avatar/avatar.jpg"}
               preview={false}
               width={30}
               height={30}

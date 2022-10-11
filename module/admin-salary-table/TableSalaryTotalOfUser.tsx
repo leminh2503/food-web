@@ -8,8 +8,6 @@ import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import baseURL from "@app/config/baseURL";
 import {LeftOutlined, PlusCircleFilled} from "@ant-design/icons";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export function TableSalaryTotalOfUser(): JSX.Element {
   const router = useRouter();
@@ -17,13 +15,15 @@ export function TableSalaryTotalOfUser(): JSX.Element {
   const {year} = router.query;
   const [searchValue, setSearchValue] = useState<string>();
   const [state, setState] = useState<number>();
+  const [pageSize, setPageSize] = useState<number>(100);
 
   const getListSalaryTotalUser = (): Promise<IDataSalaryToTalOfUser[]> => {
     return ApiSalary.getListSalaryTotalUser(
       Number(year || 0),
       Number(month || 0),
       state,
-      searchValue === "" ? undefined : searchValue
+      searchValue === "" ? undefined : searchValue,
+      pageSize
     );
   };
   const {data, refetch} =
@@ -81,6 +81,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
         },
         {
           title: "Email",
+          fixed: "left",
           dataIndex: "email",
           key: "email",
           align: "center",
@@ -96,6 +97,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           render: (_, record, index) => (
             <div>{record.baseSalary.toLocaleString("en-US")}</div>
           ),
+          sorter: (a, b) => a.baseSalary - b.baseSalary,
         },
         {
           title: "Lương quản lý",
@@ -105,6 +107,9 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           render: (_, record, index) => (
             <div>{record.manageSalary.toLocaleString("en-US")}</div>
           ),
+          filters: [{text: "quản lý", value: 0}],
+          sorter: (a, b) => a.manageSalary - b.manageSalary,
+          onFilter: (value: any, record) => record.manageSalary > value,
         },
         {
           title: "Lương dự án",
@@ -179,7 +184,9 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           key: "taxSalary",
           dataIndex: "taxSalary",
           render: (_, record, index) => (
-            <div>{record?.taxSalary.toLocaleString("en-US")}</div>
+            <div>
+              {record?.detailTaxSalary?.taxSalary?.toLocaleString("en-US")}
+            </div>
           ),
         },
         {
@@ -190,6 +197,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           render: (_, record, index) => (
             <div>{record?.totalSalary.toLocaleString("en-US")}</div>
           ),
+          sorter: (a, b) => a.totalSalary - b.totalSalary,
         },
         {
           title: "Trạng thái",
@@ -243,7 +251,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           <span>Trạng thái : </span>
           <Select
             placeholder="trạng thái"
-            className="w-[120px] ml-4"
+            className="w-[120px] ml-3 mr-4"
             onChange={(e) => {
               if (e === "-1") {
                 setState(undefined);
@@ -266,60 +274,59 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             </Select.Option>
           </Select>
         </div>
-        {CheckPermissionEvent(
-          NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.CREATE_ALL_SALARY
-        ) && (
-          <Button
-            type="primary"
-            onClick={(): void => {
-              Modal.confirm({
-                title: "Bạn chắc chắn muốn taọ lương cho toàn bộ nhân viên ?",
-                onOk: () => {
-                  ApiSalary.createSalaryAllEmployee(
-                    Number(year),
-                    Number(month)
-                  ).then((r) => {
-                    notification.success({message: "create success"});
-                    refetch();
-                  });
-                },
-              });
-            }}
-            className="bg-blue-500 items-center flex"
-            icon={<PlusCircleFilled />}
-          >
-            Tạo lương tất cả nhân viên
-          </Button>
-        )}
+
+        <Button
+          type="primary"
+          onClick={(): void => {
+            Modal.confirm({
+              title: "Bạn chắc chắn muốn taọ lương cho toàn bộ nhân viên ?",
+              onOk: () => {
+                ApiSalary.createSalaryAllEmployee(
+                  Number(year),
+                  Number(month)
+                ).then((r) => {
+                  notification.success({message: "create success"});
+                  refetch();
+                });
+              },
+            });
+          }}
+          className="bg-blue-500 items-center flex"
+          icon={<PlusCircleFilled />}
+        >
+          Tạo lương tất cả nhân viên
+        </Button>
       </div>
       <Table
         columns={columns}
         dataSource={data}
         className="hover-pointer"
         bordered
-        scroll={{y: "calc(100vh - 300)"}}
-        pagination={{showSizeChanger: true, defaultPageSize: 100}}
+        pagination={{
+          showSizeChanger: true,
+          defaultPageSize: 100,
+          onChange: (page, ps) => setPageSize(ps),
+        }}
         onRow={(record, rowIndex) => {
           return {
             onDoubleClick: () => {
-              if (
-                CheckPermissionEvent(
-                  NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
-                    .GET_DETAIL_SALARY
-                )
-              ) {
-                router.push({
-                  pathname: baseURL.SALARY.CREATE_SALARY,
-                  query: {
-                    month: month,
-                    year: year,
-                    userId: record.user.id,
-                    id: record.id,
-                    total: record.totalSalary,
-                    tax: record.taxSalary,
-                  },
-                });
-              }
+              router.push({
+                pathname: baseURL.SALARY.CREATE_SALARY,
+                query: {
+                  month: month,
+                  year: year,
+                  userId: record.user.id,
+                  id: record.id,
+                  total: record.totalSalary,
+                  taxSalary: record.taxSalary,
+                  deductionTaxMe: record?.detailTaxSalary?.deductionOwn,
+                  deductionFamilyTaxMe:
+                    record?.detailTaxSalary?.deductionFamilyCircumstances,
+                  taxableSalary: record.detailTaxSalary?.taxableSalary,
+                  tax: record?.detailTaxSalary?.tax,
+                  dailyOnsiteRate: record?.dailyOnsiteRate,
+                },
+              });
             },
           };
         }}

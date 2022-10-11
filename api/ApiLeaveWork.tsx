@@ -1,15 +1,15 @@
-import {fetcher} from "./Fetcher";
-import {ILeaveWork} from "../types";
+import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
+import {ILeaveWork, IProfile} from "../types";
 
 export interface ILeaveWorkBody {
-  startDate?: string;
-  quantity?: number;
-  reason?: string;
+  startDate: string;
+  quantity: number;
+  reason: string;
 }
 
 export interface IRefuseLeaveWorkBody {
-  id?: number;
-  refuseReason?: string;
+  id: number;
+  refuseReason: string;
 }
 
 export interface ILeaveWorkResponse {
@@ -22,29 +22,48 @@ export interface ILeaveWorkResponse {
   state?: number;
 }
 
+export interface IDaysAllowedLeave {
+  id: number;
+  quantity: number;
+  user: IProfile;
+}
+
 export interface IParamsGetLeaveWork {
-  sort?: string[];
-  searchFields?: string[];
   pageSize?: number;
   pageNumber?: number;
-  disablePagination?: boolean;
-  search?: string;
-  searchType?: string;
   filter?: {
-    state_IN?: number[];
-    createdAt_RANGE?: string[];
+    state_IN: number[];
+    createdAt_MONTH: number;
+    createdAt_YEAR: number;
   };
+  sort?: string[];
 }
 
 const path = {
   getLeaveWork: "letter-leave",
 };
 
-function getLeaveWork(params?: IParamsGetLeaveWork): Promise<ILeaveWork[]> {
-  return fetcher({url: path.getLeaveWork, method: "get", params: params});
+function getLeaveWork(
+  params?: IParamsGetLeaveWork
+): Promise<{data: ILeaveWork[]; meta: IMetadata}> {
+  return fetcherWithMetadata({
+    url: path.getLeaveWork,
+    method: "get",
+    params: params,
+  });
 }
 
-function getDaysAllowedLeave(): Promise<ILeaveWork> {
+function getLeaveWorkMe(
+  params?: IParamsGetLeaveWork
+): Promise<{data: ILeaveWork[]; meta: IMetadata}> {
+  return fetcherWithMetadata({
+    url: path.getLeaveWork + "/me",
+    method: "get",
+    params: params,
+  });
+}
+
+function getDaysAllowedLeave(): Promise<IDaysAllowedLeave> {
   return fetcher({
     url: path.getLeaveWork + "/days-allowed-leave",
     method: "get",
@@ -78,6 +97,7 @@ function approvalLeaveWork(id: number): Promise<ILeaveWork[]> {
 
 export default {
   getLeaveWork,
+  getLeaveWorkMe,
   getDaysAllowedLeave,
   createLeaveWork,
   deleteLeaveWork,

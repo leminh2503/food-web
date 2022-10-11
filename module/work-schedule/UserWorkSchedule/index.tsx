@@ -33,7 +33,7 @@ interface invalid {
 export function getAllDaysInMonth(year: number, month: number): Date[] {
   const date = new Date(year, month, 1);
 
-  const dates = [];
+  const dates: any = [];
 
   while (date.getMonth() === month) {
     dates.push(new Date(date));

@@ -74,12 +74,6 @@ export function ModalCreateProjectMember({
         });
         toggleModal();
       },
-      onError: () => {
-        notification.error({
-          duration: 1,
-          message: "Thêm thành viên dự án thất bại!",
-        });
-      },
     });
   };
 
@@ -140,8 +134,8 @@ export function ModalCreateProjectMember({
             rules={[
               {required: true},
               {
-                pattern: /^([1-9][0-9]*)$/,
-                message: "Hợp đồng phải là số nguyên dương!",
+                pattern: /^(?!0$)\d+(?:[.][05])?$/,
+                message: "Hợp đồng phải không hợp lệ!",
               },
             ]}
           >
@@ -163,14 +157,14 @@ export function ModalCreateProjectMember({
                       : dateString,
                 }));
               }}
-              disabledDate={(d): boolean => {
-                return (
-                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
-                    moment(date.startDate, "DD/MM/YYYY") ||
-                  moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-                    moment(date.endDate, "DD/MM/YYYY")
-                );
-              }}
+              // disabledDate={(d): boolean => {
+              //   return (
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") <
+              //       moment(date.startDate, "DD/MM/YYYY") ||
+              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+              //       moment(date.endDate, "DD/MM/YYYY")
+              //   );
+              // }}
             />
           </Form.Item>
           <Form.Item

@@ -1,6 +1,7 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
+  IPermission,
   EnglishCertificate,
   IAccountInfo,
   IFamilyCircumstance,
@@ -19,7 +20,7 @@ export interface IRegisterAccountBody {
   password?: string;
   gender?: UserGender;
   englishCertificate?: EnglishCertificate;
-  englishScore?: number;
+  englishScore?: string;
   workRoom?: string;
   personId?: string;
   dateOfBirth?: string;
@@ -35,6 +36,7 @@ export interface IRegisterAccountBody {
   employeeCode: string;
   fullName: string;
   deductionOwn?: number;
+  role: number;
 }
 
 export interface IProfileBody {
@@ -53,7 +55,7 @@ export interface IInformationAccountBody {
   id?: number;
   gender?: string;
   englishCertificate?: string;
-  englishScore?: number;
+  englishScore?: string;
   workRoom?: string;
   personId?: string;
   dateOfBirth?: string;
@@ -70,6 +72,7 @@ export interface IInformationAccountBody {
   email?: string;
   employeeCode?: string;
   fullName?: string;
+  role?: number;
 }
 
 export interface IResetPasswordBody {
@@ -85,8 +88,9 @@ export interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
   role?: {
-    id?: number;
-    roleName?: string;
+    id: number;
+    roleName: string;
+    permissions: IPermission[];
   };
 }
 
@@ -105,8 +109,21 @@ export interface IParamsGetUser {
   };
 }
 
+export interface IForgotPassword {
+  email: string;
+}
+
+export interface ISetPassword {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmPass: string;
+}
+
 const path = {
   login: "/auth/login",
+  forgotpassword: "/auth/forgot-password",
+  setpassword: "/auth/set-password",
   getMe: "/users/me",
   getUserAccount: "/users",
   uploadAvatar: "/users/set-avatar",
@@ -188,6 +205,21 @@ function login(body: ILoginBody): Promise<IAccountInfo> {
   );
 }
 
+function forgotPassword(body: IForgotPassword): Promise<IUserLogin> {
+  return fetcher({url: path.forgotpassword, method: "post", data: body});
+}
+
+function setPassword(body: ISetPassword): Promise<IUserLogin> {
+  return fetcher({
+    url: path.setpassword,
+    method: "post",
+    data: {
+      email: body.email,
+      newPassword: body.newPassword,
+      otp: body.otp,
+    },
+  });
+}
 function addNewEmployee(body: IRegisterAccountBody): Promise<IUserLogin> {
   return fetcher({url: path.addNewEmployee, method: "post", data: body});
 }
@@ -244,7 +276,7 @@ function isLogin(): boolean {
   return !!getAuthToken();
 }
 
-function getUserRole(): string | null {
+export function getUserRole(): string | null {
   const role = localStorage.getItem("role");
   return role;
 }
@@ -261,6 +293,8 @@ function getAuthToken(): string | undefined {
 
 export default {
   login,
+  forgotPassword,
+  setPassword,
   isLogin,
   getAuthToken,
   getInfoMe,

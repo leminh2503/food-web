@@ -1,14 +1,12 @@
 import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
-import {Card, Table} from "antd";
+import {Card, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {IDataProject, IDataProjectList} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import {CloseCircleOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import ModalProjectSalary from "@app/module/ProjectSalaryTable/ModalProjectSalary";
-import {CheckPermissionEvent} from "@app/check_event/CheckPermissionEvent";
-import NameEventConstant from "@app/check_event/NameEventConstant";
 
 export default function ProjectSalaryTable({
   month,
@@ -17,7 +15,9 @@ export default function ProjectSalaryTable({
   userId,
   isAdmin,
   setProjectSalary,
+  idTotal,
 }: {
+  idTotal?: number;
   setProjectSalary?: (val: number) => void;
   isAdmin?: boolean;
   userId: number;
@@ -61,15 +61,15 @@ export default function ProjectSalaryTable({
           dataIndex: "salary",
           key: "salary",
           align: "center",
+          render: (_, record, index) => (
+            <div>{record?.salary?.toLocaleString("en-US")} VND</div>
+          ),
         },
         {
           title: "",
           align: "center",
           render: (index, _record): JSX.Element => {
-            return CheckPermissionEvent(
-              NameEventConstant.PERMISSION_SALARY_MANAGER_KEY
-                .DELETE_SALARY_PROJECT
-            ) ? (
+            return (
               <CloseCircleOutlined
                 onClick={(): void => {
                   ApiSalary.deleteProjectSalary(_record?.id || 0).then((r) =>
@@ -78,8 +78,6 @@ export default function ProjectSalaryTable({
                 }}
                 className="text-[red] text-[20px] hover-pointer"
               />
-            ) : (
-              <> </>
             );
           },
         },
@@ -96,6 +94,9 @@ export default function ProjectSalaryTable({
           dataIndex: "salary",
           key: "salary",
           align: "center",
+          render: (_, record, index) => (
+            <div>{record?.salary?.toLocaleString("en-US")} VND</div>
+          ),
         },
       ];
 
@@ -111,7 +112,19 @@ export default function ProjectSalaryTable({
     if (setProjectSalary) {
       setProjectSalary(totalSalary2);
     }
-  }, [isRefetching]);
+  }, [isRefetching, dataProject]);
+
+  const handleAddProjectSalary = (): void => {
+    if (data.length < 5) {
+      showModal();
+    } else {
+      notification.warning({
+        message: "Thêm thất bại",
+        description: "Thưởng tối đa 5 dự án",
+      });
+    }
+  };
+
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -124,6 +137,7 @@ export default function ProjectSalaryTable({
           handleOk={handleOk}
           handleCancel={handleCancel}
           userId={Number(userId)}
+          idTotal={idTotal}
         />
       )}
       <div className="flex items-center mb-4 justify-between">
@@ -136,15 +150,12 @@ export default function ProjectSalaryTable({
             ?.toLocaleString("en-US")}{" "}
           VND
         </span>
-        {isAdmin &&
-          CheckPermissionEvent(
-            NameEventConstant.PERMISSION_SALARY_MANAGER_KEY.ADD_SALARY_PROJECT
-          ) && (
-            <PlusCircleOutlined
-              onClick={showModal}
-              className="text-[20px] text-[#0092ff] mr-3"
-            />
-          )}
+        {isAdmin && (
+          <PlusCircleOutlined
+            onClick={handleAddProjectSalary}
+            className="text-[20px] text-[#0092ff] mr-3"
+          />
+        )}
       </div>
       <Table
         loading={isRefetching}
