@@ -7,6 +7,7 @@ import ApiEvent from "@app/api/ApiEvent";
 import {Modal, notification, Table} from "antd";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {IMetadata} from "@app/api/Fetcher";
+import {DeleteOutlined} from "@ant-design/icons";
 
 interface ModalDeleteEventProps {
   isModalVisible: boolean;
@@ -61,12 +62,6 @@ export function ModalDeleteEvent({
         refetch();
         queryClient.refetchQueries({
           queryKey: queryKeys.GET_LIST_EVENT,
-        });
-      },
-      onError: () => {
-        notification.error({
-          duration: 1,
-          message: "Xóa sự kiện thất bại!",
         });
       },
     });
@@ -131,7 +126,7 @@ export function ModalDeleteEvent({
                   }
                 }}
               >
-                Delete
+                <DeleteOutlined style={{color: "red", fontSize: "20px"}} />
               </button>
             ),
           },

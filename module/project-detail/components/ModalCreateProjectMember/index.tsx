@@ -74,12 +74,6 @@ export function ModalCreateProjectMember({
         });
         toggleModal();
       },
-      onError: () => {
-        notification.error({
-          duration: 1,
-          message: "Thêm thành viên dự án thất bại!",
-        });
-      },
     });
   };
 
