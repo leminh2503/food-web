@@ -1,9 +1,6 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Filter} from "@app/components/Filter";
 import moment from "moment";
-import {queryKeys} from "@app/utils/constants/react-query";
-import {useQuery} from "react-query";
-import ApiWorkType, {IWorkTypeWithMeta} from "@app/api/ApiWorkType";
 
 interface FilterWorkScheduleProps {
   setFilterState: React.Dispatch<React.SetStateAction<number>>;
@@ -46,40 +43,25 @@ export function FilterWorkSchedule({
     );
   };
 
-  const getWorkType = (): Promise<IWorkTypeWithMeta> => {
-    return ApiWorkType.getWorkType({
-      pageSize: 30,
-      pageNumber: 1,
-    });
-  };
-  const dataWorkType = useQuery(
-    queryKeys.GET_LIST_WORK_TYPE_FOR_SETTING,
-    getWorkType
-  );
-
-  useEffect(() => {
-    dataWorkType.refetch();
-  }, []);
-
-  const dataFilterState = (): DataFilter[] => {
-    const workTypeArray: DataFilter[] = [
-      {
-        title: "Tất cả",
-        value: 0,
-        default: true,
-      },
-    ];
-    dataWorkType.data?.data.forEach((item) => {
-      if (item.name && item.id) {
-        const newWorkType = {
-          title: `${item?.name.charAt(0).toUpperCase()}${item?.name.slice(1)}`,
-          value: item?.id,
-        };
-        workTypeArray.push(newWorkType);
-      }
-    });
-    return workTypeArray;
-  };
+  const dataFilterState: DataFilter[] = [
+    {
+      title: "Tất cả",
+      value: -1,
+      default: true,
+    },
+    {
+      title: "Chưa đăng ký",
+      value: 1,
+    },
+    {
+      title: "Đã đăng ký",
+      value: 0 || 2,
+    },
+    {
+      title: "Đang khóa",
+      value: 3,
+    },
+  ];
 
   return (
     <Filter
@@ -105,7 +87,7 @@ export function FilterWorkSchedule({
               {
                 visible: true,
                 isSelect: true,
-                data: dataFilterState(),
+                data: dataFilterState,
                 handleOnChange: (value: number): void => {
                   setFilterState(value);
                 },

@@ -2,27 +2,26 @@ import moment from "moment";
 import React, {useEffect, useState} from "react";
 import {FilterWorkSchedule} from "../FilterWorkSchedule";
 import Table, {ColumnType} from "antd/lib/table";
-import {IUserLogin, IWorkSchedule} from "@app/types";
-import {EyeOutlined} from "@ant-design/icons";
-import ApiUser from "@app/api/ApiUser";
+import {IWorkSchedule} from "@app/types";
+import {EyeOutlined, FileExcelFilled} from "@ant-design/icons";
 import {useQuery} from "react-query";
 import ApiWorkSchedule from "@app/api/ApiWorkSchedule";
-import {Button, Modal, Pagination, PaginationProps} from "antd";
+import {Button, Modal, Pagination, PaginationProps, Tooltip} from "antd";
 import {ModalWorkSchedule} from "../ModalWorkSchedule";
 import "../index.scss";
 import {ModalOpenSchedule} from "../ModalOpenSchedule";
 import {ModalLockSchedule} from "../ModalLockSchedule";
 import {IMetadata} from "@app/api/Fetcher";
 import {queryKeys} from "@app/utils/constants/react-query";
+import fileDownload from "js-file-download";
 
 export function AdminWorkSchedule(): JSX.Element {
   const [filterYear, setFilterYear] = useState<number>(moment().year());
   const [filterMonth, setFilterMonth] = useState<number>(moment().month() + 1);
-  const [filterState, setFilterState] = useState<number>(0);
+  const [filterState, setFilterState] = useState<number>(-1);
   const [open, setOpen] = useState<boolean>(false);
   const [isModalOpenVisible, setIsModalOpenVisible] = useState<boolean>(false);
   const [isModalLockVisible, setIsModalLockVisible] = useState<boolean>(false);
-  const [userId, setUserId] = useState<number[]>([]);
   const [recordData, setRecordData] = useState<IWorkSchedule>();
   const [page, setPage] = useState({
     pageCurrent: 1,
@@ -75,19 +74,6 @@ export function AdminWorkSchedule(): JSX.Element {
     },
   ];
 
-  const getUserAccount = (): Promise<{data: IUserLogin[]; meta: IMetadata}> => {
-    return ApiUser.getUserAccount({
-      pageSize: 100,
-      pageNumber: 1,
-      filter: {workType: filterState === 0 ? "" : filterState},
-    });
-  };
-
-  const {data: dataUserAccount, refetch: refetchUserAccount} = useQuery(
-    queryKeys.GET_LIST_ACCOUNT,
-    getUserAccount
-  );
-
   const getAllWorkSchedule = (): Promise<{
     data: IWorkSchedule[];
     meta: IMetadata;
@@ -95,7 +81,11 @@ export function AdminWorkSchedule(): JSX.Element {
     return ApiWorkSchedule.getAllWorkSchedule({
       pageSize: page.pageSize,
       pageNumber: page.pageCurrent,
-      filter: {createdAt_MONTH: filterMonth, createdAt_YEAR: filterYear},
+      filter: {
+        createdAt_MONTH: filterMonth,
+        createdAt_YEAR: filterYear,
+        state: filterState === -1 ? "" : filterState,
+      },
     });
   };
 
@@ -105,21 +95,7 @@ export function AdminWorkSchedule(): JSX.Element {
   );
   useEffect(() => {
     dataAllWorkSchedule.refetch();
-  }, [filterMonth, filterYear, page]);
-
-  useEffect(() => {
-    refetchUserAccount();
-  }, [filterState]);
-
-  useEffect(() => {
-    const userIdArray: number[] = [];
-    dataUserAccount?.data.forEach((item) => {
-      if (item.id) {
-        userIdArray.push(item.id);
-      }
-    });
-    setUserId(userIdArray);
-  }, [dataUserAccount?.data]);
+  }, [filterMonth, filterYear, page, filterState]);
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
@@ -129,6 +105,20 @@ export function AdminWorkSchedule(): JSX.Element {
       pageCurrent: current,
       pageSize: pageSize,
     });
+  };
+
+  const exportExcelFile = async (): Promise<any> => {
+    const response = await ApiWorkSchedule.exportWorkSchedule({
+      filter: {
+        createdAt_MONTH: filterMonth,
+        createdAt_YEAR: filterYear,
+        state: filterState === -1 ? "" : filterState,
+      },
+    });
+    fileDownload(
+      response.data,
+      response.headers["x-file-name"] || "all-work-schedule.xlsx"
+    );
   };
 
   return (
@@ -141,7 +131,7 @@ export function AdminWorkSchedule(): JSX.Element {
           setFilterMonth={setFilterMonth}
           setFilterYear={setFilterYear}
         />
-        <div>
+        <div className="flex ">
           <Button
             onClick={() => setIsModalOpenVisible(true)}
             className="open_calender mr-5"
@@ -154,6 +144,16 @@ export function AdminWorkSchedule(): JSX.Element {
           >
             Khóa lịch
           </Button>
+          {dataAllWorkSchedule?.data?.data.length !== 0 ? (
+            <Tooltip title="Xuất excel" placement="top">
+              <FileExcelFilled
+                onClick={exportExcelFile}
+                className="excel_icon ml-4 mt-0.5"
+              />
+            </Tooltip>
+          ) : (
+            " "
+          )}
         </div>
       </div>
       <Table
@@ -161,9 +161,7 @@ export function AdminWorkSchedule(): JSX.Element {
         columns={columnAdmin}
         bordered
         pagination={false}
-        dataSource={dataAllWorkSchedule?.data?.data?.filter(
-          (item) => item.user?.id && userId.includes(item.user?.id)
-        )}
+        dataSource={dataAllWorkSchedule?.data?.data}
       />
       <Pagination
         className="mt-3 float-right"

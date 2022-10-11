@@ -9,7 +9,7 @@ import ApiWorkSchedule from "@app/api/ApiWorkSchedule";
 import {useMutation, useQuery} from "react-query";
 import moment from "moment";
 import Table, {ColumnType} from "antd/lib/table";
-import {Button, Input, Modal, notification, Select} from "antd";
+import {Button, Input, notification, Select} from "antd";
 import {queryKeys} from "@app/utils/constants/react-query";
 import {FilterWorkSchedule} from "../FilterWorkSchedule";
 import {FileExcelFilled} from "@ant-design/icons";
@@ -17,6 +17,7 @@ import {Tooltip} from "@mui/material";
 import {useSelector} from "react-redux";
 import {IRootState} from "@app/redux/store";
 import {IMetadata} from "@app/api/Fetcher";
+import fileDownload from "js-file-download";
 
 export interface session {
   title: string;
@@ -44,7 +45,7 @@ export function getAllDaysInMonth(year: number, month: number): Date[] {
 
 function getHourInDay() {
   const days: string[] = [];
-  for (let i = 1; i <= 24; i++) {
+  for (let i = 0; i < 24; i++) {
     if (i < 10) {
       const day = "0" + i.toString();
       days.push(day);
@@ -264,7 +265,7 @@ export function UserWorkSchedule(): JSX.Element {
       render: (day: any) => (
         <p>
           {moment(day).format("DD-MM")} (
-          {moment(day).isoWeek() === 7
+          {moment(day).isoWeekday() === 7
             ? "Chủ nhật"
             : "thứ " + (moment(day).isoWeekday() + 1)}
           )
@@ -393,14 +394,18 @@ export function UserWorkSchedule(): JSX.Element {
     },
   ];
 
-  const exportExcelFile = (): void => {
-    Modal.confirm({
-      title: "Chưa có API export file 😭",
-      content: "Khi nào có thì làm tiếp! 🙂",
-      okType: "primary",
-      cancelText: "Huỷ",
-      okText: "Oki",
+  const exportExcelFile = async (): Promise<any> => {
+    const response = await ApiWorkSchedule.exportWorkSchedule({
+      filter: {
+        createdAt_MONTH: filterMonth,
+        createdAt_YEAR: filterYear,
+        user: id,
+      },
     });
+    fileDownload(
+      response.data,
+      response.headers["x-file-name"] || "work-schedule.xlsx"
+    );
   };
 
   return (
@@ -422,9 +427,13 @@ export function UserWorkSchedule(): JSX.Element {
           setFilterMonth={setFilterMonth}
           setFilterYear={setFilterYear}
         />
-        <Tooltip title="Xuất excel" placement="left">
-          <FileExcelFilled onClick={exportExcelFile} className="excel_icon" />
-        </Tooltip>
+        {data !== null ? (
+          <Tooltip title="Xuất excel" placement="left">
+            <FileExcelFilled onClick={exportExcelFile} className="excel_icon" />
+          </Tooltip>
+        ) : (
+          " "
+        )}
       </div>
       <Table
         pagination={false}
