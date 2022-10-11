@@ -36,8 +36,8 @@ export function LeaveWorkUser(): JSX.Element {
       pageNumber: pageNumber,
       filter: {
         state_IN: filter.state,
-        createdAt_MONTH: filter.month,
-        createdAt_YEAR: filter.year,
+        startDate_MONTH: filter.month,
+        startDate_YEAR: filter.year,
       },
       sort: ["-startDate"],
     });

@@ -231,6 +231,8 @@ export interface IDataSalaryToTalOfUser {
     fullName: string;
     email: string;
   };
+  hourOT: number;
+  dayOS: number;
   totalSalary: number;
   detailTaxSalary: IDetailTax;
   afterTaxSalary: number;
