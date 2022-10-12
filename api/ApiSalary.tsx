@@ -42,6 +42,7 @@ const path = {
   createSalaryAllEmployee: "/total-salary/create-all-user",
   updateTotalSalary: "/total-salary/",
   updateOSSalary: "/total-salary/",
+  getListProjectOfMember: "/project/participate",
 };
 
 interface IBodyOTSalary {
@@ -375,11 +376,10 @@ function getListProject(
   });
 }
 
-function getListProjectOfMe(id?: number): Promise<IDataProjectList[]> {
+function getListProjectOfMe(): Promise<IDataProjectList[]> {
   return fetcher({
-    url: `/project/${id}/project-participate`,
+    url: path.getListProjectOfMember,
     method: "get",
-    params: {id},
   });
 }
 

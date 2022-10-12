@@ -1,11 +1,10 @@
-import {Filter} from "@app/components/Filter";
 import {IWorkingDaySchedule, IWorkScheduleCustom} from "@app/types";
 import {Input} from "antd";
 import Table, {ColumnType} from "antd/lib/table";
 import moment from "moment";
 import React, {useEffect, useState} from "react";
 import "../index.scss";
-import {getAllDaysInMonth, session} from "../UserWorkSchedule";
+import {getAllDaysInMonth} from "../UserWorkSchedule";
 
 interface TypeColumn {
   dataRecord?: IWorkingDaySchedule[];
@@ -14,39 +13,16 @@ interface TypeColumn {
 export function ModalWorkSchedule({dataRecord}: TypeColumn): JSX.Element {
   const [dataSource, setDataSource] = useState<IWorkScheduleCustom[]>([]);
 
-  const dataSession = [
-    {
-      title: "Cả ngày",
-      value: 0,
-      default: true,
-    },
-    {
-      title: "Sáng",
-      value: 1,
-      default: false,
-    },
-    {
-      title: "Chiều",
-      value: 2,
-      default: false,
-    },
-    {
-      title: "Nghỉ",
-      value: 3,
-      default: false,
-    },
-  ];
-
-  const onChangeDataSession = (record: IWorkScheduleCustom): session[] => {
-    const sessionArray = dataSession.map((item) => {
-      const newData =
-        item.title === record.session
-          ? {...item, default: true}
-          : {...item, default: false};
-      return newData;
-    });
-    return sessionArray;
-  };
+  // const onChangeDataSession = (record: IWorkScheduleCustom): session[] => {
+  //   const sessionArray = dataSession.map((item) => {
+  //     const newData =
+  //       item.title === record.session
+  //         ? {...item, default: true}
+  //         : {...item, default: false};
+  //     return newData;
+  //   });
+  //   return sessionArray;
+  // };
 
   const columnUser: ColumnType<IWorkScheduleCustom>[] = [
     {
@@ -69,19 +45,7 @@ export function ModalWorkSchedule({dataRecord}: TypeColumn): JSX.Element {
       dataIndex: "session",
       key: "session",
       align: "center",
-      render: (_, record, index): JSX.Element => (
-        <div className="flex justify-center">
-          <Filter
-            listSearch={[
-              {
-                visible: true,
-                isSelect: true,
-                data: onChangeDataSession(record),
-              },
-            ]}
-          />
-        </div>
-      ),
+      render: (_, record, index): JSX.Element => <div>{record.session}</div>,
     },
     {
       title: "Bắt đầu - Kết thúc",

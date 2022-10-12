@@ -124,7 +124,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           title: "Lương overtime",
           children: [
             {
-              title: "số giờ",
+              title: "Số giờ",
               dataIndex: "manager",
               key: "manager",
               align: "center",
@@ -133,7 +133,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
               ),
             },
             {
-              title: "số tiền",
+              title: "Số tiền",
               dataIndex: "manager",
               key: "manager",
               align: "center",
@@ -147,7 +147,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           title: "Lương Onsite",
           children: [
             {
-              title: "số ngày",
+              title: "Số ngày",
               dataIndex: "manager",
               key: "manager",
               align: "center",
@@ -156,7 +156,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
               ),
             },
             {
-              title: "số tiền",
+              title: "Số tiền",
               dataIndex: "onsiteSalary",
               key: "onsiteSalary",
               align: "center",

@@ -10,7 +10,7 @@ import moment from "moment";
 const dataRule = [
   {
     id: 1,
-    name: "Quy định về thuế thu nập cá nhân",
+    name: "Quy định về thuế thu nhập cá nhân",
     effectiveDate: "12-02-2019",
   },
   {

@@ -281,7 +281,9 @@ export function SalaryTableDetail(): JSX.Element {
               centered: true,
               onOk: (): void => {
                 ApiSalary.acceptToTalSalary([Number(id || 0)]).then((r) => {
-                  notification.success({message: "accept success"});
+                  notification.success({
+                    message: "Duyệt bảng lương thành công",
+                  });
                 });
                 ApiSalary.updateTotalSalary(
                   {
@@ -310,7 +312,7 @@ export function SalaryTableDetail(): JSX.Element {
               centered: true,
               onOk: (): void => {
                 ApiSalary.lockToTalSalary([Number(id || 0)]).then((r) => {
-                  notification.success({message: "Lock success"});
+                  notification.success({message: "Khoá bảng lương thành công"});
                 });
               },
             });
