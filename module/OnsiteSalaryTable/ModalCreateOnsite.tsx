@@ -70,6 +70,8 @@ export default function ModalCreateOnsite(
     setLoading(false);
   }, [props.dataOnsite]);
 
+  console.log(props?.listProject);
+
   const columns: ColumnsType<IDataOnsite> = [
     {
       title: "Ngày",
@@ -98,7 +100,7 @@ export default function ModalCreateOnsite(
         return (_record.state !== 1 && !props.isManager) || props.isAdmin ? (
           <Select
             allowClear
-            value={idPJ[0]?.id}
+            value={props.isAdmin ? idPJ[0]?.name : idPJ[0]?.project?.name}
             onChange={(e, value) => {
               handleChangeOnsite(
                 e ? Number(e) : undefined,
