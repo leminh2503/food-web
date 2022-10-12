@@ -28,7 +28,10 @@ export function SalaryTableDetail(): JSX.Element {
     deductionFamilyTaxMe,
     taxableSalary,
     dailyOnsiteRate,
+    baseSalary,
+    manageSalary,
   } = router.query;
+  const [taxableSalary2, setTaxableSalary] = useState<number>();
   const [onsiteSalary, setOnsiteSalary] = useState<number>(0);
   const [bonusSalary, setBonusSalary] = useState<number>(0);
   const [overtimeSalary, setOvertimeSalary] = useState<number>(0);
@@ -112,7 +115,7 @@ export function SalaryTableDetail(): JSX.Element {
       key: "manageSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record?.manageSalary?.toLocaleString("en-US")} VND</div>
+        <div>{Number(manageSalary ?? 0)?.toLocaleString("en-US")} VND</div>
       ),
     },
     {
@@ -121,21 +124,37 @@ export function SalaryTableDetail(): JSX.Element {
       key: "baseSalary",
       align: "center",
       render: (_, record, index) => (
-        <div>{record?.baseSalary?.toLocaleString("en-US")} VND</div>
+        <div>{Number(baseSalary ?? 0)?.toLocaleString("en-US")} VND</div>
       ),
     },
   ];
 
   useEffect(() => {
+    if (taxableSalary2 && taxableSalary2 < 0) {
+      setTaxableSalary(0);
+    }
+  }, [taxableSalary2]);
+
+  useEffect(() => {
+    setTaxableSalary(
+      onsiteSalary +
+        overtimeSalary +
+        bonusSalary +
+        projectSalary -
+        deductionSalary +
+        Number(manageSalary || 0) +
+        Number(baseSalary || 0) -
+        Number(deductionFamilyTaxMe || 0) -
+        Number(deductionTaxMe || 0)
+    );
     setTotalSalary(
       onsiteSalary +
         overtimeSalary +
         bonusSalary +
         projectSalary -
         deductionSalary +
-        Number(dataUser?.manageSalary || 0) +
-        Number(dataUser?.baseSalary || 0) -
-        Number(taxSalary || 0)
+        Number(Number(manageSalary) || 0) +
+        Number(Number(baseSalary) || 0)
     );
   }, [
     onsiteSalary,
@@ -162,11 +181,19 @@ export function SalaryTableDetail(): JSX.Element {
       </p>
       <p className="mt-2 font-bold">
         Thu nhập chịu thuế :{" "}
-        {Number(taxableSalary || 0).toLocaleString("en-US")} VND
+        {Number(taxableSalary2 ?? (taxableSalary || 0)).toLocaleString("en-US")}{" "}
+        VND
       </p>
       <p className="mt-2 font-bold">Thuế suất : {tax}</p>
       <p className="mt-2 font-bold">
-        Thuế thu nhập cá nhân : {Number(taxSalary || 0).toLocaleString("en-US")}{" "}
+        Thuế thu nhập cá nhân :{" "}
+        {Math.floor(
+          Number(
+            ((taxableSalary2 || 0) * Number(tax?.toString().replace("%", ""))) /
+              100 ??
+              (taxSalary || 0)
+          )
+        ).toLocaleString("en-US")}{" "}
         VND
       </p>
     </div>
@@ -229,7 +256,7 @@ export function SalaryTableDetail(): JSX.Element {
         <div className="mt-4">
           <OverTimeSalaryTable
             setOvertimeSalary={setOvertimeSalary}
-            baseSalary={dataUser?.baseSalary || 0}
+            baseSalary={Number(baseSalary) || 0}
             listProject={listProject}
             idUser={Number(userId)}
             month={Number(month)}
@@ -243,7 +270,7 @@ export function SalaryTableDetail(): JSX.Element {
         <div className="mt-4">
           <DeductionSalaryTable
             setDeductionSalary={setDeductionSalary}
-            baseSalary={dataUser?.baseSalary || 0}
+            baseSalary={Number(baseSalary) || 0}
             isAdmin
             userId={Number(userId)}
             month={Number(month)}
@@ -251,7 +278,7 @@ export function SalaryTableDetail(): JSX.Element {
           />
         </div>
       )}
-      <div className="mt-6 h-[150px] w-[450px] bg-white p-4">
+      <div className="mt-6 h-[150px] w-[570px] bg-white p-4">
         <Dropdown
           overlay={menu}
           placement="top"
@@ -260,13 +287,35 @@ export function SalaryTableDetail(): JSX.Element {
         >
           <p className="font-bold hover-pointer ">
             Thuế thu nhập cá nhân :{" "}
-            {Number(taxSalary || 0)?.toLocaleString("en-US")} VND
+            {Math.floor(
+              Number(
+                ((taxableSalary2 || 0) *
+                  Number(tax?.toString().replace("%", ""))) /
+                  100 ??
+                  (taxSalary || 0)
+              )
+            ).toLocaleString("en-US")}{" "}
+            VND
           </p>
         </Dropdown>
         <p className="mt-6 font-bold text-[26px]">
-          Tổng lương :{" "}
+          Tổng lương sau thuế :{" "}
           {(
-            Number((Number(totalSalary || 0) / 1000).toFixed(0)) * 1000
+            Number(
+              (
+                Number(
+                  (totalSalary || 0) -
+                    Math.floor(
+                      Number(
+                        ((taxableSalary2 || 0) *
+                          Number(tax?.toString().replace("%", ""))) /
+                          100 ??
+                          (taxSalary || 0)
+                      )
+                    )
+                ) / 1000
+              ).toFixed(0)
+            ) * 1000
           ).toLocaleString("en-US")}{" "}
           VND
         </p>

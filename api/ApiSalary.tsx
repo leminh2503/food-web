@@ -378,7 +378,7 @@ function getListProject(
 
 function getListProjectOfMe(): Promise<IDataProjectList[]> {
   return fetcher({
-    url: path.getListProjectOfMember,
+    url: `/project/participate`,
     method: "get",
   });
 }

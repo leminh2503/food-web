@@ -63,6 +63,7 @@ export function UserWorkSchedule(): JSX.Element {
   const [filterYear, setFilterYear] = useState<number>(moment().year());
   const [filterMonth, setFilterMonth] = useState<number>(moment().month() + 1);
   const [filterState, setFilterState] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dataSession = ["Cả ngày", "Sáng", "Chiều", "Nghỉ"];
   const dataMinutes = ["00", "30"];
@@ -101,11 +102,11 @@ export function UserWorkSchedule(): JSX.Element {
   }, [filterMonth, filterYear, filterState]);
 
   useEffect(() => {
-    const date = new Date();
     const states: IWorkScheduleCustom[] = [];
     const invaliArray: invalid[] = [];
+    setIsLoading(true);
     if (data === null) {
-      getAllDaysInMonth(date.getFullYear(), date.getMonth()).forEach((item) => {
+      getAllDaysInMonth(filterYear, filterMonth - 1).forEach((item) => {
         const dayItem = {
           day: item.toISOString(),
           note: "",
@@ -123,7 +124,7 @@ export function UserWorkSchedule(): JSX.Element {
         invaliArray.push({startTime: false, endTime: false});
       });
     } else {
-      const dayInMonth = getAllDaysInMonth(date.getFullYear(), date.getMonth());
+      const dayInMonth = getAllDaysInMonth(filterYear, filterMonth - 1);
       data?.workingDay.forEach((item, index) => {
         const dayItem = {
           day: dayInMonth[index].toISOString(),
@@ -144,7 +145,8 @@ export function UserWorkSchedule(): JSX.Element {
     }
     setWorkingDay(states);
     setInvalid(invaliArray);
-  }, [data]);
+    setTimeout(() => setIsLoading(false), 300);
+  }, [data, filterMonth, filterYear]);
 
   const handlerOnChangeTime = (
     value: string,
@@ -436,6 +438,7 @@ export function UserWorkSchedule(): JSX.Element {
         )}
       </div>
       <Table
+        loading={isLoading}
         pagination={false}
         className="mt-5"
         columns={columnUser}

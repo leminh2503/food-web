@@ -331,6 +331,8 @@ export function TableSalaryTotalOfUser(): JSX.Element {
                   taxableSalary: record.detailTaxSalary?.taxableSalary,
                   tax: record?.detailTaxSalary?.tax,
                   dailyOnsiteRate: record?.dailyOnsiteRate,
+                  baseSalary: record?.baseSalary,
+                  manageSalary: record?.manageSalary,
                 },
               });
             },

@@ -429,9 +429,15 @@ export interface IProject {
 export enum ERolePosition {
   BACKEND_DEV = 0,
   FRONTEND_DEV = 1,
-  TESTER = 2,
-  BA = 3,
-  DESIGNER = 4,
+  MOBILE_DEV = 2,
+  FULLSTACK = 3,
+  TESTER = 4,
+  SYSTEM_ADMIN = 5,
+  DESIGNER = 6,
+  PM = 7,
+  DEVOPS = 8,
+  BA = 9,
+  QA = 10,
 }
 
 export interface IProjectMember {

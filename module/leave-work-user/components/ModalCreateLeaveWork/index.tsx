@@ -102,6 +102,7 @@ export function ModalCreateLeaveWork({
           >
             <InputNumber
               min={0.5}
+              step={0.5}
               max={daysAllowedLeave?.quantity}
               defaultValue={0.5}
             />
