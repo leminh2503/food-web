@@ -16,6 +16,7 @@ interface FilterProps {
       value: number;
       default?: boolean;
     }[];
+    label?: string;
   }[];
   searchString?: string;
   startFilter?: (value: boolean) => void;
@@ -35,6 +36,7 @@ export function Filter({
             visible={item.isSelect && item.visible}
             data={item.data}
             handleChange={item.handleOnChange}
+            label={item.label}
           />
           <InputSearch
             index={index}

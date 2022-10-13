@@ -15,7 +15,7 @@ import NameEventConstant from "@app/check_event/NameEventConstant";
 export function WorkType(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
   const [workType, setWorkType] = useState<IWorkType>();
-  const [pageSize, setPageSize] = useState<number>(50);
+  const [pageSize, setPageSize] = useState<number>(100);
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const showModalCreateWorkType = (): void => {
@@ -37,10 +37,11 @@ export function WorkType(): JSX.Element {
       sort: ["name"],
     });
   };
-  const {data: dataWorkType, refetch} = useQuery(
-    queryKeys.GET_LIST_WORK_TYPE_FOR_SETTING,
-    getWorkType
-  );
+  const {
+    data: dataWorkType,
+    refetch,
+    isLoading,
+  } = useQuery(queryKeys.GET_LIST_WORK_TYPE_FOR_SETTING, getWorkType);
 
   useEffect(() => {
     refetch();
@@ -142,11 +143,12 @@ export function WorkType(): JSX.Element {
         ]}
         dataSource={dataWorkType?.data}
         bordered
+        loading={isLoading}
         pagination={{
           total: dataWorkType?.meta.totalItems,
-          defaultPageSize: 50,
+          defaultPageSize: 100,
           showSizeChanger: true,
-          pageSizeOptions: ["50", "100", "150", "200"],
+          pageSizeOptions: ["50", "100"],
           onChange: (page, numberPerPage): void => {
             setPageNumber(page);
             setPageSize(numberPerPage);

@@ -45,24 +45,24 @@ export function ProjectDetail(): JSX.Element {
     return ApiProject.getProjectMember(Number(id));
   };
 
-  const {data: dataProjectById, refetch: refetchProjectById} = useQuery(
-    queryKeys.GET_PROJECT_BY_ID,
-    getProjectById,
-    {enabled: false}
-  );
+  const {
+    data: dataProjectById,
+    refetch: refetchProjectById,
+    isLoading: loadingProjectById,
+  } = useQuery(queryKeys.GET_PROJECT_BY_ID, getProjectById, {enabled: false});
 
   const {data: dataUser} = useQuery(
     queryKeys.GET_LIST_USER_FOR_PROJECT,
     getUser
   );
 
-  const {data: dataProjectMember, refetch: refetchProjectMember} = useQuery(
-    queryKeys.GET_LIST_PROJECT_MEMBER,
-    getProjectMember,
-    {
-      enabled: false,
-    }
-  );
+  const {
+    data: dataProjectMember,
+    refetch: refetchProjectMember,
+    isLoading: loadingProjectMember,
+  } = useQuery(queryKeys.GET_LIST_PROJECT_MEMBER, getProjectMember, {
+    enabled: false,
+  });
 
   useEffect(() => {
     if (id) {
@@ -303,6 +303,7 @@ export function ProjectDetail(): JSX.Element {
           ]}
           dataSource={dataProjectById ? [dataProjectById] : []}
           bordered
+          loading={loadingProjectById}
           pagination={false}
         />
       </div>
@@ -427,6 +428,7 @@ export function ProjectDetail(): JSX.Element {
           ]}
           dataSource={dataProjectMember}
           bordered
+          loading={loadingProjectMember}
           pagination={false}
         />
 

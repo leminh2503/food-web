@@ -1,11 +1,8 @@
 import "./index.scss";
 import {ModalCustom} from "@app/components/ModalCustom";
 import React, {useEffect} from "react";
-import ApiLeaveWork, {
-  IDaysAllowedLeave,
-  ILeaveWorkBody,
-} from "@app/api/ApiLeaveWork";
-import {useMutation, useQuery, useQueryClient} from "react-query";
+import ApiLeaveWork, {ILeaveWorkBody} from "@app/api/ApiLeaveWork";
+import {useMutation, useQueryClient} from "react-query";
 import {Button, DatePicker, Form, InputNumber, notification, Input} from "antd";
 import moment from "moment";
 import {queryKeys} from "@app/utils/constants/react-query";
@@ -22,14 +19,6 @@ export function ModalCreateLeaveWork({
 }: ModalCreateLeaveWorkProps): JSX.Element {
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
-
-  const getDaysAllowedLeave = (): Promise<IDaysAllowedLeave> => {
-    return ApiLeaveWork.getDaysAllowedLeave();
-  };
-  const {data: daysAllowedLeave} = useQuery(
-    queryKeys.GET_DAY_ALLOWS_LEAVE,
-    getDaysAllowedLeave
-  );
 
   useEffect(() => {
     form.resetFields();
@@ -100,11 +89,7 @@ export function ModalCreateLeaveWork({
             label="Số ngày nghỉ"
             rules={[{required: true}]}
           >
-            <InputNumber
-              min={0.5}
-              max={daysAllowedLeave?.quantity}
-              defaultValue={0.5}
-            />
+            <InputNumber min={0.5} max={30} defaultValue={0.5} />
           </Form.Item>
           <Form.Item
             name="reason"

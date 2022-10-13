@@ -521,7 +521,7 @@ export function AccountManager(): JSX.Element {
       <Card className="mb-4">
         <div>
           <Row>
-            <Col lg={12} xs={24} sm={24}>
+            <Col lg={16} xs={24} sm={24}>
               <FilterAccount
                 setFilterState={setFilterState}
                 setFilterText={setFilterText}
@@ -530,7 +530,7 @@ export function AccountManager(): JSX.Element {
                 listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
-            <Col lg={12} xs={24} sm={24}>
+            <Col lg={8} xs={24} sm={24}>
               <div className="" style={{float: "right"}}>
                 <Button
                   className="mr-4 bg-blue-500 text-neutral-50"

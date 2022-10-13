@@ -14,6 +14,8 @@ import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import {Button, Dropdown, Image, Modal, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
+import ApiLeaveWork, {IDaysAllowedLeave} from "@app/api/ApiLeaveWork";
+import {queryKeys} from "@app/utils/constants/react-query";
 
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
@@ -49,6 +51,15 @@ export function SalaryTableDetail(): JSX.Element {
   };
 
   const {data: listProject} = useQuery("listProjectMe", getListProject) || [];
+
+  const getDaysAllowedLeave = (): Promise<IDaysAllowedLeave> => {
+    return ApiLeaveWork.getDaysAllowedLeave();
+  };
+
+  const {data: daysAllowedLeave} = useQuery(
+    queryKeys.GET_DAY_ALLOWS_LEAVE,
+    getDaysAllowedLeave
+  );
 
   useEffect(() => {
     if (id) {
@@ -182,6 +193,11 @@ export function SalaryTableDetail(): JSX.Element {
           Lương tháng {formatNumber(Number(month)) + "/" + year}
         </span>
       </div>
+      <span className="block text-sm font-semibold text-[#000] mb-2">
+        {"Số ngày nghỉ còn lại: " +
+          (daysAllowedLeave?.quantity ?? "") +
+          "(ngày)"}
+      </span>
       <Table
         className="mb-4"
         columns={columns}
