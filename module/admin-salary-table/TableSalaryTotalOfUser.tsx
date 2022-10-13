@@ -280,7 +280,6 @@ export function TableSalaryTotalOfUser(): JSX.Element {
             </Select.Option>
           </Select>
         </div>
-
         <Button
           type="primary"
           onClick={(): void => {
