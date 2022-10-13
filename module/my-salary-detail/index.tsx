@@ -23,13 +23,13 @@ export function MySalaryDetail(): JSX.Element {
   const baseSalary = Number(ApiUser.getInfoMe()?.baseSalary || 0);
   const manageSalary =
     ApiUser.getInfoMe()?.manageSalary?.toLocaleString("en-US");
-  const userId = ApiUser.getInfoMe()?.id;
 
   const getListProject = (): Promise<IDataProjectList[]> => {
-    return ApiSalary.getListProjectOfMe(Number(userId));
+    return ApiSalary.getListProjectOfMe();
   };
   const {data: listProject, refetch: listProjectRefetch} =
     useQuery("listProjectMe", getListProject, {enabled: false}) || [];
+
   const getListTotalSalary = (): Promise<IDataSalary[]> => {
     return ApiSalary.getMyListTotalSalary(Number(year), Number(month));
   };

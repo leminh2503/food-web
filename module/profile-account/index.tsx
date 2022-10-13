@@ -139,7 +139,9 @@ export function ProfileAccount(): JSX.Element {
   };
 
   const cancelUpdate = (): void => {
-    const date = dataUser?.dateOfBirth && new Date(dataUser?.dateOfBirth);
+    const date = dataUser?.dateOfBirth
+      ? new Date(dataUser?.dateOfBirth)
+      : new Date();
     setTypeCertificateEnglish(dataUser?.englishCertificate || "");
     form.setFieldsValue({
       fullName: dataUser?.fullName,

@@ -84,7 +84,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
     setTypeCertificateEnglish(dataDetail?.englishCertificate);
   }, [dataDetail]);
 
-  const date = dateOfBirth && new Date(dateOfBirth);
+  const date = dateOfBirth ? new Date(dateOfBirth) : new Date();
 
   useEffect(() => {
     form.setFieldsValue({

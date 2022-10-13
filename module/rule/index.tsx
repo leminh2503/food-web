@@ -2,7 +2,6 @@ import "./index.scss";
 import {Filter} from "@app/components/Filter";
 import React, {useEffect, useState} from "react";
 import {Table} from "antd";
-import {DownloadOutlined} from "@ant-design/icons";
 import baseURL from "@app/config/baseURL";
 import {useRouter} from "next/router";
 import moment from "moment";
@@ -10,7 +9,7 @@ import moment from "moment";
 const dataRule = [
   {
     id: 1,
-    name: "Quy định về thuế thu nập cá nhân",
+    name: "Quy định về thuế thu nhập cá nhân",
     effectiveDate: "12-02-2019",
   },
   {
@@ -82,16 +81,16 @@ export function Rule(): JSX.Element {
             align: "center",
             render: (date) => moment(date).format("DD-MM-YYYY"),
           },
-          {
-            title: "Tải xuống",
-            align: "center",
-            width: "15%",
-            render: (_, record) => (
-              <button type="button">
-                <DownloadOutlined style={{fontSize: 20, color: "#0092ff"}} />
-              </button>
-            ),
-          },
+          // {
+          //   title: "Tải xuống",
+          //   align: "center",
+          //   width: "15%",
+          //   render: (_, record) => (
+          //     <button type="button">
+          //       <DownloadOutlined style={{fontSize: 20, color: "#0092ff"}} />
+          //     </button>
+          //   ),
+          // },
         ]}
         dataSource={dataSearch}
         pagination={false}

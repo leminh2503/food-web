@@ -89,16 +89,41 @@ export function ProjectDetail(): JSX.Element {
       label: "Frontend Dev",
     },
     {
+      value: ERolePosition.MOBILE_DEV,
+      label: "Mobile Dev",
+    },
+    {
+      value: ERolePosition.FULLSTACK,
+      label: "Full stack",
+    },
+    {
       value: ERolePosition.TESTER,
       label: "Tester",
+    },
+    {
+      value: ERolePosition.SYSTEM_ADMIN,
+      label: "System Admin",
+    },
+    {
+      value: ERolePosition.DESIGNER,
+      label: "Desinger",
+    },
+
+    {
+      value: ERolePosition.PM,
+      label: "ProjectManager",
+    },
+    {
+      value: ERolePosition.DEVOPS,
+      label: "DevOps",
     },
     {
       value: ERolePosition.BA,
       label: "BA",
     },
     {
-      value: ERolePosition.DESIGNER,
-      label: "Designer",
+      value: ERolePosition.QA,
+      label: "QA",
     },
   ];
 
@@ -340,18 +365,7 @@ export function ProjectDetail(): JSX.Element {
               align: "center",
               dataIndex: "role",
               key: "role",
-              render: (role) =>
-                role === ERolePosition.BACKEND_DEV
-                  ? "Backend Dev"
-                  : role === ERolePosition.FRONTEND_DEV
-                  ? "Frontend Dev"
-                  : role === ERolePosition.TESTER
-                  ? "Tester"
-                  : role === ERolePosition.BA
-                  ? "BA"
-                  : role === ERolePosition.DESIGNER
-                  ? "Designer"
-                  : "",
+              render: (role) => listPosition[role].label,
             },
             {
               title: "Công số",
