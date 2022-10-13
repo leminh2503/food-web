@@ -15,7 +15,7 @@ import NameEventConstant from "@app/check_event/NameEventConstant";
 export function Position(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState("");
   const [position, setPosition] = useState<IPosition>();
-  const [pageSize, setPageSize] = useState<number>(50);
+  const [pageSize, setPageSize] = useState<number>(100);
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const showModalCreatePosition = (): void => {
@@ -37,10 +37,11 @@ export function Position(): JSX.Element {
       sort: ["name"],
     });
   };
-  const {data: dataPosition, refetch} = useQuery(
-    queryKeys.GET_LIST_POSITION_FOR_SETTING,
-    getPosition
-  );
+  const {
+    data: dataPosition,
+    refetch,
+    isLoading,
+  } = useQuery(queryKeys.GET_LIST_POSITION_FOR_SETTING, getPosition);
 
   useEffect(() => {
     refetch();
@@ -150,11 +151,12 @@ export function Position(): JSX.Element {
         ]}
         dataSource={dataPosition?.data}
         bordered
+        loading={isLoading}
         pagination={{
           total: dataPosition?.meta.totalItems,
-          defaultPageSize: 50,
+          defaultPageSize: 100,
           showSizeChanger: true,
-          pageSizeOptions: ["50", "100", "150", "200"],
+          pageSizeOptions: ["50", "100"],
           onChange: (page, numberPerPage): void => {
             setPageNumber(page);
             setPageSize(numberPerPage);

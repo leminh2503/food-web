@@ -11,6 +11,7 @@ interface SelectSearchProps {
     default?: boolean;
   }[];
   index: number;
+  label?: string;
 }
 
 export function SelectSearch({
@@ -18,13 +19,17 @@ export function SelectSearch({
   handleChange,
   data,
   index,
+  label,
 }: SelectSearchProps): JSX.Element {
   const defaultItem = data?.find((item) => item.default);
 
   return (
     <div
-      className={classNames("select-input-container", {"pl-5": index !== 0})}
+      className={classNames("select-input-container flex items-center", {
+        "pl-5": index !== 0,
+      })}
     >
+      {label && <span className="label">{label}</span>}
       {visible && data && (
         <Select
           defaultValue={defaultItem?.value}

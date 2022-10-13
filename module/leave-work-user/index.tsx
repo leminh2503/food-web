@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import type {ColumnsType} from "antd/es/table";
 import Icon from "@app/components/Icon/Icon";
 import moment from "moment";
-import ApiLeaveWork from "@app/api/ApiLeaveWork";
+import ApiLeaveWork, {IDaysAllowedLeave} from "@app/api/ApiLeaveWork";
 import {ELeaveWork, ILeaveWork} from "@app/types";
 import {useMutation, useQuery} from "react-query";
 import {ModalCreateLeaveWork} from "@app/module/leave-work-user/components/ModalCreateLeaveWork";
@@ -43,9 +43,19 @@ export function LeaveWorkUser(): JSX.Element {
     });
   };
 
-  const {data: dataLeaveWorkMe, refetch} = useQuery(
-    queryKeys.GET_LIST_LEAVE_WORK_ME,
-    getLeaveWorkMe
+  const {
+    data: dataLeaveWorkMe,
+    refetch,
+    isLoading,
+  } = useQuery(queryKeys.GET_LIST_LEAVE_WORK_ME, getLeaveWorkMe);
+
+  const getDaysAllowedLeave = (): Promise<IDaysAllowedLeave> => {
+    return ApiLeaveWork.getDaysAllowedLeave();
+  };
+
+  const {data: daysAllowedLeave} = useQuery(
+    queryKeys.GET_DAY_ALLOWS_LEAVE,
+    getDaysAllowedLeave
   );
 
   useEffect(() => {
@@ -148,7 +158,14 @@ export function LeaveWorkUser(): JSX.Element {
   return (
     <div className="container-leave-work">
       <div className="flex justify-between mb-5">
-        <FilterLeaveWork setFilter={setFilter} />
+        <div className="flex items-center">
+          <FilterLeaveWork setFilter={setFilter} />
+          <span className="day-allowed-leave">
+            {"Số ngày nghỉ còn lại: " +
+              (daysAllowedLeave?.quantity ?? "") +
+              "(ngày)"}
+          </span>
+        </div>
         <Button
           className="btn-primary"
           type="primary"
@@ -163,6 +180,7 @@ export function LeaveWorkUser(): JSX.Element {
         columns={columnsUser}
         bordered
         dataSource={dataLeaveWorkMe?.data ?? []}
+        loading={isLoading}
         pagination={{
           total: dataLeaveWorkMe?.meta.totalItems,
           defaultPageSize: 100,

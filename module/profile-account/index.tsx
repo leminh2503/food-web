@@ -146,7 +146,7 @@ export function ProfileAccount(): JSX.Element {
     form.setFieldsValue({
       fullName: dataUser?.fullName,
       email: dataUser?.email,
-      dateOfBirth: moment(date, "DD/MM/YYYY"),
+      dateOfBirth: date ? moment(date, "DD/MM/YYYY") : null,
       personId: dataUser?.personId,
       address: dataUser?.address,
       phoneNumber: dataUser?.phoneNumber,

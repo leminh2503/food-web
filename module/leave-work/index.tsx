@@ -46,10 +46,11 @@ export function LeaveWork(): JSX.Element {
     });
   };
 
-  const {data: dataLeaveWork, refetch} = useQuery(
-    queryKeys.GET_LIST_LEAVE_WORK,
-    getLeaveWork
-  );
+  const {
+    data: dataLeaveWork,
+    refetch,
+    isLoading,
+  } = useQuery(queryKeys.GET_LIST_LEAVE_WORK, getLeaveWork);
 
   useEffect(() => {
     refetch();
@@ -202,6 +203,7 @@ export function LeaveWork(): JSX.Element {
         columns={columnsAdmin}
         bordered
         dataSource={dataLeaveWork?.data ?? []}
+        loading={isLoading}
         pagination={{
           total: dataLeaveWork?.meta.totalItems,
           defaultPageSize: 100,

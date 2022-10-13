@@ -23,7 +23,8 @@ export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
     values: IForgotPassword,
     {setSubmitting}: {setSubmitting: (isSubmitting: boolean) => void}
   ): void => {
-    if (values.email) {
+    const regex = /^[^@\s]+@tinasoft.vn$/;
+    if (regex.test(values.email)) {
       forgotPassMutation.mutate(
         {
           email: values.email,
@@ -34,8 +35,8 @@ export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
             changeTab("newPassword");
             setSubmitting(false);
             notification.success({
-              duration: 1,
-              message: "Hãy cập nhật lại mật khẩu!",
+              duration: 3,
+              message: "Đã gửi OTP xác nhận qua email, hãy thay đổi mật khẩu!",
             });
           },
           onError: (error) => {
@@ -54,6 +55,13 @@ export function ForgotPassword({changeTab, setData}: SignInProps): JSX.Element {
         if (!values.email) {
           notification.error({
             message: "Vui lòng nhập email!",
+          });
+          return;
+        }
+        const regex = /^[^@\s]+@tinasoft.vn$/;
+        if (!regex.test(values.email)) {
+          notification.error({
+            message: "Vui lòng nhập email đúng định dạng của Tinasoft!",
           });
         }
       }}
