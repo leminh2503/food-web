@@ -55,18 +55,19 @@ export function SalaryTableDetail(): JSX.Element {
 
   const {data: listProject} = useQuery("listProjectMe", getListProject) || [];
 
-  const getDaysAllowedLeave = (): Promise<IDaysAllowedLeave> => {
-    return ApiLeaveWork.getDaysAllowedLeave();
+  const getDaysAllowedLeaveById = (): Promise<IDaysAllowedLeave> => {
+    return ApiLeaveWork.getDaysAllowedLeaveById(Number(userId));
   };
 
-  const {data: daysAllowedLeave} = useQuery(
-    queryKeys.GET_DAY_ALLOWS_LEAVE,
-    getDaysAllowedLeave
-  );
+  const {data: daysAllowedLeaveById, refetch: refetchDaysAllowedLeaveById} =
+    useQuery(queryKeys.GET_DAY_ALLOWS_LEAVE_BY_ID, getDaysAllowedLeaveById, {
+      enabled: false,
+    });
 
   useEffect(() => {
     if (id) {
       refetch();
+      refetchDaysAllowedLeaveById();
     }
   }, [id]);
 
@@ -222,7 +223,7 @@ export function SalaryTableDetail(): JSX.Element {
       </div>
       <span className="block text-sm font-semibold text-[#000] mb-2">
         {"Số ngày nghỉ còn lại: " +
-          (daysAllowedLeave?.quantity ?? "") +
+          (daysAllowedLeaveById?.quantity ?? "") +
           "(ngày)"}
       </span>
       <Table

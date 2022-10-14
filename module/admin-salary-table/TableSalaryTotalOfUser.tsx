@@ -201,7 +201,7 @@ export function TableSalaryTotalOfUser(): JSX.Element {
           key: "totalSalary",
           align: "center",
           render: (_, record, index) => (
-            <div>{record?.totalSalary.toLocaleString("en-US")}</div>
+            <div>{record?.totalSalary?.toLocaleString("en-US")}</div>
           ),
           sorter: (a, b) => a.totalSalary - b.totalSalary,
         },

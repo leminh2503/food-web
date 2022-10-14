@@ -70,8 +70,6 @@ export default function ModalCreateOnsite(
     setLoading(false);
   }, [props.dataOnsite]);
 
-  console.log(props?.listProject);
-
   const columns: ColumnsType<IDataOnsite> = [
     {
       title: "Ngày",
@@ -169,7 +167,6 @@ export default function ModalCreateOnsite(
       }
       return el;
     });
-    console.log(dataChange);
     setData(dataChange);
   };
 
