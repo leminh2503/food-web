@@ -43,10 +43,11 @@ export function Project(): JSX.Element {
     return ApiUser.getUserAccount();
   };
 
-  const {data: dataProject, refetch} = useQuery(
-    queryKeys.GET_LIST_PROJECT,
-    getProject
-  );
+  const {
+    data: dataProject,
+    refetch,
+    isLoading,
+  } = useQuery(queryKeys.GET_LIST_PROJECT, getProject);
 
   const {data: dataUser} = useQuery(
     queryKeys.GET_LIST_USER_FOR_PROJECT,
@@ -196,22 +197,12 @@ export function Project(): JSX.Element {
         ]}
         dataSource={dataProject?.data}
         bordered
+        loading={isLoading}
         pagination={{
           total: dataProject?.meta.totalItems,
           defaultPageSize: 100,
           showSizeChanger: true,
-          pageSizeOptions: [
-            "100",
-            "200",
-            "300",
-            "400",
-            "500",
-            "600",
-            "700",
-            "800",
-            "900",
-            "1000",
-          ],
+          pageSizeOptions: ["50", "100"],
           onChange: (page, numberPerPage): void => {
             setPageNumber(page);
             setPageSize(numberPerPage);

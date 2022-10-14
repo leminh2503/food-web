@@ -98,7 +98,7 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
       baseSalary,
       position: position?.id || 0,
       workType: workType?.id || 0,
-      dateOfBirth: moment(date, "DD/MM/YYYY") || null,
+      dateOfBirth: date ? moment(date, "DD/MM/YYYY") : null,
       familyCircumstances,
       englishCertificate,
       englishScore,
@@ -199,7 +199,6 @@ export function ModalInfo(props: ModalInfoProps): JSX.Element {
                   disabledDate={(current) =>
                     current.isAfter(moment().subtract(18, "years"))
                   }
-                  allowClear={false}
                 />
               </Form.Item>
               <Form.Item

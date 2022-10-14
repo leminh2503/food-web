@@ -21,7 +21,7 @@ export function AcceptSalaryEmployee(): JSX.Element {
   const [month, setMonth] = useState<number>(date.getMonth() + 1);
 
   const getListTotalSalary = (): Promise<any> => {
-    return ApiSalary.getUserOfProject(Number(idProject), year, month);
+    return ApiSalary.getUserOfProject(Number(idProject), month, year);
   };
 
   const getListProject = (): Promise<IDataProjectList[]> => {

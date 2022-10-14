@@ -23,20 +23,20 @@ export function ModalCreateProject({
   const [form] = Form.useForm();
 
   const [date, setDate] = useState({
-    startDate: moment().format("DD/MM/YYYY"),
-    endDate: moment().format("DD/MM/YYYY"),
+    startDate: "",
+    endDate: "",
   });
 
   useEffect(() => {
     form.resetFields();
     form.setFieldsValue({
       projectManager: 1,
-      startDate: moment(),
-      endDate: moment(),
+      startDate: null,
+      endDate: null,
     });
     setDate({
-      startDate: moment().format("DD/MM/YYYY"),
-      endDate: moment().format("DD/MM/YYYY"),
+      startDate: "",
+      endDate: "",
     });
   }, [isModalVisible]);
 
@@ -132,28 +132,18 @@ export function ModalCreateProject({
               onChange={(value, dateString): void => {
                 setDate((prev) => ({
                   ...prev,
-                  startDate:
-                    dateString === ""
-                      ? moment().format("DD/MM/YYYY")
-                      : dateString,
+                  startDate: dateString,
                 }));
               }}
-              // disabledDate={(d): boolean => {
-              //   console.log(
-              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY"),
-              //     moment(date.endDate, "DD/MM/YYYY"),
-              //     moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-              //       moment(date.endDate, "DD/MM/YYYY")
-              //   );
-              //   if (date.endDate !== moment().format("DD/MM/YYYY")) {
-              //     return (
-              //       d.isBefore() ||
-              //       moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
-              //         moment(date.endDate, "DD/MM/YYYY")
-              //     );
-              //   }
-              //   return d.isBefore();
-              // }}
+              disabledDate={(d): boolean => {
+                if (date.endDate !== moment().format("DD/MM/YYYY")) {
+                  return (
+                    moment(d.format("DD/MM/YYYY"), "DD/MM/YYYY") >
+                    moment(date.endDate, "DD/MM/YYYY")
+                  );
+                }
+                return false;
+              }}
             />
           </Form.Item>
           <Form.Item
@@ -166,17 +156,11 @@ export function ModalCreateProject({
               onChange={(value, dateString): void => {
                 setDate((prev) => ({
                   ...prev,
-                  endDate:
-                    dateString === ""
-                      ? moment().format("DD/MM/YYYY")
-                      : dateString,
+                  endDate: dateString,
                 }));
               }}
               disabledDate={(d): boolean => {
-                return (
-                  d.isBefore() ||
-                  d.isBefore(moment(date.startDate, "DD/MM/YYYY"))
-                );
+                return d.isBefore(moment(date.startDate, "DD/MM/YYYY"));
               }}
             />
           </Form.Item>

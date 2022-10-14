@@ -38,8 +38,8 @@ export function ModalCreateProjectMember({
     form.setFieldsValue({
       user: 1,
       role: ERolePosition.BACKEND_DEV,
-      startDate: moment(dataProjectById.startDate),
-      endDate: moment(dataProjectById.startDate),
+      startDate: null,
+      endDate: null,
     });
     setDate({
       startDate: moment(dataProjectById.startDate).format("DD/MM/YYYY"),
@@ -151,10 +151,7 @@ export function ModalCreateProjectMember({
               onChange={(value, dateString): void => {
                 setDate((prev) => ({
                   ...prev,
-                  startDate:
-                    dateString === ""
-                      ? moment(dataProjectById.startDate).format("DD/MM/YYYY")
-                      : dateString,
+                  startDate: dateString,
                 }));
               }}
               // disabledDate={(d): boolean => {
@@ -177,10 +174,7 @@ export function ModalCreateProjectMember({
               onChange={(value, dateString): void => {
                 setDate((prev) => ({
                   ...prev,
-                  endDate:
-                    dateString === ""
-                      ? moment(dataProjectById.startDate).format("DD/MM/YYYY")
-                      : dateString,
+                  endDate: dateString,
                 }));
               }}
               disabledDate={(d): boolean => {

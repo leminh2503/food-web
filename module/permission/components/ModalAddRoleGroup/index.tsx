@@ -219,18 +219,7 @@ export function ModalAddRoleGroup(props: ModalInfoProps): JSX.Element {
           <Form.Item
             name="nameGroupRole"
             label="Tên nhóm quyền"
-            rules={[
-              {
-                // eslint-disable-next-line consistent-return
-                validator: async (rule, value) => {
-                  if (value.trim().length === 0) {
-                    return Promise.reject(
-                      new Error("Tên nhóm quyền không được để trống!")
-                    );
-                  }
-                },
-              },
-            ]}
+            rules={[{required: true, whitespace: true}]}
           >
             <Input placeholder="Tên nhóm quyền" />
           </Form.Item>

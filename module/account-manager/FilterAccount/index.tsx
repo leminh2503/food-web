@@ -27,14 +27,14 @@ export function FilterAccount({
   listPositionConvertForFilter,
 }: FilterLeaveWorkProps): JSX.Element {
   const dataFilterState: DataFilter[] = [
-    {title: "Trạng thái", value: -1, default: true},
+    {title: "Tất cả", value: -1, default: true},
     {title: "Hoạt động", value: 1},
     {title: "Bị khóa", value: 0},
   ];
 
   const dataFilterPosition = [
     {
-      title: "Chức vụ",
+      title: "Tất cả",
       value: -1,
       default: true,
     },
@@ -58,6 +58,7 @@ export function FilterAccount({
         {
           visible: true,
           isSelect: true,
+          label: "Chức vụ:",
           data: dataFilterPosition,
           handleOnChange: (value: number): void => {
             setFilterPosition(value);
@@ -66,6 +67,7 @@ export function FilterAccount({
         {
           visible: true,
           isSelect: true,
+          label: "Trạng thái:",
           data: dataFilterState,
           handleOnChange: (value: number): void => {
             setFilterState(value);

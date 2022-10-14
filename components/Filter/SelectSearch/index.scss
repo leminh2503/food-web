@@ -1,3 +1,11 @@
 .select-input-container {
-  width: 200px;
+  .label {
+    font-size: 15px;
+    font-weight: $font-weight-bold;
+  }
+
+  .ant-select {
+    margin-left: 5px;
+    width: 200px;
+  }
 }
