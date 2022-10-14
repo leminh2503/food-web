@@ -488,7 +488,7 @@ export function AccountManager(): JSX.Element {
       width: "5%",
       render: (_, record) =>
         CheckPermissionEvent(
-          NameEventConstant.PERMISSION_USER_KEY.DELETE_USER
+          NameEventConstant.PERMISSION_USER_KEY.BlOCK_USER
         ) ? (
           <div>
             {Number(record.id) === 1 ? (

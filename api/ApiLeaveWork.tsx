@@ -70,6 +70,13 @@ function getDaysAllowedLeave(): Promise<IDaysAllowedLeave> {
   });
 }
 
+function getDaysAllowedLeaveById(id: number): Promise<IDaysAllowedLeave> {
+  return fetcher({
+    url: path.getLeaveWork + "/days-allowed-leave/" + id,
+    method: "get",
+  });
+}
+
 function createLeaveWork(body: ILeaveWorkBody): Promise<ILeaveWorkResponse> {
   return fetcher({url: path.getLeaveWork, method: "post", data: body});
 }
@@ -99,6 +106,7 @@ export default {
   getLeaveWork,
   getLeaveWorkMe,
   getDaysAllowedLeave,
+  getDaysAllowedLeaveById,
   createLeaveWork,
   deleteLeaveWork,
   refuseLeaveWork,
