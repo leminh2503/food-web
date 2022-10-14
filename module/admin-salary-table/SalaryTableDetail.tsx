@@ -41,6 +41,7 @@ export function SalaryTableDetail(): JSX.Element {
   const [deductionSalary, setDeductionSalary] = useState<number>(0);
   const [dailyOnsiteRate2, setDailyOnsiteRate2] = useState<number>();
   const [totalSalary, setTotalSalary] = useState<number>();
+  const [taxDeduction, setTaxDeduction] = useState(0);
 
   const getUserInfo = (): Promise<IUserLogin> => {
     return ApiUser.getUserInfo({id: Number(userId)});
@@ -148,8 +149,20 @@ export function SalaryTableDetail(): JSX.Element {
   }, [taxableSalary2]);
 
   useEffect(() => {
-    setTaxableSalary(
-      onsiteSalary +
+    if (tax) {
+      setTaxableSalary(
+        onsiteSalary +
+          overtimeSalary +
+          bonusSalary +
+          projectSalary -
+          deductionSalary +
+          Number(manageSalary || 0) +
+          Number(baseSalary || 0) -
+          Number(deductionFamilyTaxMe || 0) -
+          Number(deductionTaxMe || 0)
+      );
+      const total =
+        onsiteSalary +
         overtimeSalary +
         bonusSalary +
         projectSalary -
@@ -157,8 +170,23 @@ export function SalaryTableDetail(): JSX.Element {
         Number(manageSalary || 0) +
         Number(baseSalary || 0) -
         Number(deductionFamilyTaxMe || 0) -
-        Number(deductionTaxMe || 0)
-    );
+        Number(deductionTaxMe || 0);
+      if (total <= 5000000) {
+        setTaxDeduction(0);
+      } else if (total <= 10000000) {
+        setTaxDeduction(250000);
+      } else if (total <= 18000000) {
+        setTaxDeduction(750000);
+      } else if (total <= 32000000) {
+        setTaxDeduction(1650000);
+      } else if (total <= 52000000) {
+        setTaxDeduction(3250000);
+      } else if (total <= 80000000) {
+        setTaxDeduction(5850000);
+      } else {
+        setTaxDeduction(9850000);
+      }
+    }
     setTotalSalary(
       onsiteSalary +
         overtimeSalary +
@@ -202,7 +230,8 @@ export function SalaryTableDetail(): JSX.Element {
         {Math.floor(
           Number(
             ((taxableSalary2 || 0) * Number(tax?.toString().replace("%", ""))) /
-              100 ??
+              100 -
+              taxDeduction ??
               (taxSalary || 0)
           )
         ).toLocaleString("en-US")}{" "}
@@ -308,7 +337,8 @@ export function SalaryTableDetail(): JSX.Element {
               Number(
                 ((taxableSalary2 || 0) *
                   Number(tax?.toString().replace("%", ""))) /
-                  100 ??
+                  100 -
+                  taxDeduction ??
                   (taxSalary || 0)
               )
             ).toLocaleString("en-US")}{" "}
@@ -326,7 +356,8 @@ export function SalaryTableDetail(): JSX.Element {
                       Number(
                         ((taxableSalary2 || 0) *
                           Number(tax?.toString().replace("%", ""))) /
-                          100 ??
+                          100 -
+                          taxDeduction ??
                           (taxSalary || 0)
                       )
                     )
