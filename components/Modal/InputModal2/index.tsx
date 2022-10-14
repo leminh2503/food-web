@@ -37,7 +37,6 @@ export function InputModal2({
   useEffect(() => {
     setDataInput(value);
   }, [value]);
-  // console.log(value, keyValue);
 
   return (
     <div className={classNames("input-modal-container2", className)}>

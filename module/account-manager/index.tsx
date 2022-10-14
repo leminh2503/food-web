@@ -222,10 +222,10 @@ export function AccountManager(): JSX.Element {
   });
 
   const handleUserAction = (record: IUserLogin, type: string): void => {
-    const title = type === "lock" ? "Khóa" : "Mở khóa";
+    const title = type === "lock" ? "khóa" : "mở khóa";
     Modal.confirm({
-      title: `Bạn có muốn ${title.toLowerCase()} tài khoản ${record.email}?`,
-      content: `Tài khoản ${record.email} sẽ bị khoá`,
+      title: `Bạn có muốn ${title} tài khoản ${record.email}?`,
+      content: `Tài khoản ${record.email} sẽ ${title}!`,
       okType: "primary",
       cancelText: "Huỷ",
       okText: title,
@@ -488,7 +488,7 @@ export function AccountManager(): JSX.Element {
       width: "5%",
       render: (_, record) =>
         CheckPermissionEvent(
-          NameEventConstant.PERMISSION_USER_KEY.DELETE_USER
+          NameEventConstant.PERMISSION_USER_KEY.BlOCK_USER
         ) ? (
           <div>
             {Number(record.id) === 1 ? (
