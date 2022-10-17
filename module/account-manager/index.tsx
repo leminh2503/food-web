@@ -341,8 +341,34 @@ export function AccountManager(): JSX.Element {
   };
 
   const handleExportExcel = async (): Promise<any> => {
-    const response = await ApiUser.exportListAccount();
-    fileDownload(response.data, response.headers["x-file-name"] || "user.xlsx");
+    try {
+      const response = await ApiUser.exportListAccount();
+      fileDownload(
+        response.data,
+        response.headers["x-file-name"] || "user.xlsx"
+      );
+      notification.success({
+        duration: 1,
+        message: "Xuất Excel thành công!",
+      });
+    } catch (e) {
+      notification.error({
+        duration: 1,
+        message: "Xuất Excel thất bại!",
+      });
+    }
+  };
+
+  const confirmExportExcel = (): void => {
+    Modal.confirm({
+      title: `Bạn có muốn xuất excel?`,
+      okType: "primary",
+      cancelText: "Huỷ",
+      okText: "Xác nhận",
+      onOk: () => {
+        handleExportExcel();
+      },
+    });
   };
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
@@ -371,7 +397,7 @@ export function AccountManager(): JSX.Element {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: "2%",
+      width: "5%",
       render: (_, record, index) =>
         (pagingCurrent.currentPage - 1) * pagingCurrent.pageSize + index + 1,
     },
@@ -406,7 +432,7 @@ export function AccountManager(): JSX.Element {
       dataIndex: "fullName",
       key: "fullName",
       align: "center",
-      width: "13%",
+      width: "10%",
     },
     {
       title: "Số điện thoại",
@@ -521,7 +547,7 @@ export function AccountManager(): JSX.Element {
       <Card className="mb-4">
         <div>
           <Row>
-            <Col lg={12} xs={24} sm={24}>
+            <Col lg={16} xs={24} sm={24}>
               <FilterAccount
                 setFilterState={setFilterState}
                 setFilterText={setFilterText}
@@ -530,11 +556,11 @@ export function AccountManager(): JSX.Element {
                 listPositionConvertForFilter={listPositionConvertForFilter}
               />
             </Col>
-            <Col lg={12} xs={24} sm={24}>
+            <Col lg={8} xs={24} sm={24}>
               <div className="" style={{float: "right"}}>
                 <Button
                   className="mr-4 bg-blue-500 text-neutral-50"
-                  onClick={handleExportExcel}
+                  onClick={confirmExportExcel}
                 >
                   Xuất Excel
                 </Button>
