@@ -81,8 +81,8 @@ export default function ModalCreateOverTime(
     },
     {
       title: "Thứ",
-      dataIndex: "dayOnWeek",
       key: "dayOnWeek",
+      dataIndex: "dayOnWeek",
       align: "center",
     },
     {

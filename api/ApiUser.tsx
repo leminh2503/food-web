@@ -9,6 +9,7 @@ import {
   IWorkType,
 } from "../types";
 import axios from "axios";
+import Config from "@app/config";
 
 export interface ILoginBody {
   email: string;
@@ -261,9 +262,10 @@ function deleteFamilyCircumstance(id: number) {
 }
 
 function exportListAccount() {
+  const baseURL = Config.NETWORK_CONFIG.API_BASE_URL;
   const accessToken = getAuthToken();
   return axios({
-    url: "http://13.215.91.199:8000/api/v1" + path.exportListAccount,
+    url: baseURL + path.exportListAccount,
     method: "get",
     responseType: "blob",
     headers: {

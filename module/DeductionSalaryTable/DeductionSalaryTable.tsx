@@ -209,7 +209,9 @@ export default function DeductionSalaryTable({
         id: el.id,
         date: el?.date,
         dayOffWork: el?.dayOffWork,
-        deductionSalaryDay: (Number(el?.dayOffWork || 0) * baseSalary) / 24,
+        deductionSalaryDay: Math.round(
+          (Number(el?.dayOffWork || 0) * baseSalary) / 24
+        ),
       };
     }) || [];
   const data2: IDataDeductionDay[] =
@@ -218,8 +220,9 @@ export default function DeductionSalaryTable({
         id: el.id,
         date: el?.date,
         hourLateWork: el?.hourLateWork,
-        deductionSalaryHour:
-          (Number(el?.hourLateWork || 0) * baseSalary) / 24 / 8,
+        deductionSalaryHour: Math.round(
+          (Number(el?.hourLateWork || 0) * baseSalary) / 24 / 8
+        ),
       };
     }) || [];
 

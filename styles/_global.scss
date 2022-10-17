@@ -97,3 +97,8 @@ $red-color: #cb2131;
 $blue-color: #0092ff;
 $primary: #127ff3;
 $gray: #c4c2c2;
+
+//Antd table cell
+.ant-table-cell {
+  word-break: break-word;
+}

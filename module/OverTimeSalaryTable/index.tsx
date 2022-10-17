@@ -86,7 +86,9 @@ export default function OverTimeSalaryTable({
         return accumulator + (Number(element?.hour) || 0);
       }, 0) || 0;
     if (setOvertimeSalary) {
-      setOvertimeSalary(((totalSalary2 * (baseSalary || 0)) / 24 / 8) * 1.5);
+      setOvertimeSalary(
+        Math.round(((totalSalary2 * (baseSalary || 0)) / 24 / 8) * 1.5)
+      );
     }
   }, [isRefetching, dataOT, baseSalary]);
 
@@ -231,9 +233,9 @@ export default function OverTimeSalaryTable({
       />
       <div className="mb-4 font-bold">
         Lương Overtime :{" "}
-        {(((totalSalary * (baseSalary || 0)) / 24 / 8) * 1.5).toLocaleString(
-          "en-US"
-        )}{" "}
+        {Math.round(
+          ((totalSalary * (baseSalary || 0)) / 24 / 8) * 1.5
+        ).toLocaleString("en-US")}{" "}
         VND
       </div>
       <Table

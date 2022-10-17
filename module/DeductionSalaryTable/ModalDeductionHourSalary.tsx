@@ -39,14 +39,28 @@ export default function ModalDeductionHourSalary(
             label="Số giờ đi muộn"
             name="b"
             rules={[
-              {min: 0, message: "Giá trị phải lớn hơn 0"},
-              {max: 24, message: "Giá trị phải nhỏ hơn hoặc bằng 24"},
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value > 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Giá trị phải lớn hơn 0"));
+                },
+              }),
+              ({getFieldValue}) => ({
+                validator(_, value) {
+                  if (value < 25) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Giá trị phải nhỏ hơn hoặc bằng 24")
+                  );
+                },
+              }),
             ]}
           >
             <InputNumber
               name="b"
-              max={24}
-              min={0}
               className="w-full"
               onChange={(e) => {
                 setHourLateWork(Number(e));
