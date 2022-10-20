@@ -239,26 +239,6 @@ export interface IDataSalaryToTalOfUser {
   dailyOnsiteRate: number;
 }
 
-export interface IDataSalary {
-  afterTaxSalary: number;
-  baseSalary: number;
-  bonusSalary: number;
-  createdAt: string;
-  date: string;
-  deductionSalary: number;
-  id: number;
-  manageSalary: number;
-  onsiteSalary: number;
-  overtimeSalary: number;
-  projectSalary: number;
-  state: number;
-  taxSalary: number;
-  totalSalary: number;
-  updatedAt: string;
-  detailTaxSalary: IDetailTax;
-  dailyOnsiteRate: number;
-}
-
 export interface IProfile {
   id: string;
   avatar?: string;
@@ -278,6 +258,27 @@ export interface IProfile {
   gender?: string;
   englishCertificate?: string;
   englishScore?: number;
+}
+
+export interface IDataSalary {
+  afterTaxSalary: number;
+  baseSalary: number;
+  bonusSalary: number;
+  createdAt: string;
+  date: string;
+  deductionSalary: number;
+  id: number;
+  manageSalary: number;
+  onsiteSalary: number;
+  overtimeSalary: number;
+  projectSalary: number;
+  state: number;
+  taxSalary: number;
+  totalSalary: number;
+  updatedAt: string;
+  detailTaxSalary: IDetailTax;
+  dailyOnsiteRate: number;
+  user: IProfile;
 }
 
 export interface IFamilyCircumstance {

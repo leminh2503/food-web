@@ -27,6 +27,7 @@ export default function OnsiteSalaryTable({
   isAdmin,
   listProject,
   totalSalaryOS,
+  state,
 }: {
   isAdmin?: boolean;
   setDailyOnsiteRate2?: (val: number) => void;
@@ -41,6 +42,7 @@ export default function OnsiteSalaryTable({
   isManager?: boolean;
   month: number;
   year: number;
+  state?: number;
 }): JSX.Element {
   const [disableCheck] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -97,11 +99,13 @@ export default function OnsiteSalaryTable({
     {
       title: (
         <>
-          <EditFilled
-            onClick={showModal}
-            className="text-[20px] text-[#0092ff] mr-3"
-          />
-          {isManager && (
+          {state !== 3 && (
+            <EditFilled
+              onClick={showModal}
+              className="text-[20px] text-[#0092ff] mr-3"
+            />
+          )}
+          {isManager && state !== 3 && (
             <CheckCircleFilled
               className={
                 disableCheck
@@ -246,7 +250,7 @@ export default function OnsiteSalaryTable({
             <div className="mb-4 font-bold">
               {" "}
               {dailyOnsiteRate?.toLocaleString("en-US")} VND/ngày
-              {isEditDailyOnsiteRate && (
+              {isEditDailyOnsiteRate && state !== 3 && (
                 <EditFilled
                   className="text-[20px] text-[#0092ff] ml-2"
                   onClick={(): void => setIsUpdate(true)}

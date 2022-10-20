@@ -16,6 +16,7 @@ export default function ProjectSalaryTable({
   isAdmin,
   setProjectSalary,
   idTotal,
+  state,
 }: {
   idTotal?: number;
   setProjectSalary?: (val: number) => void;
@@ -24,6 +25,7 @@ export default function ProjectSalaryTable({
   listProject?: IDataProjectList[];
   month: number;
   year: number;
+  state?: number;
 }): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -150,7 +152,7 @@ export default function ProjectSalaryTable({
             ?.toLocaleString("en-US")}{" "}
           VND
         </span>
-        {isAdmin && (
+        {isAdmin && state !== 3 && (
           <PlusCircleOutlined
             onClick={handleAddProjectSalary}
             className="text-[20px] text-[#0092ff] mr-3"

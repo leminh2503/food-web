@@ -22,6 +22,7 @@ export default function OverTimeSalaryTable({
   idProject,
   baseSalary,
   setOvertimeSalary,
+  state,
 }: {
   setOvertimeSalary?: (val: number) => void;
   baseSalary?: number;
@@ -33,6 +34,7 @@ export default function OverTimeSalaryTable({
   month: number;
   year: number;
   projectName?: string;
+  state?: number;
 }): JSX.Element {
   const [disableCheck] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -96,12 +98,14 @@ export default function OverTimeSalaryTable({
     {
       title: (
         <>
-          <EditFilled
-            onClick={showModal}
-            className="text-[20px] text-[#0092ff] mr-3"
-          />
+          {state !== 3 && (
+            <EditFilled
+              onClick={showModal}
+              className="text-[20px] text-[#0092ff] mr-3"
+            />
+          )}
 
-          {isManager && (
+          {isManager && state !== 3 && (
             <CheckCircleFilled
               className={
                 disableCheck

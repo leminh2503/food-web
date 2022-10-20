@@ -20,6 +20,7 @@ export function MySalaryDetail(): JSX.Element {
   const {month} = router.query;
   const {year} = router.query;
   const {onsiteSalary} = router.query;
+  const {state} = router.query;
   const baseSalary = Number(ApiUser.getInfoMe()?.baseSalary || 0);
   const manageSalary =
     ApiUser.getInfoMe()?.manageSalary?.toLocaleString("en-US");
@@ -119,6 +120,7 @@ export function MySalaryDetail(): JSX.Element {
             listProject={listProject}
             totalSalaryOS={Number(onsiteSalary || 0)}
             dailyOnsiteRate={dailyOnsiteRate}
+            state={Number(state)}
           />
         </div>
       )}
@@ -130,6 +132,7 @@ export function MySalaryDetail(): JSX.Element {
             idUser={ApiUser.getInfoMe()?.id || ""}
             month={Number(month)}
             year={Number(year)}
+            state={Number(state)}
           />
         </div>
       )}

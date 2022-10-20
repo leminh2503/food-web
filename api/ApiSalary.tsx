@@ -39,10 +39,12 @@ const path = {
   createDeductionHourSalary: "/deduction-hour-late",
   acceptToTalSalary: "/total-salary/accept",
   lockToTalSalary: "/total-salary/lock",
+  unLockToTalSalary: "/total-salary/unlock",
   createSalaryAllEmployee: "/total-salary/create-all-user",
   updateTotalSalary: "/total-salary/",
   updateOSSalary: "/total-salary/",
   getListProjectOfMember: "/project/participate",
+  taxCalculator: "/total-salary/tax-calculator",
 };
 
 interface IBodyOTSalary {
@@ -88,6 +90,14 @@ function lockToTalSalary(ids: number[]): Promise<IDataSalaryToTalOfUser[]> {
   });
 }
 
+function unLockToTalSalary(ids: number[]): Promise<IDataSalaryToTalOfUser[]> {
+  return fetcher({
+    url: path.unLockToTalSalary,
+    method: "post",
+    data: {ids},
+  });
+}
+
 function acceptToTalSalary(ids: number[]): Promise<IDataSalaryToTalOfUser[]> {
   return fetcher({
     url: path.acceptToTalSalary,
@@ -123,6 +133,35 @@ function getMyListTotalSalary(
     url: path.getMyListTotalSalary,
     method: "get",
     params: {filter: {date_year: year, date_month: month}},
+  });
+}
+
+function getTotalSalaryById(
+  id: number,
+  year: number,
+  month?: number
+): Promise<IDataSalary> {
+  return fetcher({
+    url: path.getListSalaryTotalUser + "/" + id + "/detail",
+    method: "get",
+    params: {filter: {date_year: year, date_month: month}},
+  });
+}
+
+function taxCalculator(
+  totalSalary: number,
+  user: number
+): Promise<{
+  deductionFamilyCircumstances: number;
+  deductionOwn: number;
+  taxableSalary: number;
+  taxSalary: number;
+  tax: number;
+}> {
+  return fetcher({
+    url: path.taxCalculator,
+    method: "post",
+    data: {totalSalary, user},
   });
 }
 
@@ -395,6 +434,8 @@ export default {
   createTotalSalary,
   createSalaryProject,
   getUserOfProject,
+  getTotalSalaryById,
+  taxCalculator,
   createOnsiteSalary,
   getListProjectOfMe,
   createOTSalary,
@@ -421,6 +462,7 @@ export default {
   deleteDeductionHourSalary,
   acceptToTalSalary,
   lockToTalSalary,
+  unLockToTalSalary,
   createSalaryAllEmployee,
   updateTotalSalary,
   updateOSSalary,
