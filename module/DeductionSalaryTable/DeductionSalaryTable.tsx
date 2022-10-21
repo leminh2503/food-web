@@ -16,6 +16,7 @@ export default function DeductionSalaryTable({
   userId,
   baseSalary,
   setDeductionSalary,
+  state,
 }: {
   setDeductionSalary?: (val: number) => void;
   baseSalary: number;
@@ -23,6 +24,7 @@ export default function DeductionSalaryTable({
   isAdmin?: boolean;
   month: number;
   year: number;
+  state?: number;
 }): JSX.Element {
   const [isModalVisibleDay, setIsModalVisibleDay] = useState(false);
   const [isModalVisibleHour, setIsModalVisibleHour] = useState(false);
@@ -92,7 +94,7 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: (
+          title: state !== 3 && (
             <EditFilled
               onClick={showModalDay}
               className="text-[20px] text-[#0092ff] mr-3"
@@ -158,7 +160,7 @@ export default function DeductionSalaryTable({
           ),
         },
         {
-          title: (
+          title: state !== 3 && (
             <EditFilled
               onClick={showModalHour}
               className="text-[20px] text-[#0092ff] mr-3"

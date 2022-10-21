@@ -49,6 +49,7 @@ export function Salary(): JSX.Element {
             month: month.getMonth() + 1,
             year: year,
             onsiteSalary: record.onsiteSalary,
+            state: record.state,
           },
         });
       },

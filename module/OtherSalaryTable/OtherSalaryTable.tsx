@@ -14,12 +14,14 @@ export default function OtherSalaryTable({
   userId,
   isAdmin,
   setBonusSalary,
+  state,
 }: {
   setBonusSalary?: (val: number) => void;
   isAdmin?: boolean;
   userId: number;
   month: number;
   year: number;
+  state?: number;
 }): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -134,7 +136,7 @@ export default function OtherSalaryTable({
             ?.toLocaleString("en-US")}{" "}
           VND
         </div>
-        {isAdmin && (
+        {isAdmin && state !== 3 && (
           <PlusCircleOutlined
             onClick={showModal}
             className="text-[20px] text-[#0092ff] mr-3"

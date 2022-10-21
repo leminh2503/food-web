@@ -9,31 +9,27 @@ import OtherSalaryTable from "@app/module/OtherSalaryTable/OtherSalaryTable";
 import OverTimeSalaryTable from "@app/module/OverTimeSalaryTable";
 import ApiUser from "@app/api/ApiUser";
 import DeductionSalaryTable from "@app/module/DeductionSalaryTable/DeductionSalaryTable";
-import {IDataProjectList, IUserLogin} from "@app/types";
+import {IDataProjectList, IDataSalary, IUserLogin} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
-import {Button, Dropdown, Image, Modal, notification, Table} from "antd";
+import {Button, Image, Modal, notification, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import ApiLeaveWork, {IDaysAllowedLeave} from "@app/api/ApiLeaveWork";
 import {queryKeys} from "@app/utils/constants/react-query";
+import {ModalCustom} from "@app/components/ModalCustom";
+
+interface ITaxSalary {
+  deductionOwn: number;
+  deductionFamilyCircumstances: number;
+  taxableSalary: number;
+  tax: number;
+  taxSalary: number;
+}
 
 export function SalaryTableDetail(): JSX.Element {
   const router = useRouter();
-  const {
-    month,
-    year,
-    userId,
-    id,
-    tax,
-    taxSalary,
-    deductionTaxMe,
-    deductionFamilyTaxMe,
-    taxableSalary,
-    dailyOnsiteRate,
-    baseSalary,
-    manageSalary,
-  } = router.query;
-  const [taxableSalary2, setTaxableSalary] = useState<number>();
+  const {month, year, userId, id, dailyOnsiteRate, baseSalary, manageSalary} =
+    router.query;
   const [onsiteSalary, setOnsiteSalary] = useState<number>(0);
   const [bonusSalary, setBonusSalary] = useState<number>(0);
   const [overtimeSalary, setOvertimeSalary] = useState<number>(0);
@@ -41,13 +37,38 @@ export function SalaryTableDetail(): JSX.Element {
   const [deductionSalary, setDeductionSalary] = useState<number>(0);
   const [dailyOnsiteRate2, setDailyOnsiteRate2] = useState<number>();
   const [totalSalary, setTotalSalary] = useState<number>();
-  const [taxDeduction, setTaxDeduction] = useState(0);
+  const [dataTaxSalary, setDataTaxSalary] = useState<ITaxSalary>();
+  const [isModalVisible, setIsModalVisible] = useState("");
+
+  const showModalTaxSalary = (): void => {
+    setIsModalVisible("taxSalary");
+  };
+
+  const toggleModal = (): void => {
+    setIsModalVisible("");
+  };
+
+  const totalSalaryById = (): Promise<IDataSalary> => {
+    return ApiSalary.getTotalSalaryById(
+      Number(id),
+      Number(year),
+      Number(month)
+    );
+  };
+
+  const {data: dataTotalSalaryById, refetch: refetchTotalSalaryById} = useQuery(
+    queryKeys.GET_TOTAL_SALARY_BY_ID,
+    totalSalaryById,
+    {
+      enabled: false,
+    }
+  );
 
   const getUserInfo = (): Promise<IUserLogin> => {
     return ApiUser.getUserInfo({id: Number(userId)});
   };
 
-  const {data: dataUser, refetch} =
+  const {data: dataUser, refetch: refetchUser} =
     useQuery("userInfo" + userId, getUserInfo, {enabled: false}) || [];
 
   const getListProject = (): Promise<IDataProjectList[]> => {
@@ -67,23 +88,64 @@ export function SalaryTableDetail(): JSX.Element {
 
   useEffect(() => {
     if (id) {
-      refetch();
-      refetchDaysAllowedLeaveById();
+      refetchUser();
+      refetchTotalSalaryById();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (userId) {
+      refetchDaysAllowedLeaveById();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const total =
+      onsiteSalary +
+      overtimeSalary +
+      bonusSalary +
+      projectSalary -
+      deductionSalary +
+      Number(Number(manageSalary) || 0) +
+      Number(Number(baseSalary) || 0);
+
+    setTotalSalary(total);
+  }, [
+    onsiteSalary,
+    overtimeSalary,
+    bonusSalary,
+    projectSalary,
+    deductionSalary,
+    dataUser,
+  ]);
+
+  useEffect(() => {
+    if (userId && totalSalary) {
+      ApiSalary.taxCalculator(totalSalary, Number(userId)).then((result) => {
+        setDataTaxSalary({
+          deductionOwn: result.deductionOwn,
+          deductionFamilyCircumstances: result.deductionFamilyCircumstances,
+          taxableSalary: result.taxableSalary,
+          tax: result.tax,
+          taxSalary: result.taxSalary,
+        });
+      });
+    }
+  }, [totalSalary]);
 
   const columns: ColumnsType<any> = [
     {
       title: "Họ & Tên",
       dataIndex: "fullName",
       key: "fullName",
+      width: "15%",
       align: "center",
     },
     {
       title: "Ảnh",
       key: "avatar",
       align: "center",
-      width: 150,
+      width: "15%",
       render: (_, record) => {
         return (
           <div>
@@ -91,6 +153,8 @@ export function SalaryTableDetail(): JSX.Element {
               src={record?.avatar || "img/avatar/avatar.jpg"}
               fallback="../img/avatar/avatar.jpg"
               preview={false}
+              width={150}
+              height={150}
             />
           </div>
         );
@@ -101,6 +165,7 @@ export function SalaryTableDetail(): JSX.Element {
       dataIndex: "position",
       key: "position",
       align: "center",
+      width: "20%",
       render: (_, record) => {
         return (
           <div>
@@ -110,10 +175,11 @@ export function SalaryTableDetail(): JSX.Element {
       },
     },
     {
-      title: "Vị trí",
+      title: "Loại hình làm việc",
       dataIndex: "workType",
       key: "workType",
       align: "center",
+      width: "20%",
       render: (_, record) => {
         return (
           <div>
@@ -127,6 +193,7 @@ export function SalaryTableDetail(): JSX.Element {
       dataIndex: "manageSalary",
       key: "manageSalary",
       align: "center",
+      width: "15%",
       render: (_, record, index) => (
         <div>{Number(manageSalary ?? 0)?.toLocaleString("en-US")} VND</div>
       ),
@@ -136,112 +203,63 @@ export function SalaryTableDetail(): JSX.Element {
       dataIndex: "baseSalary",
       key: "baseSalary",
       align: "center",
+      width: "15%",
       render: (_, record, index) => (
         <div>{Number(baseSalary ?? 0)?.toLocaleString("en-US")} VND</div>
       ),
     },
   ];
 
-  useEffect(() => {
-    if (taxableSalary2 && taxableSalary2 < 0) {
-      setTaxableSalary(0);
-    }
-  }, [taxableSalary2]);
-
-  useEffect(() => {
-    if (tax) {
-      setTaxableSalary(
-        onsiteSalary +
-          overtimeSalary +
-          bonusSalary +
-          projectSalary -
-          deductionSalary +
-          Number(manageSalary || 0) +
-          Number(baseSalary || 0) -
-          Number(deductionFamilyTaxMe || 0) -
-          Number(deductionTaxMe || 0)
-      );
-      const total =
-        onsiteSalary +
-        overtimeSalary +
-        bonusSalary +
-        projectSalary -
-        deductionSalary +
-        Number(manageSalary || 0) +
-        Number(baseSalary || 0) -
-        Number(deductionFamilyTaxMe || 0) -
-        Number(deductionTaxMe || 0);
-      if (total <= 5000000) {
-        setTaxDeduction(0);
-      } else if (total <= 10000000) {
-        setTaxDeduction(250000);
-      } else if (total <= 18000000) {
-        setTaxDeduction(750000);
-      } else if (total <= 32000000) {
-        setTaxDeduction(1650000);
-      } else if (total <= 52000000) {
-        setTaxDeduction(3250000);
-      } else if (total <= 80000000) {
-        setTaxDeduction(5850000);
-      } else {
-        setTaxDeduction(9850000);
-      }
-    }
-    setTotalSalary(
-      onsiteSalary +
-        overtimeSalary +
-        bonusSalary +
-        projectSalary -
-        deductionSalary +
-        Number(Number(manageSalary) || 0) +
-        Number(Number(baseSalary) || 0)
-    );
-  }, [
-    onsiteSalary,
-    overtimeSalary,
-    bonusSalary,
-    projectSalary,
-    deductionSalary,
-    tax,
-    dataUser,
-  ]);
-
-  const menu = (
+  const renderContent = (): JSX.Element => (
     <div className="p-4 bg-white shadow-2xl">
-      <p className=" font-bold">
-        Tổng lương : {totalSalary?.toLocaleString("en-US")} VND
-      </p>
-      <p className="mt-2 font-bold">
-        Giảm trừ gia cảnh cá nhân:{" "}
-        {Number(deductionTaxMe || 0).toLocaleString("en-US")} VND
-      </p>
-      <p className="mt-2 font-bold">
-        Giảm trừ gia cảnh người phụ thuộc :{" "}
-        {Number(deductionFamilyTaxMe || 0).toLocaleString("en-US")} VND
-      </p>
-      <p className="mt-2 font-bold">
-        Thu nhập chịu thuế :{" "}
-        {Number(taxableSalary2 ?? (taxableSalary || 0)).toLocaleString("en-US")}{" "}
-        VND
-      </p>
-      <p className="mt-2 font-bold">Thuế suất : {tax}</p>
-      <p className="mt-2 font-bold">
-        Thuế thu nhập cá nhân :{" "}
-        {Math.floor(
-          Number(
-            ((taxableSalary2 || 0) * Number(tax?.toString().replace("%", ""))) /
-              100 -
-              taxDeduction ??
-              (taxSalary || 0)
-          )
-        ).toLocaleString("en-US")}{" "}
-        VND
-      </p>
+      <Table
+        columns={[
+          {
+            title: "Giảm trừ gia cảnh",
+            dataIndex: "deductionOwn",
+            align: "center",
+            render: (_, record) =>
+              (record.deductionOwn ?? 11000000).toLocaleString("en-US") +
+              " VND",
+          },
+          {
+            title: "Giảm trừ gia cảnh người phụ thuộc",
+            dataIndex: "deductionFamilyCircumstances",
+            align: "center",
+            render: (_, record) =>
+              (record.deductionFamilyCircumstances ?? 0).toLocaleString(
+                "en-US"
+              ) + " VND",
+          },
+          {
+            title: "Thu nhập chịu thuế",
+            dataIndex: "taxableSalary",
+            align: "center",
+            render: (_, record) =>
+              (record.taxableSalary ?? 0).toLocaleString("en-US") + " VND",
+          },
+          {
+            title: "Thuế suất",
+            dataIndex: "tax",
+            align: "center",
+            render: (_, record) => (record.tax ?? 0) + "%",
+          },
+          {
+            title: "Thuế thu nhập cá nhân",
+            dataIndex: "taxSalary",
+            align: "center",
+            render: (_, record) =>
+              (record.taxSalary ?? 0).toLocaleString("en-US") + " VND",
+          },
+        ]}
+        dataSource={dataTaxSalary ? [dataTaxSalary] : []}
+        pagination={false}
+      />
     </div>
   );
 
   return (
-    <div>
+    <div className="container-salary-table-detail">
       <div className="flex items-center mb-6">
         <button type="button" className="btn-back-page" onClick={router.back}>
           <LeftOutlined />
@@ -272,6 +290,7 @@ export function SalaryTableDetail(): JSX.Element {
             year={Number(year)}
             idTotal={Number(id)}
             isAdmin
+            state={dataTotalSalaryById?.state}
           />
           <OtherSalaryTable
             setBonusSalary={setBonusSalary}
@@ -279,6 +298,7 @@ export function SalaryTableDetail(): JSX.Element {
             isAdmin
             month={Number(month)}
             year={Number(year)}
+            state={dataTotalSalaryById?.state}
           />
         </div>
       )}
@@ -295,6 +315,7 @@ export function SalaryTableDetail(): JSX.Element {
             listProject={listProject}
             isManager
             isAdmin
+            state={dataTotalSalaryById?.state}
           />
         </div>
       )}
@@ -309,6 +330,7 @@ export function SalaryTableDetail(): JSX.Element {
             year={Number(year)}
             isManager
             isAdmin
+            state={dataTotalSalaryById?.state}
           />
         </div>
       )}
@@ -321,49 +343,27 @@ export function SalaryTableDetail(): JSX.Element {
             userId={Number(userId)}
             month={Number(month)}
             year={Number(year)}
+            state={dataTotalSalaryById?.state}
           />
         </div>
       )}
-      <div className="mt-6 h-[150px] w-[570px] bg-white p-4">
-        <Dropdown
-          overlay={menu}
-          placement="top"
-          trigger={["click"]}
-          arrow={{pointAtCenter: true}}
+      <div className="mt-6 w-[570px] bg-white p-4">
+        <p className="font-bold text-[26px]">
+          Tổng lương trước thuế: {(totalSalary || 0).toLocaleString("en-US")}{" "}
+          VND
+        </p>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+        <p
+          className="font-bold hover-pointer mt-6 mb-6"
+          onClick={showModalTaxSalary}
         >
-          <p className="font-bold hover-pointer ">
-            Thuế thu nhập cá nhân :{" "}
-            {Math.floor(
-              Number(
-                ((taxableSalary2 || 0) *
-                  Number(tax?.toString().replace("%", ""))) /
-                  100 -
-                  taxDeduction ??
-                  (taxSalary || 0)
-              )
-            ).toLocaleString("en-US")}{" "}
-            VND
-          </p>
-        </Dropdown>
-        <p className="mt-6 font-bold text-[26px]">
-          Tổng lương sau thuế :{" "}
+          Thuế thu nhập cá nhân :{" "}
+          {(dataTaxSalary?.taxSalary ?? 0).toLocaleString("en-US")} VND
+        </p>
+        <p className="font-bold text-[26px]">
+          Tổng lương sau thuế:{" "}
           {(
-            Number(
-              (
-                Number(
-                  (totalSalary || 0) -
-                    Math.floor(
-                      Number(
-                        ((taxableSalary2 || 0) *
-                          Number(tax?.toString().replace("%", ""))) /
-                          100 -
-                          taxDeduction ??
-                          (taxSalary || 0)
-                      )
-                    )
-                ) / 1000
-              ).toFixed(0)
-            ) * 1000
+            (totalSalary ?? 0) - (dataTaxSalary?.taxSalary ?? 0)
           ).toLocaleString("en-US")}{" "}
           VND
         </p>
@@ -404,20 +404,47 @@ export function SalaryTableDetail(): JSX.Element {
         <Button
           className="ml-8 bg-red-500 text-[white]"
           onClick={() => {
+            const lock = dataTotalSalaryById?.state === 3 ? "mở khóa" : "khóa";
             Modal.confirm({
-              title: "Bạn chắc chắn muốn khoá bảng lương ?",
+              title: `Bạn chắc chắn muốn ${lock} bảng lương ?`,
               centered: true,
               onOk: (): void => {
-                ApiSalary.lockToTalSalary([Number(id || 0)]).then((r) => {
-                  notification.success({message: "Khoá bảng lương thành công"});
-                });
+                if (dataTotalSalaryById?.state === 3) {
+                  ApiSalary.unLockToTalSalary([Number(id || 0)]).then((r) => {
+                    notification.success({
+                      message: `${
+                        lock.charAt(0).toUpperCase() + lock.slice(1)
+                      } bảng lương thành công`,
+                    });
+                    refetchTotalSalaryById();
+                  });
+                } else {
+                  ApiSalary.lockToTalSalary([Number(id || 0)]).then((r) => {
+                    notification.success({
+                      message: `${
+                        lock.charAt(0).toUpperCase() + lock.slice(1)
+                      } bảng lương thành công`,
+                    });
+                    refetchTotalSalaryById();
+                  });
+                }
               },
             });
           }}
         >
-          Khoá bảng lương
+          {dataTotalSalaryById?.state === 3
+            ? "Mở khóa bảng lương"
+            : "Khóa bảng lương"}
         </Button>
       </div>
+      <ModalCustom
+        isModalVisible={isModalVisible === "taxSalary"}
+        handleCancel={toggleModal}
+        title="Chi tiết thuế thu nhập cá nhân"
+        width="400"
+        content={renderContent()}
+        footer={null}
+      />
     </div>
   );
 }
