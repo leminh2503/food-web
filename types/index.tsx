@@ -211,6 +211,7 @@ export interface IDataDeductionDay {
   hourLateWork?: number;
   deductionSalaryDay?: number | string;
   deductionSalaryHour?: number | string;
+  type?: string;
 }
 
 export interface IDataSalaryToTalOfUser {
@@ -355,7 +356,7 @@ export interface IAccountInfo {
 export interface ILeaveWork {
   id: number;
   user?: IProfile;
-  startDate?: Date;
+  startDate?: string;
   reason?: string;
   reasonRefuse?: string;
   quantity?: number;

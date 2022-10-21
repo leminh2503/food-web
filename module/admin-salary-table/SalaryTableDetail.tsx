@@ -88,13 +88,13 @@ export function SalaryTableDetail(): JSX.Element {
 
   useEffect(() => {
     if (id) {
-      refetchUser();
       refetchTotalSalaryById();
     }
   }, [id]);
 
   useEffect(() => {
     if (userId) {
+      refetchUser();
       refetchDaysAllowedLeaveById();
     }
   }, [userId]);
@@ -118,6 +118,17 @@ export function SalaryTableDetail(): JSX.Element {
     deductionSalary,
     dataUser,
   ]);
+
+  useEffect(() => {
+    ApiSalary.updateTotalSalary(
+      {
+        deductionSalary: Number(deductionSalary),
+      },
+      Number(id || 0)
+    ).then((r) => {
+      //
+    });
+  }, [deductionSalary]);
 
   useEffect(() => {
     if (userId && totalSalary) {
@@ -334,7 +345,7 @@ export function SalaryTableDetail(): JSX.Element {
           />
         </div>
       )}
-      {month && year && (
+      {month && year && userId && daysAllowedLeaveById && (
         <div className="mt-4">
           <DeductionSalaryTable
             setDeductionSalary={setDeductionSalary}
@@ -344,29 +355,49 @@ export function SalaryTableDetail(): JSX.Element {
             month={Number(month)}
             year={Number(year)}
             state={dataTotalSalaryById?.state}
+            daysAllowedLeaveById={daysAllowedLeaveById.quantity}
           />
         </div>
       )}
-      <div className="mt-6 w-[570px] bg-white p-4">
-        <p className="font-bold text-[26px]">
-          Tổng lương trước thuế: {(totalSalary || 0).toLocaleString("en-US")}{" "}
-          VND
-        </p>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-        <p
-          className="font-bold hover-pointer mt-6 mb-6"
-          onClick={showModalTaxSalary}
-        >
-          Thuế thu nhập cá nhân :{" "}
-          {(dataTaxSalary?.taxSalary ?? 0).toLocaleString("en-US")} VND
-        </p>
-        <p className="font-bold text-[26px]">
-          Tổng lương sau thuế:{" "}
-          {(
-            (totalSalary ?? 0) - (dataTaxSalary?.taxSalary ?? 0)
-          ).toLocaleString("en-US")}{" "}
-          VND
-        </p>
+      <div className="flex justify-center mt-6 bg-white p-4">
+        <table className="custom-table">
+          <tr className="font-bold text-[26px]">
+            <th>
+              <p className="mb-4">Tổng lương trước thuế:</p>
+            </th>
+            <td className="mb-4">
+              <p className="mb-4">
+                {(totalSalary || 0).toLocaleString("en-US")} VND
+              </p>
+            </td>
+          </tr>
+          <tr
+            className="font-bold text-[18px] hover-pointer"
+            onClick={showModalTaxSalary}
+          >
+            <th>
+              <p>Thuế thu nhập cá nhân:</p>
+            </th>
+            <td>
+              <p>
+                {(dataTaxSalary?.taxSalary ?? 0).toLocaleString("en-US")} VND
+              </p>
+            </td>
+          </tr>
+          <tr className="font-bold text-[26px]">
+            <th>
+              <p className="mt-4">Tổng lương sau thuế:</p>
+            </th>
+            <td>
+              <p className="mt-4">
+                {(
+                  (totalSalary ?? 0) - (dataTaxSalary?.taxSalary ?? 0)
+                ).toLocaleString("en-US")}{" "}
+                VND
+              </p>
+            </td>
+          </tr>
+        </table>
       </div>
       <div className="w-full row-all-center mt-8 mb-16">
         <Button

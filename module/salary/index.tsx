@@ -48,6 +48,8 @@ export function Salary(): JSX.Element {
           query: {
             month: month.getMonth() + 1,
             year: year,
+            id: record.id,
+            userId: record.user.id,
             onsiteSalary: record.onsiteSalary,
             state: record.state,
           },
