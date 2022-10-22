@@ -3,6 +3,25 @@
   //background: $border-color;
 }
 
-.onsite-salary {
-  width: calc(100% - 260px);
+.container-salary-table-detail {
+  .custom-table {
+    th,
+    td {
+      border-collapse: collapse;
+    }
+
+    th {
+      padding-right: 20px;
+    }
+
+    td {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    th,
+    td {
+      text-align: left;
+    }
+  }
 }

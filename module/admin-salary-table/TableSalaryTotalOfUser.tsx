@@ -322,7 +322,6 @@ export function TableSalaryTotalOfUser(): JSX.Element {
                   year: year,
                   userId: record.user.id,
                   id: record.id,
-                  taxableSalary: record.detailTaxSalary?.taxableSalary,
                   dailyOnsiteRate: record?.dailyOnsiteRate,
                   baseSalary: record?.baseSalary,
                   manageSalary: record?.manageSalary,

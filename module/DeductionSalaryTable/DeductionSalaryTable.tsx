@@ -2,12 +2,16 @@ import "../my-salary-detail/index.scss";
 import React, {useEffect, useState} from "react";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {IDataDeductionDay} from "@app/types";
+import {ELeaveWork, IDataDeductionDay, ILeaveWork} from "@app/types";
 import ApiSalary from "@app/api/ApiSalary";
 import {useQuery} from "react-query";
 import {CloseCircleOutlined, EditFilled} from "@ant-design/icons";
 import ModalDeductionSalary from "@app/module/DeductionSalaryTable/ModalDeductionSalary";
 import ModalDeductionHourSalary from "@app/module/DeductionSalaryTable/ModalDeductionHourSalary";
+import {IMetadata} from "@app/api/Fetcher";
+import ApiLeaveWork from "@app/api/ApiLeaveWork";
+import {queryKeys} from "@app/utils/constants/react-query";
+import moment from "moment";
 
 export default function DeductionSalaryTable({
   month,
@@ -17,6 +21,7 @@ export default function DeductionSalaryTable({
   baseSalary,
   setDeductionSalary,
   state,
+  daysAllowedLeaveById,
 }: {
   setDeductionSalary?: (val: number) => void;
   baseSalary: number;
@@ -25,9 +30,11 @@ export default function DeductionSalaryTable({
   month: number;
   year: number;
   state?: number;
+  daysAllowedLeaveById: number;
 }): JSX.Element {
   const [isModalVisibleDay, setIsModalVisibleDay] = useState(false);
   const [isModalVisibleHour, setIsModalVisibleHour] = useState(false);
+  const [remainDayOff, setRemainDayOff] = useState<number>();
 
   const showModalDay = (): void => {
     setIsModalVisibleDay(true);
@@ -73,25 +80,36 @@ export default function DeductionSalaryTable({
     isRefetching: isRefetchingH,
   } = useQuery("deductionHourSalary" + userId, getDeductionHourSalary) || [];
 
+  const getLeaveWork = (): Promise<{data: ILeaveWork[]; meta: IMetadata}> => {
+    return ApiLeaveWork.getLeaveWork();
+  };
+
+  const {data: dataLeaveWork} = useQuery(
+    queryKeys.GET_LIST_LEAVE_WORK,
+    getLeaveWork
+  );
+
+  const dataLeaveWorkByUser = dataLeaveWork?.data.filter(
+    (item: ILeaveWork) =>
+      Number(item.user?.id) === Number(userId) &&
+      item.state === ELeaveWork.DA_CHAP_NHAN &&
+      moment(item.startDate).month() + 1 === Number(month)
+  );
+
   const columns: ColumnsType<IDataDeductionDay> = isAdmin
     ? [
         {
-          title: "Ngày nghỉ",
+          title: "Ngày bắt đầu nghỉ",
+          dataIndex: "date",
+          key: "date",
+          align: "center",
+          render: (date) => moment(date).format("DD/MM/YYYY"),
+        },
+        {
+          title: "Số ngày nghỉ",
           dataIndex: "dayOffWork",
           key: "dayOffWork",
           align: "center",
-          render: (_, record, index) => (
-            <div>{(record?.dayOffWork || "") + " (" + record.date + ")"}</div>
-          ),
-        },
-        {
-          title: "Số tiền trừ",
-          dataIndex: "deductionSalaryDay",
-          key: "deductionSalaryDay",
-          align: "center",
-          render: (_, record, index) => (
-            <div>{record?.deductionSalaryDay?.toLocaleString("en-US")} VND</div>
-          ),
         },
         {
           title: state !== 3 && (
@@ -102,62 +120,52 @@ export default function DeductionSalaryTable({
           ),
           align: "center",
           width: "100px",
-          render: (index, _record): JSX.Element => {
+          render: (_, record) => {
             return (
-              <CloseCircleOutlined
-                onClick={(): void => {
-                  ApiSalary.deleteDeductionDaySalary(_record?.id || 0).then(
-                    (r) => dayRefetch()
-                  );
-                }}
-                className="text-[red] text-[20px] hover-pointer"
-              />
+              record.type === "leaveWorkAdded" && (
+                <CloseCircleOutlined
+                  onClick={(): void => {
+                    ApiSalary.deleteDeductionDaySalary(record?.id || 0).then(
+                      (r) => dayRefetch()
+                    );
+                  }}
+                  className="text-[red] text-[20px] hover-pointer"
+                />
+              )
             );
           },
         },
       ]
     : [
         {
-          title: "Ngày nghỉ",
+          title: "Ngày bắt đầu nghỉ",
+          dataIndex: "date",
+          key: "date",
+          align: "center",
+          render: (date) => moment(date).format("DD/MM/YYYY"),
+        },
+        {
+          title: "Số ngày nghỉ",
           dataIndex: "dayOffWork",
           key: "dayOffWork",
           align: "center",
-          render: (_, record, index) => (
-            <div>{(record?.dayOffWork || "") + " (" + record.date + ")"}</div>
-          ),
-        },
-        {
-          title: "Số tiền trừ",
-          dataIndex: "deductionSalaryDay",
-          key: "deductionSalaryDay",
-          align: "center",
-          render: (_, record, index) => (
-            <div>{record?.deductionSalaryDay?.toLocaleString("en-US")} VND</div>
-          ),
         },
       ];
 
   const columns2: ColumnsType<IDataDeductionDay> = isAdmin
     ? [
         {
-          title: "Giờ đi muộn",
+          title: "Ngày",
+          dataIndex: "date",
+          key: "date",
+          align: "center",
+          render: (date) => moment(date).format("DD/MM/YYYY"),
+        },
+        {
+          title: "Số giờ đi muộn",
           dataIndex: "hourLateWork",
           key: "hourLateWork",
           align: "center",
-          render: (_, record, index) => (
-            <div>{(record?.hourLateWork || "") + " (" + record.date + ")"}</div>
-          ),
-        },
-        {
-          title: "Số tiền trừ",
-          dataIndex: "deductionSalaryHour",
-          key: "deductionSalaryHour",
-          align: "center",
-          render: (_, record, index) => (
-            <div>
-              {record?.deductionSalaryHour?.toLocaleString("en-US")} VND
-            </div>
-          ),
         },
         {
           title: state !== 3 && (
@@ -184,38 +192,44 @@ export default function DeductionSalaryTable({
       ]
     : [
         {
-          title: "Giờ đi muộn",
+          title: "Ngày",
+          dataIndex: "date",
+          key: "date",
+          align: "center",
+          render: (date) => moment(date).format("DD/MM/YYYY"),
+        },
+        {
+          title: "Số giờ đi muộn",
           dataIndex: "hourLateWork",
           key: "hourLateWork",
           align: "center",
-          render: (_, record, index) => (
-            <div>{(record?.hourLateWork || "") + " (" + record.date + ")"}</div>
-          ),
-        },
-        {
-          title: "Số tiền trừ",
-          dataIndex: "deductionSalaryHour",
-          key: "deductionSalaryHour",
-          align: "center",
-          render: (_, record, index) => (
-            <div>
-              {record?.deductionSalaryHour?.toLocaleString("en-US")} VND
-            </div>
-          ),
         },
       ];
 
-  const data: IDataDeductionDay[] =
-    dataDeduction?.map((el) => {
-      return {
-        id: el.id,
-        date: el?.date,
-        dayOffWork: el?.dayOffWork,
-        deductionSalaryDay: Math.round(
-          (Number(el?.dayOffWork || 0) * baseSalary) / 24
-        ),
-      };
-    }) || [];
+  const data = () => {
+    const leaveWorkAccepted: IDataDeductionDay[] =
+      dataLeaveWorkByUser?.map((item) => {
+        return {
+          id: undefined,
+          date: item?.startDate,
+          dayOffWork: item?.quantity,
+          type: "leaveWorkAccepted",
+        };
+      }) || [];
+
+    const leaveWorkAdded: IDataDeductionDay[] =
+      dataDeduction?.map((item) => {
+        return {
+          id: item.id,
+          date: item?.date,
+          dayOffWork: item?.dayOffWork,
+          type: "leaveWorkAdded",
+        };
+      }) || [];
+
+    return [...leaveWorkAccepted, ...leaveWorkAdded];
+  };
+
   const data2: IDataDeductionDay[] =
     dataDeductionHour?.map((el) => {
       return {
@@ -228,21 +242,33 @@ export default function DeductionSalaryTable({
       };
     }) || [];
 
-  const totalSalaryDay =
-    data?.reduce(function (accumulator, element) {
-      return accumulator + (Number(element?.deductionSalaryDay) || 0);
-    }, 0) || 0;
+  const acountLeaveWorkDay = data()?.reduce(
+    (accumulator, element) =>
+      accumulator +
+      (element.type === "leaveWorkAdded" ? element?.dayOffWork ?? 0 : 0),
+    0
+  );
+
+  const totalSalaryDay = Math.floor(
+    (Math.abs(remainDayOff ?? 0) * baseSalary) / 24
+  );
 
   const totalSalaryHour =
     data2?.reduce(function (accumulator, element) {
       return accumulator + (Number(element?.deductionSalaryHour) || 0);
     }, 0) || 0;
+
   useEffect(() => {
     const totalSalary2 = totalSalaryDay + totalSalaryHour;
     if (setDeductionSalary) {
       setDeductionSalary(totalSalary2);
     }
-  }, [isRefetchingD, isRefetchingH, totalSalaryDay, totalSalaryHour]);
+  }, [isRefetchingH, totalSalaryDay, totalSalaryHour]);
+
+  useEffect(() => {
+    setRemainDayOff((daysAllowedLeaveById ?? 0) - acountLeaveWorkDay);
+  }, [isRefetchingD, acountLeaveWorkDay]);
+
   return (
     <Card className="w-full">
       {isAdmin && (
@@ -266,20 +292,33 @@ export default function DeductionSalaryTable({
         {(totalSalaryHour + totalSalaryDay)?.toLocaleString("en-US")} VND
       </div>
       <div className="flex">
-        <Table
-          className="w-full"
-          columns={columns}
-          dataSource={data || []}
-          bordered
-          pagination={false}
-        />
-        <Table
-          className="w-full ml-4"
-          columns={columns2}
-          dataSource={data2 || []}
-          bordered
-          pagination={false}
-        />
+        <Card className="w-full">
+          <Table
+            className="w-full"
+            columns={columns}
+            dataSource={data() ?? []}
+            bordered
+            pagination={false}
+          />
+          <p className="font-bold mt-2">
+            Số ngày nghỉ còn lại: {remainDayOff} ngày
+          </p>
+          <p className="font-bold mt-2">
+            Tiền trừ: {totalSalaryDay.toLocaleString("en-US")} VND
+          </p>
+        </Card>
+        <Card className="w-full">
+          <Table
+            className="w-full"
+            columns={columns2}
+            dataSource={data2 || []}
+            bordered
+            pagination={false}
+          />
+          <p className="font-bold mt-2">
+            Tiền trừ: {totalSalaryHour.toLocaleString("en-US")} VND
+          </p>
+        </Card>
       </div>
     </Card>
   );
