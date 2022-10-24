@@ -12,7 +12,7 @@ import axios from "axios";
 import Config from "@app/config";
 
 export interface ILoginBody {
-  email: string;
+  username: string;
   password: string;
 }
 type UserGender = "Other" | "Male" | "Female";

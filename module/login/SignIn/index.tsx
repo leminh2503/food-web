@@ -20,9 +20,9 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
     values: ILoginBody,
     {setSubmitting}: {setSubmitting: (isSubmitting: boolean) => void}
   ): void => {
-    if (values.email && values.password) {
+    if (values.username && values.password) {
       loginMutation.mutate(
-        {email: values.email, password: values.password},
+        {username: values.username, password: values.password},
         {
           onSuccess: (res: IAccountInfo) => {
             dispatch(loginUser({...res}));
@@ -41,9 +41,9 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
   };
   return (
     <Formik
-      initialValues={{email: "", password: ""}}
+      initialValues={{username: "", password: ""}}
       validate={(values): void => {
-        if (!values.email) {
+        if (!values.username) {
           notification.error({
             message: "Tài khoản và mật khẩu không được để trống!",
           });
@@ -67,7 +67,7 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
               <TextInput
                 placeholder="Nhập tài khoản"
                 label="Tài khoản"
-                value={values.email}
+                value={values.username}
                 handleChange={handleChange}
                 name="email"
               />
