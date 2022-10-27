@@ -122,7 +122,7 @@ export interface ISetPassword {
 }
 
 const path = {
-  login: "/auth/login",
+  login: "/login",
   forgotpassword: "/auth/forgot-password",
   setpassword: "/auth/set-password",
   getMe: "/users/me",

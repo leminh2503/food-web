@@ -1,6 +1,6 @@
 import "./index.scss";
 import {Formik} from "formik";
-import {Form, Image, notification} from "antd";
+import {Form, Image} from "antd";
 import {TextInput} from "@app/components/TextInput";
 import {ButtonSubmit} from "@app/components/ButtonSubmit";
 import {useMutation} from "react-query";
@@ -8,13 +8,18 @@ import ApiUser, {ILoginBody} from "@app/api/ApiUser";
 import {useDispatch} from "react-redux";
 import {loginUser} from "@app/redux/slices/UserSlice";
 import {IAccountInfo} from "@app/types";
+import {useValidation} from "@app/utils/class-validator";
+import LoginValidation from "@app/utils/validation/LoginValidation";
 
 interface SignInProps {
   changeTab: (tab: string) => void;
 }
 export function SignIn({changeTab}: SignInProps): JSX.Element {
   const dispatch = useDispatch();
+
   const loginMutation = useMutation(ApiUser.login);
+
+  const [loginValidate] = useValidation(LoginValidation);
 
   const handleLogin = (
     values: ILoginBody,
@@ -42,13 +47,7 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
   return (
     <Formik
       initialValues={{username: "", password: ""}}
-      validate={(values): void => {
-        if (!values.username) {
-          notification.error({
-            message: "Tài khoản và mật khẩu không được để trống!",
-          });
-        }
-      }}
+      validate={loginValidate}
       validateOnChange={false}
       onSubmit={handleLogin}
     >
