@@ -4,24 +4,24 @@ import {Form, Image, notification} from "antd";
 import {TextInput} from "@app/components/TextInput";
 import {ButtonSubmit} from "@app/components/ButtonSubmit";
 import {useMutation} from "react-query";
-import ApiUser, {ILoginBody} from "@app/api/ApiUser";
+import ApiUser, {IRegisterBody} from "@app/api/ApiUser";
 import {useDispatch} from "react-redux";
 import {loginUser} from "@app/redux/slices/UserSlice";
 import {IAccountInfo} from "@app/types";
 
-interface SignInProps {
+interface SignUpProps {
   changeTab: (tab: string) => void;
 }
-export function SignIn({changeTab}: SignInProps): JSX.Element {
+export function SignUp({changeTab}: SignUpProps): JSX.Element {
   const dispatch = useDispatch();
-  const loginMutation = useMutation(ApiUser.login);
-
-  const handleLogin = (
-    values: ILoginBody,
+  const registerMutation = useMutation(ApiUser.register);
+  const handleRegister = (
+    values: IRegisterBody,
     {setSubmitting}: {setSubmitting: (isSubmitting: boolean) => void}
   ): void => {
+    console.log(values);
     if (values.username && values.password) {
-      loginMutation.mutate(
+      registerMutation.mutate(
         {username: values.username, password: values.password},
         {
           onSuccess: (res: IAccountInfo) => {
@@ -44,7 +44,7 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
     <Formik
       initialValues={{username: "", password: ""}}
       validate={(values): void => {
-        console.log("test", values);
+        console.log("test register", values);
         if (!values.username) {
           notification.error({
             message: "Tài khoản và mật khẩu không được để trống!",
@@ -52,18 +52,18 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
         }
       }}
       validateOnChange={false}
-      onSubmit={handleLogin}
+      onSubmit={handleRegister}
     >
       {({values, handleChange, isSubmitting, handleSubmit}): JSX.Element => (
-        <div className="container-sign-in">
-          <Form onFinish={handleSubmit} className="container-sign-in">
+        <div className="container-sign-up">
+          <Form onFinish={handleSubmit} className="container-sign-up">
             <div className="header-wrapper">
               <Image
-                className="login-image"
+                className="sign-up-image"
                 src="img/logo.png"
                 preview={false}
               />
-              <div className="login-text">Đăng nhập</div>
+              <div className="sign-up-text">Đăng ký</div>
             </div>
             <div>
               <TextInput
@@ -72,6 +72,7 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
                 value={values.username}
                 handleChange={handleChange}
                 name="username"
+                type="text"
               />
             </div>
             <div className="pt-20">
@@ -84,27 +85,9 @@ export function SignIn({changeTab}: SignInProps): JSX.Element {
                 type="password"
               />
             </div>
-            <div className="flex justify-end">
-              <span
-                role="button"
-                tabIndex={0}
-                className="forgot-pass pt-20"
-                onClick={(): void => changeTab("forgotPassword")}
-              >
-                Quên mật khẩu?
-              </span>
-              <span
-                role="button"
-                tabIndex={0}
-                className="sign-up pt-20"
-                onClick={(): void => changeTab("signUp")}
-              >
-                Sign Up
-              </span>
-            </div>
 
             <ButtonSubmit
-              label="Đăng nhập"
+              label="Đăng ký"
               isSubmitting={isSubmitting}
               classRow="pt-20"
             />

@@ -13,13 +13,12 @@ interface ModalInfoProps {
 export function ModalChangePass(props: ModalInfoProps): JSX.Element {
   const {isModalVisible, handleConfirmChangePass, handleCancelChangePass} =
     props;
-
   const [form] = Form.useForm();
-
   const onFinish = (fieldsValue: {
     newPassword: string;
     confirmPassword: string;
   }): void => {
+    console.log(fieldsValue);
     handleConfirmChangePass(fieldsValue.newPassword);
   };
 
@@ -61,7 +60,7 @@ export function ModalChangePass(props: ModalInfoProps): JSX.Element {
                 message: "Mật khẩu xác nhận không được để trống!",
               },
               ({getFieldValue}) => ({
-                validator(_, value) {
+                validator(_, value): Promise<void> {
                   if (!value || getFieldValue("newPassword") === value) {
                     return Promise.resolve();
                   }

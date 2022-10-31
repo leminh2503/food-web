@@ -15,6 +15,10 @@ export interface ILoginBody {
   username: string;
   password: string;
 }
+export interface IRegisterBody {
+  username: string;
+  password: string;
+}
 type UserGender = "Other" | "Male" | "Female";
 
 export interface IRegisterAccountBody {
@@ -77,7 +81,6 @@ export interface IInformationAccountBody {
 }
 
 export interface IResetPasswordBody {
-  id?: number;
   newPassword?: string;
 }
 
@@ -123,6 +126,8 @@ export interface ISetPassword {
 
 const path = {
   login: "/auth/login",
+  register: "/auth/register",
+  changePassword: "/users/change-password",
   forgotpassword: "/auth/forgot-password",
   setpassword: "/auth/set-password",
   getMe: "/users/me",
@@ -184,15 +189,16 @@ function updateInformationAccount(
 }
 
 function resetPasswordForAccount(
-  data: IResetPasswordBody
+  body: IResetPasswordBody
 ): Promise<IUserLogin> {
-  const {id} = data;
-  delete data.id;
-  return fetcher({
-    url: `/users/${id}/set-password`,
-    method: "post",
-    data,
-  });
+  return fetcher(
+    {
+      url: path.changePassword,
+      method: "POST",
+      data: body,
+    },
+    {displayError: true}
+  );
 }
 
 function updateAvatar(formData: any): Promise<IUserLogin> {
@@ -202,6 +208,12 @@ function updateAvatar(formData: any): Promise<IUserLogin> {
 function login(body: ILoginBody): Promise<IAccountInfo> {
   return fetcher(
     {url: path.login, method: "post", data: body},
+    {displayError: true}
+  );
+}
+function register(body: IRegisterBody): Promise<IAccountInfo> {
+  return fetcher(
+    {url: path.register, method: "post", data: body},
     {displayError: true}
   );
 }
@@ -295,6 +307,7 @@ function getAuthToken(): string | undefined {
 
 export default {
   login,
+  register,
   forgotPassword,
   setPassword,
   isLogin,

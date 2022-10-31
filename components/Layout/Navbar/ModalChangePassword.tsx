@@ -41,15 +41,9 @@ ModalChangePassword): JSX.Element {
 
   const router = useRouter();
 
-  // const showModal = () => {
-  //   setIsModalVisible(true);
-  // };
-
   const changePasswordMutation = useMutation(ApiUser.changePassword);
 
   const handleOk = (values: any) => {
-    // const {email, newPass, oldPass } = data;
-
     if (!data.oldPassword) {
       notification.error({
         message: `Chưa nhập mật khẩu cũ`,
@@ -71,28 +65,21 @@ ModalChangePassword): JSX.Element {
         message: `Mật khẩu mới trùng với mật khẩu cũ`,
       });
     } else {
-      // onClose()
       HandleSubmit(values);
     }
   };
 
   const handleCancel = () => {
-    // setIsModalVisible(false)
-
-    // setToggleModal(password);
     setPassword(!password);
   };
 
   const HandleSubmit = (values: IChangePassword): void => {
     changePasswordMutation.mutate(
       {
-        oldPassword: data.oldPassword,
         newPassword: data.newPassword,
       },
       {
         onSuccess: () => {
-          // router.push("/#");
-          //   setSubmitting(false);
           notification.success({
             message: "Đổi mật khẩu thành công",
           });
@@ -135,9 +122,8 @@ ModalChangePassword): JSX.Element {
               <Modal
                 title="Đổi mật khẩu"
                 visible={isModalVisible}
-                onOk={() => {
+                onOk={(): void => {
                   handleOk(values);
-                  // HandleSubmit(values);
                 }}
                 onCancel={handleCancel}
                 okText="Xác nhận"

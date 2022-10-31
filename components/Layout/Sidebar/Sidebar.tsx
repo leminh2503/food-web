@@ -92,7 +92,7 @@ export default function Sidebar(): JSX.Element {
   const handleLogout = (): void => {
     Modal.confirm({
       title: "Đăng xuất",
-      content: "Bạn có chắc chắn?",
+      content: "Bạn có chắc chắn muốn đăng xuất?",
       onOk: () => {
         persistor
           .purge()
