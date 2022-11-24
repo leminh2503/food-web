@@ -57,16 +57,10 @@ export function ModalEditUser(props: ModalInfoProps): JSX.Element {
             <Input disabled />
           </Form.Item>
           <Form.Item label="First Name" name="firstName">
-            <Input
-              value={firstNameEdit}
-              onChange={(e): void => setFirstNameEdit(e.target.value)}
-            />
+            <Input onChange={(e): void => setFirstNameEdit(e.target.value)} />
           </Form.Item>
           <Form.Item label="Last Name" name="lastName">
-            <Input
-              value={lastNameEdit}
-              onChange={(e): void => setLastNameEdit(e.target.value)}
-            />
+            <Input onChange={(e): void => setLastNameEdit(e.target.value)} />
           </Form.Item>
         </Form>
       </div>

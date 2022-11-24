@@ -11,7 +11,6 @@ const UserSlice = createSlice({
       return action.payload;
     },
     editAcountMe: (state, action: PayloadAction<IEditUser>) => {
-      console.log(state);
       if (state.user) {
         state.user.firstName = action.payload.firstName;
         state.user.lastName = action.payload.lastName;

@@ -65,7 +65,7 @@ export default function Navbar(): JSX.Element {
     if (values.firstName || values.lastName) {
       mutate(values, {
         onSuccess: (res: IGetUsers) => {
-          console.log("ok");
+          console.log("ok", values);
           dispatch(editAcountMe({...values}));
           notification.success({
             message: "Cập nhật thông tin thành công !",
