@@ -61,10 +61,11 @@ export default function Navbar(): JSX.Element {
     },
   });
   const handleConfirmModalEdit = (values: IEditUser): void => {
-    console.log(values);
+    // console.log(values);
     if (values.firstName || values.lastName) {
       mutate(values, {
         onSuccess: (res: IGetUsers) => {
+          console.log("ok");
           dispatch(editAcountMe({...values}));
           notification.success({
             message: "Cập nhật thông tin thành công !",
