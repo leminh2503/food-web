@@ -32,7 +32,7 @@ export function ModalCustom({
       destroyOnClose={destroyOnClose}
       centered
       title={title}
-      visible={isModalVisible}
+      open={isModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
       okText={okeText}

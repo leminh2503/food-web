@@ -15,23 +15,9 @@ export interface IRoute {
 }
 
 const routes: IRoute[] = [
-  // {
-  //   path: Config.PATHNAME.LOGIN,
-  //   name: "Auth",
-  //   isAuth: true,
-  // },
-  // {
-  //   path: "/approve-news",
-  //   name: "sidebar.approve_new",
-  //   role: ["admin"],
-  //   icon: "usd_coin_usdc",
-  //   isPrivate: true,
-  //   isSidebar: true,
-  // },
   {
-    path: "/",
+    path: "/users",
     name: "Quản lý tài khoản",
-    role: NameEventConstant.PERMISSION_USER_KEY.LIST_ALL_USER,
     isPrivate: true,
     icon: "Users",
     isSidebar: true,
@@ -45,8 +31,8 @@ const routes: IRoute[] = [
     isSidebar: true,
   },
   {
-    path: "/salary",
-    name: "Bảng lương cá nhân",
+    path: "/booking",
+    name: "Booking",
     icon: "Payroll",
     isPrivate: true,
     isSidebar: true,

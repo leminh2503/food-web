@@ -12,6 +12,7 @@ import {
 } from "redux-persist";
 import UserReducer from "./slices/UserSlice";
 import MenuReducer from "./slices/MenuSlice";
+import BookingReducer from "./slices/BookingSlice";
 import {combineReducers} from "redux";
 import {configureStore} from "@reduxjs/toolkit";
 
@@ -47,6 +48,7 @@ const persistConfig = {
 const rootReducers = combineReducers({
   user: UserReducer,
   menu: MenuReducer,
+  booking: BookingReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);
@@ -61,7 +63,6 @@ const store = configureStore({
       },
     }),
 });
-
 export const persistor = persistStore(store);
 
 export default store;

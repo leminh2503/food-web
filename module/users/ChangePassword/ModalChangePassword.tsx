@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {logoutUser} from "@app/redux/slices/UserSlice";
 import {Form, Modal, notification} from "antd";
 import ApiUser, {IChangePassword} from "@app/api/ApiChangePassword";
@@ -10,27 +10,14 @@ import {InputPassword} from "@app/components/InputPassword";
 import {useDispatch} from "react-redux";
 
 interface ModalChangePassword {
-  setToggleModal: (value: boolean) => void;
+  handleCancel: () => void;
   isModalVisible: boolean;
-
-  // dataRefetch: () => void;
-  // dataPass: IChangePassword;
 }
 
 export function ModalChangePassword({
-  setToggleModal,
   isModalVisible,
-}: // dataRefetch,
-// dataPass,
-ModalChangePassword): JSX.Element {
-  // const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const [password, setPassword] = useState(true);
-
-  useEffect(() => {
-    setToggleModal(password);
-  }, [password]);
-
+  handleCancel,
+}: ModalChangePassword): JSX.Element {
   const [data, setData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -68,11 +55,6 @@ ModalChangePassword): JSX.Element {
       HandleSubmit(values);
     }
   };
-
-  const handleCancel = () => {
-    setPassword(!password);
-  };
-
   const HandleSubmit = (values: IChangePassword): void => {
     changePasswordMutation.mutate(
       {
@@ -121,7 +103,7 @@ ModalChangePassword): JSX.Element {
             <div className="modal-ant">
               <Modal
                 title="Đổi mật khẩu"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={(): void => {
                   handleOk(values);
                 }}

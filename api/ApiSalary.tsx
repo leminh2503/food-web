@@ -125,17 +125,6 @@ function getListSalaryTotalUser(
   });
 }
 
-function getMyListTotalSalary(
-  year: number,
-  month?: number
-): Promise<IDataSalary[]> {
-  return fetcher({
-    url: path.getMyListTotalSalary,
-    method: "get",
-    params: {filter: {date_year: year, date_month: month}},
-  });
-}
-
 function getTotalSalaryById(
   id: number,
   year: number,
@@ -422,7 +411,11 @@ function getListProjectOfMe(): Promise<IDataProjectList[]> {
   });
 }
 
-function getUserOfProject(projectId: number, month: number, year: number) {
+function getUserOfProject(
+  projectId: number,
+  month: number,
+  year: number
+): Promise<unknown> {
   return fetcher({
     url: path.getUserOfProject,
     method: "get",
@@ -449,7 +442,6 @@ export default {
   getMyListOTSalary,
   deleteOnsiteSalary,
   getMyListOnsiteSalary,
-  getMyListTotalSalary,
   updateOnsiteSalary,
   updateOTSalary,
   getListSalaryTotalUser,

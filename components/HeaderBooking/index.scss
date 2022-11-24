@@ -1,0 +1,19 @@
+.headerBooking {
+  display: flex;
+  justify-content: flex-end;
+  &-numberOrder {
+    border-right: 2px solid royalblue;
+    margin-right: 10px;
+    padding: 5px 10px;
+  }
+  &-total {
+    border-right: 2px solid royalblue;
+    margin-right: 10px;
+    padding: 5px 10px 5px 0;
+  }
+  &-time {
+    border-right: 2px solid royalblue;
+    margin-right: 20px;
+    padding: 5px 10px 5px 0;
+  }
+}

@@ -1,5 +1,5 @@
-import {Salary} from "@app/module/salary";
+import {Booking} from "@app/module/booking";
 
 export default function index() {
-  return <Salary />;
+  return <Booking />;
 }

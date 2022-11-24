@@ -4,11 +4,12 @@ const SALARY = {
   CREATE_SALARY: "/manager-salary/create-salary",
   LIST_EMPLOYEE: "/manager-salary/list-employee",
 };
-
 const PROJECT = {
   PROJECT_DETAIL: "/project/project-detail",
 };
-
+const USER = {
+  GET_ALL_USER: "/user/users",
+};
 const RULE = {
   QUY_DINH_VE_BAO_HIEM: "/rule/quy-dinh-ve-bao-hiem",
   QUY_DINH_VE_THUONG_GIOI_THIEU: "/rule/quy-dinh-ve-thuong-gioi-thieu",
@@ -17,6 +18,7 @@ const RULE = {
 
 export default {
   SALARY,
+  USER,
   PROJECT,
   RULE,
 };

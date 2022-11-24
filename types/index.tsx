@@ -339,9 +339,21 @@ export interface IDataProjectSalary {
   projectName?: string;
   projectSalary?: number | string;
 }
-
+export interface IGetUsers {
+  budget: number;
+  createdAt: string;
+  email: string;
+  firstName: string;
+  id: number;
+  lastName: string;
+  role: string;
+  updatedAt: string;
+  username: string;
+  avatar: string;
+  fullName: "none";
+}
 export interface IAccountInfo {
-  user?: IUserLogin;
+  user?: IGetUsers;
   accessToken?: string;
   refreshToken?: string;
   isConfirmed?: boolean;
@@ -350,6 +362,29 @@ export interface IAccountInfo {
     id: number;
     roleName: string;
     permissions: IPermission[];
+  };
+}
+export interface IEditUser {
+  firstName: string;
+  lastName: string;
+}
+export interface IGetBookingList {
+  bookDate: number;
+  createdAt: string;
+  createdBy: {
+    username: string;
+  };
+  deleteAt: string;
+  deletedBy: {
+    username: string;
+  };
+  isChosen: boolean;
+  id: number;
+  session: number;
+  state: number;
+  updatedAt: string;
+  updateBy: {
+    username: string;
   };
 }
 

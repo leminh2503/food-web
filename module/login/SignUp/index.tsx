@@ -8,6 +8,8 @@ import ApiUser, {IRegisterBody} from "@app/api/ApiUser";
 import {useDispatch} from "react-redux";
 import {loginUser} from "@app/redux/slices/UserSlice";
 import {IAccountInfo} from "@app/types";
+import {LeftOutlined} from "@ant-design/icons";
+import React from "react";
 
 interface SignUpProps {
   changeTab: (tab: string) => void;
@@ -56,6 +58,13 @@ export function SignUp({changeTab}: SignUpProps): JSX.Element {
     >
       {({values, handleChange, isSubmitting, handleSubmit}): JSX.Element => (
         <div className="container-sign-up">
+          <button
+            type="button"
+            className="btn-back-page"
+            onClick={(): void => changeTab("signIn")}
+          >
+            <LeftOutlined />
+          </button>
           <Form onFinish={handleSubmit} className="container-sign-up">
             <div className="header-wrapper">
               <Image

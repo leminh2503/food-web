@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IAccountInfo} from "../../types";
+import {IAccountInfo, IEditUser} from "@app/types";
 
 const initialState: IAccountInfo = {};
 
@@ -10,6 +10,10 @@ const UserSlice = createSlice({
     loginUser: (_, action: PayloadAction<IAccountInfo>) => {
       return action.payload;
     },
+    editAcountMe: (state, action: PayloadAction<IEditUser>) => {
+      state.user.firstName = action.payload.firstName;
+      state.user.lastName = action.payload.lastName;
+    },
     logoutUser: () => {
       return initialState;
     },
@@ -17,6 +21,6 @@ const UserSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {loginUser, logoutUser} = UserSlice.actions;
+export const {loginUser, editAcountMe, logoutUser} = UserSlice.actions;
 
 export default UserSlice.reducer;

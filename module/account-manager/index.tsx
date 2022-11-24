@@ -143,7 +143,7 @@ export function AccountManager(): JSX.Element {
         state: filterState !== -1 ? filterState : "",
       },
     };
-    return ApiUser.getUserAccount(params);
+    return ApiUser.getUserAccount(params) as any;
   };
 
   const {

@@ -1,10 +1,11 @@
 import {fetcher, fetcherWithMetadata, IMetadata} from "./Fetcher";
 import store from "../redux/store";
 import {
-  IPermission,
   EnglishCertificate,
   IAccountInfo,
+  IEditUser,
   IFamilyCircumstance,
+  IGetUsers,
   IUserLogin,
   IWorkType,
 } from "../types";
@@ -44,17 +45,17 @@ export interface IRegisterAccountBody {
   role: number;
 }
 
-export interface IProfileBody {
-  id?: number;
-  fullName?: string;
-  email?: string;
-  dateOfBirth?: string;
-  personId?: string;
-  address?: string;
-  phoneNumber?: string;
-  phoneNumberRelative?: string;
-  gender?: string;
-}
+// export interface IProfileBody {
+//   id?: number;
+//   fullName?: string;
+//   email?: string;
+//   dateOfBirth?: string;
+//   personId?: string;
+//   address?: string;
+//   phoneNumber?: string;
+//   phoneNumberRelative?: string;
+//   gender?: string;
+// }
 
 export interface IInformationAccountBody {
   id?: number;
@@ -84,19 +85,19 @@ export interface IResetPasswordBody {
   newPassword?: string;
 }
 
-export interface IUploadAvatarBody {
-  file: string;
-}
+// export interface IUploadAvatarBody {
+//   file: string;
+// }
 
-export interface ILoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  role?: {
-    id: number;
-    roleName: string;
-    permissions: IPermission[];
-  };
-}
+// export interface ILoginResponse {
+//   accessToken: string;
+//   refreshToken: string;
+//   role?: {
+//     id: number;
+//     roleName: string;
+//     permissions: IPermission[];
+//   };
+// }
 
 export interface IParamsGetUser {
   sort?: string[];
@@ -128,8 +129,8 @@ const path = {
   login: "/auth/login",
   register: "/auth/register",
   changePassword: "/users/change-password",
-  forgotpassword: "/auth/forgot-password",
-  setpassword: "/auth/set-password",
+  forgotPassword: "/auth/forgot-password",
+  setPassword: "/auth/set-password",
   getMe: "/users/me",
   getUserAccount: "/users",
   uploadAvatar: "/users/set-avatar",
@@ -144,7 +145,7 @@ const path = {
 
 function getUserAccount(
   params?: IParamsGetUser
-): Promise<{data: IUserLogin[]; meta: IMetadata}> {
+): Promise<{data: IGetUsers[]; meta: IMetadata}> {
   return fetcherWithMetadata({
     url: path.getUserAccount,
     method: "get",
@@ -152,9 +153,11 @@ function getUserAccount(
   });
 }
 
-function getUserInfo(params: {id: number}): Promise<IUserLogin> {
+function getUserInfo(
+  params: IParamsGetUser
+): Promise<{data: IUserLogin[]; meta: IMetadata}> {
   return fetcher({
-    url: path.getUserAccount + "/" + params.id,
+    // url: path.getUserAccount + "/" + params.id,
     method: "get",
     params: params,
   });
@@ -168,13 +171,19 @@ function getListWorkType(): Promise<IWorkType[]> {
   return fetcher({url: path.workType, method: "get"});
 }
 
-function getMe(): Promise<IUserLogin> {
-  return fetcher({url: path.getMe, method: "get"});
+function getMe(): Promise<IGetUsers> {
+  return fetcher({url: path.getMe, method: "get"}, {displayError: true});
+}
+function setMeDataAcount(body: IEditUser): Promise<IGetUsers> {
+  return fetcher(
+    {url: path.getMe, method: "PUT", data: body},
+    {displayError: true}
+  );
 }
 
-function updateMe(data: IProfileBody): Promise<IUserLogin> {
-  return fetcher({url: path.getMe, method: "put", data});
-}
+// function updateMe(data: IProfileBody): Promise<IUserLogin> {
+//   return fetcher({url: path.getMe, method: "put", data});
+// }
 
 function updateInformationAccount(
   data: IInformationAccountBody
@@ -201,9 +210,9 @@ function resetPasswordForAccount(
   );
 }
 
-function updateAvatar(formData: any): Promise<IUserLogin> {
-  return fetcher({url: path.uploadAvatar, method: "patch", data: formData});
-}
+// function updateAvatar(formData: any): Promise<IUserLogin> {
+//   return fetcher({url: path.uploadAvatar, method: "patch", data: formData});
+// }
 
 function login(body: ILoginBody): Promise<IAccountInfo> {
   return fetcher(
@@ -219,12 +228,12 @@ function register(body: IRegisterBody): Promise<IAccountInfo> {
 }
 
 function forgotPassword(body: IForgotPassword): Promise<IUserLogin> {
-  return fetcher({url: path.forgotpassword, method: "post", data: body});
+  return fetcher({url: path.forgotPassword, method: "post", data: body});
 }
 
 function setPassword(body: ISetPassword): Promise<IUserLogin> {
   return fetcher({
-    url: path.setpassword,
+    url: path.setPassword,
     method: "post",
     data: {
       email: body.email,
@@ -266,14 +275,14 @@ function updateFamilyCircumstance(
   });
 }
 
-function deleteFamilyCircumstance(id: number) {
+function deleteFamilyCircumstance(id: number): Promise<unknown> {
   return fetcher({
     url: path.familyCircumstance + `/${id}`,
     method: "delete",
   });
 }
 
-function exportListAccount() {
+function exportListAccount(): Promise<any> {
   const baseURL = Config.NETWORK_CONFIG.API_BASE_URL;
   const accessToken = getAuthToken();
   return axios({
@@ -290,15 +299,14 @@ function isLogin(): boolean {
   return !!getAuthToken();
 }
 
-export function getUserRole(): string | null {
-  const role = localStorage.getItem("role");
-  return role;
-}
+// export function getUserRole(): string | null {
+//   return localStorage.getItem("role");
+// }
 
-function getInfoMe(): IUserLogin | undefined {
-  const {user} = store.getState();
-  return user?.user;
-}
+// function getInfoMe(): IUserLogin | undefined {
+//   const {user} = store.getState();
+//   return user?.user;
+// }
 
 function getAuthToken(): string | undefined {
   const {user} = store.getState();
@@ -311,13 +319,15 @@ export default {
   forgotPassword,
   setPassword,
   isLogin,
-  getAuthToken,
-  getInfoMe,
-  getUserRole,
+
+  // getAuthToken,
+  // getInfoMe,
+  // getUserRole,
   getMe,
-  updateMe,
+  setMeDataAcount,
+  // updateMe,
   getUserAccount,
-  updateAvatar,
+  // updateAvatar,
   getListWorkType,
   getListPosition,
   updateInformationAccount,

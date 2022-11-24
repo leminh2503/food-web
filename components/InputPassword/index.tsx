@@ -1,6 +1,7 @@
 import "./index.scss";
 import {Col, Input, Row} from "antd";
 import {ChangeEvent} from "react";
+import * as React from "react";
 
 interface TextInputProps {
   type?: string;
@@ -12,7 +13,6 @@ interface TextInputProps {
 
 export function InputPassword(props: TextInputProps): JSX.Element {
   const {label, handleChange, handleBlur, name, type} = props;
-
   return (
     <Row className="input-container password-label">
       <Col span={10}>
@@ -25,12 +25,10 @@ export function InputPassword(props: TextInputProps): JSX.Element {
       <Col span={1} />
       <Col span={13}>
         {type === "password" && (
-          <Input
+          <Input.Password
             type="password"
             name={name}
             className="input"
-            // placeholder={placeholder}
-            //   value={value}
             onChange={handleChange}
             onBlur={handleBlur}
           />

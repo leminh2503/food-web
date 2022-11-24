@@ -147,7 +147,6 @@ export async function fetcher<T>(
     displayError: Config.NETWORK_CONFIG.DISPLAY_ERROR,
     ...options,
   };
-
   const apiClient = axios.create({
     headers: {
       "Content-Type": "application/json",
