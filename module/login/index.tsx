@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import {NewPassword} from "@app/module/login/NewPassword";
 import {ForgotPassword} from "@app/module/login/ForgotPassword";
 import {SignIn} from "@app/module/login/SignIn";
+import {SignUp} from "@app/module/login/SignUp";
 
 export function Login(): JSX.Element {
   const [data, setData] = useState("");
@@ -12,6 +13,9 @@ export function Login(): JSX.Element {
   const tabList = {
     signIn: {
       component: SignIn,
+    },
+    signUp: {
+      component: SignUp,
     },
     forgotPassword: {
       component: ForgotPassword,

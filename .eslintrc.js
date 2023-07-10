@@ -76,7 +76,7 @@ module.exports = {
 
         // Warning
         "semi": 1,
-        "no-console": 1,
+        "no-console": "off",
         "max-statements-per-line": [1, {max: 2}],
         "react/jsx-filename-extension": [1, {extensions: [".ts", ".tsx"]}],
         "quotes": [

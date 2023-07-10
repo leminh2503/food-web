@@ -5,7 +5,7 @@ const path = {
 };
 
 export interface IChangePassword {
-  oldPassword: string;
+  // oldPassword: string;
   newPassword: string;
 }
 

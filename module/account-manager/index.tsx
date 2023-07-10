@@ -319,7 +319,7 @@ export function AccountManager(): JSX.Element {
 
   const handleResetPasswordForAccount = (newPassword: string): void => {
     const body: IResetPasswordBody = {
-      id: Number(dataDetail.id),
+      // id: Number(dataDetail.id),
       newPassword: newPassword,
     };
     resetPasswordForAccount.mutate(body);
